@@ -31,7 +31,7 @@ public class FileIO {
 		if (codeMap == null) {
 			File f = new File(CodeFileName);
 			codeMap = new HashMap();
-			if (!f.exists()) {
+			if (!f.exists() || f.isDirectory()) {
 				f = new File(CodeFilePATH + "/" + CodeFileName);
 				if (!f.exists()) {
 					return null;
