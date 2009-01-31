@@ -11,7 +11,6 @@ public class LineKindController implements LineKind, Shell {
 		String temp = inputLine.trim();
 		if (temp.length() == 0)
 			return NULL_LINE;
-		
 		Tokenizer tnz = new Tokenizer(temp);
 		TokenArray tokens = new TokenArray(tnz.getTokens());
 		if (tokens.length() == 0)

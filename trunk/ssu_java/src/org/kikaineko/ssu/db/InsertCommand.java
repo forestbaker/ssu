@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.kikaineko.ssu.csv.CSVParser;
+import org.kikaineko.ssu.exception.SSUException;
 import org.kikaineko.util.FileIO;
-import org.kikianeko.ssu.exception.SSUException;
 
 public class InsertCommand {
 	public static void insert(String filePath, String jdbcClass, String url,

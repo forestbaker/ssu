@@ -46,4 +46,8 @@ public class Token {
 	public void setLineNo(int lineNo) {
 		this.lineNo = lineNo;
 	}
+	
+	public String toString(){
+		return "["+kind+","+val+","+isStringOrChar+","+lineNo+"]";
+	}
 }

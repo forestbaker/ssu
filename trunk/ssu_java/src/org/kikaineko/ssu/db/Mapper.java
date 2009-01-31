@@ -80,8 +80,11 @@ public class Mapper {
 				return bd.toString();
 			return "";
 		case Types.DATE:
-			java.sql.Date d = rset.getDate(name);
-			return "\"" + TimeF.toS(d) + "\"";
+			//java.sql.Date d = rset.getDate(name);
+			//return "\"" + TimeF.toS(d) + "\"";
+			// TODO
+			java.sql.Timestamp ts0 = rset.getTimestamp(name);
+			return "\"" + TimeF.toS(ts0).split("\\.")[0] + "\"";
 		case Types.TIME:
 			java.sql.Time t = rset.getTime(name);
 			return "\"" + TimeF.toS(t) + "\"";
@@ -157,7 +160,9 @@ public class Mapper {
 			}
 
 		case Types.DATE:
-			return TimeF.toSFromDate(s);
+			//return TimeF.toSFromDate(s);
+			// TODO
+			return TimeF.toSFromTimestamp(s).split("\\.")[0];
 		case Types.TIME:
 			return TimeF.toSFromTime(s);
 		case Types.TIMESTAMP:
@@ -229,8 +234,13 @@ public class Mapper {
 			}
 			return "";
 		case Types.DATE:
+			/*
 			java.sql.Date d = rset.getDate(i);
 			return TimeF.toS(d);
+			*/
+			// TODO
+			java.sql.Timestamp ts0 = rset.getTimestamp(i);
+			return TimeF.toS(ts0).split("\\.")[0];
 		case Types.TIME:
 			java.sql.Time t = rset.getTime(i);
 			return TimeF.toS(t);

@@ -62,9 +62,7 @@ public class Tokenizer {
 			if (flag) {
 				lastchar = c;
 				index = i + 1;
-
 				return new Token(tokenAutomaton.getState(), sb.toString());
-
 			} else {
 				sb.append(c);
 			}

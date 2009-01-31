@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kikaineko.ssu.csv.CSVParser;
+import org.kikaineko.ssu.exception.DBCheckException;
+import org.kikaineko.ssu.exception.SSUException;
 import org.kikaineko.util.FileIO;
-import org.kikianeko.ssu.exception.DBCheckException;
-import org.kikianeko.ssu.exception.SSUException;
 
 public class SelectCommand {
 	private static String BR = System.getProperty("line.separator");
@@ -75,13 +75,19 @@ public class SelectCommand {
 	}
 
 	public static void selectAssertOrder(String filePath, String jdbcClass,
-			String url, String user, String password, String table, String where)
+			String url, String user, String password, String table, String where,String convertPath)
 			throws Throwable {
 		ArrayList fileData = FileIO.getFileDatas(new File(filePath),
 				FileIO.FileReadCodeToDB);
 		if (fileData.size() < 2) {
 			throw new SSUException("no data in " + filePath);
 		}
+		if (convertPath != null && convertPath.length()!=0) {
+			Convertor.init(convertPath);
+		}else{
+			convertPath=null;
+		}
+		
 		String head = (String) fileData.get(0);
 		fileData.remove(0);
 		List csvdata = CSVParser.getCSVLineList(fileData);
@@ -94,8 +100,8 @@ public class SelectCommand {
 			stmt = connect(jdbcClass, conn, url, user, password);
 
 			sql = "select " + head + " from " + table;
-			if (where != null && where.trim().length() != 0) {
-				sql += " " + where;
+			if (where != null && where.trim().length() != 0 && !where.trim().equals(".")) {
+				sql += " " + where.trim();
 			}
 			// –â‡‚¹‚ÌŽÀs
 			rset = stmt.executeQuery(sql);
@@ -105,7 +111,15 @@ public class SelectCommand {
 			while (rset.next()) {
 				ArrayList temp = new ArrayList();
 				for (int i = 1; i <= max; i++) {
-					temp.add(Mapper.normFromDB(rset, i, rsmd.getColumnType(i)));
+					//temp.add(Mapper.normFromDB(rset, i, rsmd.getColumnType(i)));
+					Object o = Mapper.normFromDB(rset, i, rsmd.getColumnType(i));
+					if (convertPath != null && o instanceof String) {
+						String s = (String) o;
+						s = Convertor.convert(s);
+						temp.add(s);
+					} else {
+						temp.add(o);
+					}
 				}
 
 				if (csvdata.size() == 0) {
@@ -115,8 +129,17 @@ public class SelectCommand {
 				List data = (List) csvdata.get(0);
 				List csvtmp = new ArrayList();
 				for (int i = 0; i < data.size(); i++) {
-					csvtmp.add(Mapper.normFromCSV((String) data.get(i), rsmd
-							.getColumnType(i + 1)));
+					//csvtmp.add(Mapper.normFromCSV((String) data.get(i), rsmd
+						//	.getColumnType(i + 1)));
+					Object o = Mapper.normFromCSV((String) data.get(i), rsmd
+							.getColumnType(i + 1));
+					if (convertPath != null && o instanceof String) {
+						String s = (String) o;
+						s = Convertor.convert(s);
+						csvtmp.add(s);
+					} else {
+						csvtmp.add(o);
+					}
 				}
 
 				if (csvtmp.size() != temp.size()) {
@@ -171,9 +194,14 @@ public class SelectCommand {
 	 */
 	public static void selectAssert(String flag, String filePath,
 			String jdbcClass, String url, String user, String password,
-			String table, String where) throws Throwable {
+			String table, String where, String convertPath) throws Throwable {
 		if (!flag.equals("complete")) {
 			flag = "include";
+		}
+		if (convertPath != null && convertPath.length()!=0) {
+			Convertor.init(convertPath);
+		}else{
+			convertPath=null;
 		}
 		ArrayList fileData = FileIO.getFileDatas(new File(filePath),
 				FileIO.FileReadCodeToDB);
@@ -192,20 +220,35 @@ public class SelectCommand {
 			stmt = connect(jdbcClass, conn, url, user, password);
 
 			sql = "select " + head + " from " + table;
-			if (where != null && where.trim().length() != 0) {
-				sql += " " + where;
+			if (where != null && where.trim().length() != 0 && !where.trim().equals(".")) {
+				sql += " " + where.trim();
 			}
 			// –â‡‚¹‚ÌŽÀs
 			rset = stmt.executeQuery(sql);
 			ResultSetMetaData rsmd = rset.getMetaData();
 
+			int clmnSize = rsmd.getColumnCount();
+
 			List csvMapped = new ArrayList();
 			for (int i = 0; i < csvdata.size(); i++) {
 				List data = (List) csvdata.get(i);
 				List csvtmp = new ArrayList();
+				if (clmnSize != data.size()) {
+					throw new DBCheckException(
+							"Unmuched ColumnCount! RowCount=" + clmnSize
+									+ " CSVCount=" + data.size() + "\n sql => "
+									+ sql);
+				}
 				for (int j = 0; j < data.size(); j++) {
-					csvtmp.add(Mapper.normFromCSV((String) data.get(j), rsmd
-							.getColumnType(j + 1)));
+					Object o = Mapper.normFromCSV((String) data.get(j), rsmd
+							.getColumnType(j + 1));
+					if (convertPath != null && o instanceof String) {
+						String s = (String) o;
+						s = Convertor.convert(s);
+						csvtmp.add(s);
+					} else {
+						csvtmp.add(o);
+					}
 				}
 				csvMapped.add(csvtmp);
 			}
@@ -220,7 +263,15 @@ public class SelectCommand {
 				// —ñ”Ô†‚É‚æ‚éŽw’è
 				ArrayList temp = new ArrayList();
 				for (int i = 1; i <= max; i++) {
-					temp.add(Mapper.normFromDB(rset, i, rsmd.getColumnType(i)));
+					Object o = Mapper
+							.normFromDB(rset, i, rsmd.getColumnType(i));
+					if (convertPath != null && o instanceof String) {
+						String s = (String) o;
+						s = Convertor.convert(s);
+						temp.add(s);
+					} else {
+						temp.add(o);
+					}
 				}
 				int index = -1;
 				for (int i = 0; i < csvMapped.size(); i++) {
@@ -264,7 +315,8 @@ public class SelectCommand {
 		try {
 			Integer.parseInt(count);
 		} catch (Throwable t) {
-			throw new DBCheckException("UnCorrect Count! ExpectedValue is not number? " + count);
+			throw new DBCheckException(
+					"UnCorrect Count! ExpectedValue is not number? " + count);
 		}
 		String[] ss = count(jdbcClass, url, user, password, table, where);
 		String res = ss[1];
@@ -286,15 +338,16 @@ public class SelectCommand {
 		try {
 			Integer.parseInt(count);
 		} catch (Throwable t) {
-			throw new DBCheckException("UnCorrect Count! UnExpectedValue is not number? " + count);
+			throw new DBCheckException(
+					"UnCorrect Count! UnExpectedValue is not number? " + count);
 		}
 		String[] ss = count(jdbcClass, url, user, password, table, where);
 		String res = ss[1];
 		String sql = ss[0];
 		if (res != null && res.length() != 0) {
 			if (res.trim().equals(count.trim())) {
-				throw new DBCheckException("UnCorrect Count! UnExpected:" + count
-						+ " ,but Actual:" + res + "!! \n sql => " + sql);
+				throw new DBCheckException("UnCorrect Count! UnExpected:"
+						+ count + " ,but Actual:" + res + "!! \n sql => " + sql);
 			}
 		} else {
 			throw new DBCheckException("UnCorrect Count! Expected:" + count
