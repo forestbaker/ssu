@@ -29,7 +29,7 @@ assert_num(){
 	then
 		comment="${3}";
 	fi
-
+	
 	if [ ${expect_value} -eq ${actual_value} ]
 	then
 		_ssu_succeedLog "assert_num" "${comment}";
@@ -719,6 +719,50 @@ assert_db(){
 }
 
 ################################################################################
+# assert_db_with_convert
+# 
+# $1 expect file
+# $2 table
+# $3 convert_prop_file_path (option)
+# $4 where-condition (option)
+# $5 comment (option) require where-condition
+################################################################################
+assert_db_with_convert(){
+	_ssu_AssertSetUp;
+	if [[ $# != 2 && $# != 3 && $# != 4 && $# != 5 ]]
+	then
+		_ssu_ErrExit "assert_db_with_convert";
+	fi
+	typeset file="${1}";
+	typeset table="${2}";
+	typeset cp_path="${SSU_SELFPATH}";
+	typeset where='.';
+	typeset comment=" ";
+	if [ $# = 3 ]
+	then
+		cp_path="${3}";
+	fi
+	if [ $# = 4 ]
+	then
+		cp_path="${3}";
+		where="${4}";
+	fi
+	if [ $# = 5 ]
+	then
+		cp_path="${3}";
+		where="${4}";
+		comment="${5}";
+	fi
+	_ssu_TempVar=`${JAVA_CMD} -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.Main "${SSU_CHARCODE}" "db" "selectComp.conv" "${file}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" "${JDBC_USER}" "${JDBC_PASSWORD}" "${cp_path}"`
+	typeset rc=$?
+	if [ ${rc} -eq 0 ]; then
+		_ssu_succeedLog "assert_db_with_convert" "${comment}";
+	else
+		_ssu_FailLog_DB "assert_db_with_convert" "${_ssu_TempVar}" "${comment}";
+	fi
+}
+
+################################################################################
 # assert_db_ordered
 # 
 # $1 expect file
@@ -755,6 +799,51 @@ assert_db_ordered(){
 }
 
 ################################################################################
+# assert_db_ordered_with_convert
+# 
+# $1 expect file
+# $2 table
+# $3 convert_prop_file_path (option)
+# $4 where-condition (option)
+# $5 comment (option) require where-condition
+################################################################################
+assert_db_ordered_with_convert(){
+	_ssu_AssertSetUp;
+	if [[ $# != 2 && $# != 3 && $# != 4 && $# != 5 ]]
+	then
+		_ssu_ErrExit "assert_db_ordered_with_convert";
+	fi
+	typeset file="${1}";
+	typeset table="${2}";
+	typeset cp_path="${SSU_SELFPATH}";
+	typeset where='.';
+	typeset comment=" ";
+	
+	if [ $# = 3 ]
+	then
+		cp_path="${3}";
+	fi
+	if [ $# = 4 ]
+	then
+		cp_path="${3}";
+		where="${4}";
+	fi
+	if [ $# = 5 ]
+	then
+		cp_path="${3}";
+		where="${4}";
+		comment="${5}";
+	fi
+	_ssu_TempVar=`${JAVA_CMD} -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.Main "${SSU_CHARCODE}" "db" "selectCompOrder.conv" "${file}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" "${JDBC_USER}" "${JDBC_PASSWORD}" "${cp_path}"`
+	typeset rc=$?
+	if [ ${rc} -eq 0 ]; then
+		_ssu_succeedLog "assert_db_ordered_with_convert" "${comment}";
+	else
+		_ssu_FailLog_DB "assert_db_ordered_with_convert" "${_ssu_TempVar}" "${comment}";
+	fi
+}
+
+################################################################################
 # assert_db_include
 # 
 # $1 expect file
@@ -787,6 +876,52 @@ assert_db_include(){
 		_ssu_succeedLog "assert_db_include" "${comment}";
 	else
 		_ssu_FailLog_DB "assert_db_include" "${_ssu_TempVar}" "${comment}";
+	fi
+}
+
+
+################################################################################
+# assert_db_include_with_convert
+# 
+# $1 expect file
+# $2 table
+# $3 convert_prop_file_path (option)
+# $4 where-condition (option)
+# $5 comment (option) require where-condition
+################################################################################
+assert_db_include_with_convert(){
+	_ssu_AssertSetUp;
+	if [[ $# != 2 && $# != 3 && $# != 4 && $# != 5 ]]
+	then
+		_ssu_ErrExit "assert_db_include_with_convert";
+	fi
+	typeset file="${1}";
+	typeset table="${2}";
+	typeset cp_path="${SSU_SELFPATH}";
+	typeset where='.';
+	typeset comment=" ";
+	
+	if [ $# = 3 ]
+	then
+		cp_path="${3}";
+	fi
+	if [ $# = 4 ]
+	then
+		cp_path="${3}";
+		where="${4}";
+	fi
+	if [ $# = 5 ]
+	then
+		cp_path="${3}";
+		where="${4}";
+		comment="${5}";
+	fi
+	_ssu_TempVar=`${JAVA_CMD} -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.Main "${SSU_CHARCODE}" "db" "selectInc.conv" "${file}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" "${JDBC_USER}" "${JDBC_PASSWORD}" "${cp_path}"`
+	typeset rc=$?
+	if [ ${rc} -eq 0 ]; then
+		_ssu_succeedLog "assert_db_include_with_convert" "${comment}";
+	else
+		_ssu_FailLog_DB "assert_db_include_with_convert" "${_ssu_TempVar}" "${comment}";
 	fi
 }
 
@@ -870,7 +1005,7 @@ assert_db_not_same_count(){
 ################################################################################
 assert_db_connect(){
 	_ssu_AssertSetUp;
-	${JAVA_CMD} -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBConnectTest "${SSU_CHARCODE}" "${JDBC_CLASS}" "${JDBC_URL}" ${JDBC_USER} ${JDBC_PASSWORD};
+	${JAVA_CMD} -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBConnectTest "${JDBC_CLASS}" "${JDBC_URL}" ${JDBC_USER} ${JDBC_PASSWORD};
 	typeset rc=$?
 	if [ ${rc} -eq 0 ]; then
 		_ssu_succeedLog "assert_db_connect" "${comment}";
