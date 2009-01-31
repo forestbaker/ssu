@@ -21,6 +21,28 @@ public class LineStateControllerTest extends TestCase {
 		assertEquals(false,cnt.isSkipLine("echo 333"));
 		assertEquals(true,cnt.isSkipLine("  else"));
 		assertEquals(false,cnt.isSkipLine("  echo 33"));
-		assertEquals(false,cnt.isSkipLine("  fi"));
+		assertEquals(true,cnt.isSkipLine("  fi"));
+	}
+	
+	public void testEsc(){
+		assertEquals(false,cnt.isSkipLine("echo 333"));
+		assertEquals(false,cnt.isSkipLine("mv aaa \\"));
+		assertEquals(true,cnt.isSkipLine("bbb"));
+		assertEquals(false,cnt.isSkipLine("bbb"));
+		assertEquals(false,cnt.isSkipLine("bbb"));
+	}
+	
+	public void testEscEsc(){
+		assertEquals(false,cnt.isSkipLine(">/dev/null 2>&1"));
+
+		assertEquals(false,cnt.isSkipLine("echo 333"));
+		assertEquals(false,cnt.isSkipLine("mv aaa \\"));
+		assertEquals(true,cnt.isSkipLine("bbb \\"));
+		assertEquals(true,cnt.isSkipLine("bbb\\"));
+		assertEquals(true,cnt.isSkipLine("bbb"));
+		assertEquals(false,cnt.isSkipLine("bbb"));
+
+		assertEquals(false,cnt.isSkipLine("db2exfmt -d ${DB} -g tic -e ${INSTANCE} -n % -s % -w -1 -# 0 -o ${exp_log} \\"));
+		assertEquals(true,cnt.isSkipLine(">/dev/null 2>&1"));
 	}
 }
