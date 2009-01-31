@@ -21,8 +21,8 @@
 #
 # author : Masayuki Ioki,Takumi Hosaka
 # Version : 0.5
-# Date ; 2009.01.20
-_ssu_version="0.5 :: 2009.01.20"
+# Date ; 2009.01.29
+_ssu_version="0.5 :: 2009.01.29"
 ################################################################################
 ################################################################################
 ## You MUST Define "SSU_SELFPATH" in your test_case.
@@ -229,8 +229,9 @@ _ssu_DoSSU(){
 		_ssu_mkdir_evi_test
 		
 		if [ "${DEBUG_MODE}" != "ON" ]; then
-			typeset mes=`${JAVA_CMD} -jar  ${_ssu_UtilJar} "${SSU_CHARCODE}" "report" "START ${_ssu_CurrentTestName}" "${_ssu_cnt}" "${test_cnt_max}" "${color}"`
-			printf "\r${mes}" -e
+			#typeset mes=`${JAVA_CMD} -jar  ${_ssu_UtilJar} "${SSU_CHARCODE}" "report" "START ${_ssu_CurrentTestName}" "${_ssu_cnt}" "${test_cnt_max}" "${color}"`
+			#printf "\r${mes}" -e
+			display_bar "START ${_ssu_CurrentTestName}" "${_ssu_cnt}" "${test_cnt_max}" "${color}"
 		fi
 		
 		#testing
@@ -252,15 +253,17 @@ _ssu_DoSSU(){
 		_ssu_cnt=$((${_ssu_cnt}+1));
 		
 		if [ "${DEBUG_MODE}" != "ON" ]; then
-			typeset mes=`${JAVA_CMD} -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "report" "END   ${_ssu_CurrentTestName}" "${_ssu_cnt}" "${test_cnt_max}" "${color}"`
-			printf "\r${mes}" -e
+			#typeset mes=`${JAVA_CMD} -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "report" "END   ${_ssu_CurrentTestName}" "${_ssu_cnt}" "${test_cnt_max}" "${color}"`
+			#printf "\r${mes}" -e
+			display_bar "END   ${_ssu_CurrentTestName}" "${_ssu_cnt}" "${test_cnt_max}" "${color}"
 		fi
 		
 	done
 	
 	if [ "${DEBUG_MODE}" != "ON" ]; then
-		typeset mes=`${JAVA_CMD} -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "report" "TEST END" "${_ssu_cnt}" "${test_cnt_max}" "${color}"`
-		printf "\r${mes}" -e
+		#typeset mes=`${JAVA_CMD} -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "report" "TEST END" "${_ssu_cnt}" "${test_cnt_max}" "${color}"`
+		#printf "\r${mes}" -e
+		display_bar "TEST END" "${_ssu_cnt}" "${test_cnt_max}" "${color}"
 	fi
 	
     _ssu_AfterTest;
@@ -312,6 +315,7 @@ _ssu_test_trap_function(){
 	then
 		return 1;
 	fi
+	trap "" 1 2 3 15
 	echo "2" > ${_ssu_Lock};
 	_ssu_tearDown_h
 	_ssu_TeardownForEvidence_test
@@ -319,6 +323,7 @@ _ssu_test_trap_function(){
 }
 
 _ssu_trap_function(){
+	trap "" 1 2 3 15
 	unset _ssu_TestArray
 	if [ ! -z "${_ssu_TestJobID}" ]; then
 		typeset status=`cat ${_ssu_Lock}`
@@ -633,6 +638,41 @@ _ssu_TeardownForEvidence(){
 	d=`dirname "${d}"`
 	_ssu_teardown_rmdir "${d}"
 	
+}
+
+################################################################################
+# test bar
+################################################################################
+
+_ssu_RED="\033[41m\033[1;37m"
+_ssu_GREEN="\033[42m\033[1;37m"
+_ssu_WHITE="\033[46m\033[30m"
+_ssu_END="\033[0m"
+_ssu_LENG=75
+
+if [[ -x /usr/bin/tput ]]; then
+    (( _ssu_LENG = `tput cols` - 5))
+fi
+
+display_bar() {
+    typeset testname=$1
+    typeset cnt=$2
+    typeset max=$3
+    typeset color=$4
+    typeset pre=0
+    typeset post=0
+    ((pre=cnt * _ssu_LENG / max))
+    ((post=pre + 1))
+
+    typeset sb=`printf "%-${_ssu_LENG}.${_ssu_LENG}s" " ${testname} (done: ${cnt}/${max}) "`
+
+    typeset p1=`expr substr "$sb" 1 $pre`
+    typeset p2=`expr substr "$sb" $post $_ssu_LENG`
+    typeset col=$_ssu_RED
+    if [[ z$color = "zgreen" ]]; then
+        col=$_ssu_GREEN
+    fi
+    printf "\r${col}${p1}${_ssu_END}${_ssu_WHITE}${p2}${_ssu_END}" -e
 }
 
 
