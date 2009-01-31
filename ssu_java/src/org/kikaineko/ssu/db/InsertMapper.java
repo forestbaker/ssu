@@ -120,15 +120,19 @@ public class InsertMapper {
 	}
 
 	protected static String datef(String s) {
-		String t = TimeF.toSFromDate(s);
+	//	String t = TimeF.toSFromDate(s);
+		//TODO ˆêŽž“I‚È‘Î‰ž
+		String t = TimeF.toSFromTimestamp(s);
 		if(t.length()==0){
 			return null;
 		}
+		String[] ss=t.split("\\.");
+		t=ss[0];
 		if (DB2.equals(dbmsType)) {
 			return "'" + t + "'";
 		}
 		if (ORACLE.equals(dbmsType)) {
-			return "to_date('" + t + "','yyyy-mm-dd')";
+			return "to_date('" + t + "','yyyy-mm-dd hh24:mi:ss')";
 		}
 		return "'" + s + "'";
 	}

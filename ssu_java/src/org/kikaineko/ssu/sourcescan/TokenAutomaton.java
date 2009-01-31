@@ -25,6 +25,11 @@ public class TokenAutomaton implements TokenKind{
 	 * @return
 	 */
 	public boolean isToken(char c) {
+		if(c=='#' && (state!=Start && state!=Kuuhaku && state!=DoubleQ && state!=SingleQ  && state!=End )){
+			state=WithSharpe;
+			return false;
+		}
+		
 		if(state==Start)
 			start(c);
 		else if(state==Word)

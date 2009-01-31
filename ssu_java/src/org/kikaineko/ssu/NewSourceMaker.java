@@ -36,16 +36,6 @@ public class NewSourceMaker {
 		appendWithBR(sb, "return 0");
 		appendWithBR(sb, "}");
 
-		// System.out.println(funcName + "(){");
-		// System.out.println("typeset r=$?");
-		// System.out.println("echo ${1} >> ${2}");
-		// System.out.println("return $r");
-		// System.out.println("}");
-		// System.out.println(elsefuncName + "(){");
-		// System.out.println("echo ${1} >> ${2}");
-		// System.out.println("return 0");
-		// System.out.println("}");
-
 		for (int i = 0; i < lines.size(); i++) {
 			String s = (String)lines.get(i);
 			if (!cnt.isSkipLine(s)) {
@@ -54,21 +44,14 @@ public class NewSourceMaker {
 					String otherPart = s.substring(ind);
 					appendWithBR(sb, "elif (" + elsefuncName + " \"" + (i + 1)
 							+ "\" \"" + out + "\") && " + otherPart);
-					// System.out.println("elif (" + elsefuncName + " \""
-					// + (i + 1) + "\" \"" + out + "\") && " + otherPart);
 				} else {
 					appendWithBR(sb, funcName + " \"" + (i + 1) + "\" \"" + out
 							+ "\"");
 					appendWithBR(sb, s);
-					// System.out.println(funcName + " \"" + (i + 1) + "\" \""
-					// + out + "\"");
-					// System.out.println(s);
 				}
 				appendWithBR(errSb, String.valueOf(i + 1));
-				// System.err.println(i + 1);
 			} else {
 				appendWithBR(sb, s);
-				// System.out.println(s);
 			}
 
 		}

@@ -128,6 +128,8 @@ public interface TokenKind {
 	public static final int Char = 54; // •¶Žš
 	
 	public static final int AttMark=55; //@
-	
+
 	public static final int Sharpe=56; //#
+	
+	public static final int WithSharpe=57; //-#‚Æ‚©
 }
