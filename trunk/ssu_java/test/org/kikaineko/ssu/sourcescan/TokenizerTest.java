@@ -17,18 +17,44 @@ import junit.framework.TestCase;
  * 
  */
 public class TokenizerTest extends TestCase {
+	public void testWithSharpe(){
+		Tokenizer t = new Tokenizer("db2exfmt -# \\");
+		assertEquals("db2exfmt", t.nextToken().getVal());
+		assertEquals("-#", t.nextToken().getVal());
+		assertEquals("\\", t.nextToken().getVal());
+		
+		t = new Tokenizer("db2exfmt s# \\");
+		assertEquals("db2exfmt", t.nextToken().getVal());
+		assertEquals("s#", t.nextToken().getVal());
+		assertEquals("\\", t.nextToken().getVal());
+		
+		t = new Tokenizer("db2exfmt 11120# \\");
+		assertEquals("db2exfmt", t.nextToken().getVal());
+		assertEquals("11120#", t.nextToken().getVal());
+		assertEquals("\\", t.nextToken().getVal());
+	}
+	
 	public void testSharpe() {
 		Tokenizer t = new Tokenizer("#aa");
 		assertEquals("#", t.nextToken().getVal());
 		assertEquals("aa", t.nextToken().getVal());
 		t = new Tokenizer("    #aa");
-		assertEquals(TokenKind.Sharpe, t.nextToken().getKind());
+		Token tk=t.nextToken();
+		assertEquals(TokenKind.Sharpe, tk.getKind());
+		assertEquals(false, tk.isStringOrChar);
+		
 		assertEquals("aa", t.nextToken().getVal());
 
 		t = new Tokenizer("  \"#aa\"");
 		assertEquals("\"", t.nextToken().getVal());
 		assertEquals("#aa", t.nextToken().getVal());
 		assertEquals("\"", t.nextToken().getVal());
+		
+		t = new Tokenizer("  '#aa'");
+		assertEquals("'", t.nextToken().getVal());
+		assertEquals("#", t.nextToken().getVal());
+		assertEquals("aa", t.nextToken().getVal());
+		assertEquals("'", t.nextToken().getVal());
 	}
 
 	public void testAttoMark() {

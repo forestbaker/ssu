@@ -19,7 +19,7 @@ public class SelectCommandTest extends TestCase {
 		String password = "ioki0da";
 		String table = "V$DATABASE";
 		SelectCommand.selectAssert("complete", filePath, jdbcClass, url, user,
-				password, table, null);
+				password, table, null,null);
 	}
 
 	public void atestHELP() throws Throwable {
@@ -32,10 +32,10 @@ public class SelectCommandTest extends TestCase {
 		//SelectCommand.selectAssert("include", filePath, jdbcClass, url, user,
 			//	password, table, null);
 		SelectCommand.selectAssert("complete", filePath, jdbcClass, url, user,
-				password, table, "seq = 60 ");
+				password, table, "seq = 60 ",null);
 
 		SelectCommand.selectAssert("complete", filePath, jdbcClass, url, user,
-				password, table, "seq = 60 and topic ='TOPICS'");
+				password, table, "seq = 60 and topic ='TOPICS'",null);
 	}
 	
 }

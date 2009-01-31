@@ -30,8 +30,18 @@ public class TokenAutomatonTest extends TestCase {
 		assertEquals(false,ta.isToken(' '));
 		assertEquals(false,ta.isToken(' '));
 		assertEquals(true,ta.isToken('#'));
+		assertEquals(TokenKind.Kuuhaku,ta.getState());
 		assertEquals(true,ta.isToken('a'));
+		assertEquals(TokenKind.Sharpe,ta.getState());
 		assertEquals(false,ta.isToken('a'));
+		assertEquals(TokenKind.Word,ta.endState());
+		
+		ta=new TokenAutomaton();
+		assertEquals(false,ta.isToken('#'));
+		assertEquals(true,ta.isToken('a'));
+		assertEquals(TokenKind.Sharpe,ta.getState());
+		assertEquals(false,ta.isToken('a'));
+		assertEquals(TokenKind.Word,ta.endState());
 	}
 	
 	public void testCommentOpen(){
@@ -356,6 +366,35 @@ public class TokenAutomatonTest extends TestCase {
 		assertEquals(TokenAutomaton.BlockClose,ta.endState());
 	}
 	
+	public void testWithSharpe(){
+		assertEquals(false,ta.isToken('c'));
+		assertEquals(false,ta.isToken('s'));
+		assertEquals(false,ta.isToken('#'));
+		assertEquals(true,ta.isToken('0'));
+		assertEquals(TokenKind.WithSharpe,ta.getState());
+		
+		ta=new TokenAutomaton();
+		assertEquals(false,ta.isToken('1'));
+		assertEquals(false,ta.isToken('2'));
+		assertEquals(false,ta.isToken('#'));
+		assertEquals(true,ta.isToken('0'));
+		assertEquals(TokenKind.WithSharpe,ta.getState());
+	
+		ta=new TokenAutomaton();
+		assertEquals(false,ta.isToken('c'));
+		assertEquals(true,ta.isToken('-'));
+		assertEquals(false,ta.isToken('#'));
+		assertEquals(true,ta.isToken('0'));
+		assertEquals(TokenKind.WithSharpe,ta.getState());
+		
+		ta=new TokenAutomaton();
+		assertEquals(false,ta.isToken('c'));
+		assertEquals(true,ta.isToken(' '));
+		assertEquals(true,ta.isToken('#'));
+		assertEquals(true,ta.isToken('0'));
+		assertEquals(TokenKind.Sharpe,ta.getState());
+		
+	}
 	public void testSaikiDainyu(){
 		assertEquals(false,ta.isToken('c'));
 		assertEquals(true,ta.isToken('+'));
