@@ -244,6 +244,7 @@ public class SelectCommand {
 							.getColumnType(j + 1));
 					if (convertPath != null && o instanceof String) {
 						String s = (String) o;
+						
 						s = Convertor.convert(s);
 						csvtmp.add(s);
 					} else {
@@ -265,8 +266,10 @@ public class SelectCommand {
 				for (int i = 1; i <= max; i++) {
 					Object o = Mapper
 							.normFromDB(rset, i, rsmd.getColumnType(i));
+								
 					if (convertPath != null && o instanceof String) {
 						String s = (String) o;
+						
 						s = Convertor.convert(s);
 						temp.add(s);
 					} else {
