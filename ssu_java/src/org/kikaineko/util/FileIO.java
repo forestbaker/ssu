@@ -8,8 +8,8 @@ import java.util.Map;
 /**
  * @author masayuki
  * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
+ *         To change the template for this generated type comment go to Window -
+ *         Preferences - Java - Code Generation - Code and Comments
  */
 public class FileIO {
 	private static Map codeMap = null;
@@ -25,12 +25,13 @@ public class FileIO {
 		if (name == null) {
 			return null;
 		}
-		if(CodeFilePATH==null || CodeFilePATH.trim().length()==0){
+		if (CodeFilePATH == null || CodeFilePATH.trim().length() == 0) {
 			return null;
 		}
 		if (codeMap == null) {
-			File f = new File(CodeFileName);
+			File f = new File(CodeFilePATH);
 			codeMap = new HashMap();
+
 			if (!f.exists() || f.isDirectory()) {
 				f = new File(CodeFilePATH + "/" + CodeFileName);
 				if (!f.exists()) {
@@ -81,6 +82,17 @@ public class FileIO {
 			}
 		}
 		return list;
+	}
+
+	public static String getFileData(String fileName, String code)
+			throws Exception {
+		String charCode = code(code);
+		if (charCode != null) {
+			return new String(getFileDataAsBytes(new File(fileName)), charCode);
+		} else {
+			return new String(getFileDataAsBytes(new File(fileName)));
+
+		}
 	}
 
 	public static byte[] getFileDataAsBytes(String fileName) throws Exception {
