@@ -631,7 +631,7 @@ u_f_getTimestamp(){
 		echo "cannot find ${file}";
 		return 1;
 	fi
-	${JAVA_CMD} -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "util" "file-time" "${file}"
+	${JAVA_CMD} $JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "util" "file-time" "${file}"
 }
 
 ################################################################################
@@ -654,12 +654,12 @@ u_db_insert(){
 		where="${3}";
 	fi
 	
-	${JAVA_CMD} -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.Main "${SSU_CHARCODE}" "db" "insert" "${file}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}
+	${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "insert" "${file}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}
 	typeset r=$?
 	if [ $r -ne 0 ]
 	then
 		echo "u_db_insert error!! ${table} ${file}"
-		exit 1
+		return $r
 	fi
 }
 
@@ -681,12 +681,12 @@ u_db_delete(){
 		where="${2}";
 	fi
 	
-	${JAVA_CMD} -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.Main "${SSU_CHARCODE}" "db" "delete" ".." "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}
+	${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "delete" ".." "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}
 	typeset r=$?
 	if [ $r -ne 0 ]
 	then
 		echo "u_db_delete error!! ${table}"
-		exit 1
+		return $r
 	fi
 }
 
@@ -710,12 +710,12 @@ if [[ $# != 2 && $# != 3 ]]
 		where="${3}";
 	fi
 	
-	${JAVA_CMD} -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.Main "${SSU_CHARCODE}" "db" "selectto" "${file}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}
+	${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectto" "${file}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}
 	typeset r=$?
 	if [ $r -ne 0 ]
 	then
 		echo "u_db_select_to error!! ${table} ${file}"
-		exit 1
+		return $r
 	fi
 }
 
@@ -726,7 +726,7 @@ if [[ $# != 2 && $# != 3 ]]
 # $2 where-condition (option)
 ################################################################################
 u_db_select(){
-if [[ $# != 1 && $# != 2 ]]
+	if [[ $# != 1 && $# != 2 ]]
 	then
 		_ssu_util_ExitLog "u_db_select";
 		return 1;
@@ -738,12 +738,52 @@ if [[ $# != 1 && $# != 2 ]]
 		where="${2}";
 	fi
 	
-	${JAVA_CMD} -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.Main "${SSU_CHARCODE}" "db" "selectout" ".." "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}
+	${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectout" ".." "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}
 	typeset r=$?
 	if [ $r -ne 0 ]
 	then
 		echo "u_db_select error!! ${table}"
-		exit 1
+		return $r
+	fi
+}
+
+################################################################################
+# u_db_sql_query
+# $1 file-path
+################################################################################
+u_db_sql_query(){
+	if [[ $# != 1 ]]
+	then
+		_ssu_util_ExitLog "u_db_sql_query";
+		return 1;
+	fi
+	typeset file="${1}";
+	${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "query" "$file" ".." "${JDBC_CLASS}" "${JDBC_URL}" " " ${JDBC_USER} ${JDBC_PASSWORD}
+	typeset r=$?
+	if [ $r -ne 0 ]
+	then
+		echo "u_db_sql_query error!! ${file}"
+		return $r
+	fi
+}
+
+################################################################################
+# u_db_sql_exec
+# $1 file-path
+################################################################################
+u_db_sql_exec(){
+	if [[ $# != 1 ]]
+	then
+		_ssu_util_ExitLog "u_db_sql_exec";
+		return 1;
+	fi
+	typeset file="${1}";
+	${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "exec" "$file" ".." "${JDBC_CLASS}" "${JDBC_URL}" " " ${JDBC_USER} ${JDBC_PASSWORD}
+	typeset r=$?
+	if [ $r -ne 0 ]
+	then
+		echo "u_db_sql_exec error!! ${file}"
+		return $r
 	fi
 }
 
@@ -770,12 +810,12 @@ if [[ $# != 1 && $# != 2 ]]
 	typeset file=`_ssu_util_evi_FileName "${name}"`
 	
 	typeset where=" ";
-	${JAVA_CMD} -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.Main "${SSU_CHARCODE}" "db" "selectto" "${file}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}
+	${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectto" "${file}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}
 	typeset r=$?
 	if [ $r -ne 0 ]
 	then
 		echo "u_evi_db error!! ${table} ${file}"
-		exit 1
+		return $r
 	fi
 }
 
@@ -804,7 +844,7 @@ if [[ $# != 1 && $# != 2 ]]
 	if [ $r -ne 0 ]
 	then
 		echo "u_evi_file error!! ${moto} ${file}"
-		exit 1
+		return $r
 	fi
 }
 
@@ -834,7 +874,7 @@ if [[ $# != 1 && $# != 2 ]]
 	if [ $r -ne 0 ]
 	then
 		echo "u_evi_dir error!!:cannot create dir: ${moto} ${dir}"
-		exit 1
+		return $r
 	fi
 	
 	cp -pfr "${moto}" "${dir}"
@@ -842,7 +882,7 @@ if [[ $# != 1 && $# != 2 ]]
 	if [ $r -ne 0 ]
 	then
 		echo "u_evi_dir error!! ${moto} ${dir}"
-		exit 1
+		return $r
 	fi
 }
 
