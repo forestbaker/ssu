@@ -13,6 +13,8 @@ public class DBCommander {
 	public static final String COUNTNOT = "countnot";
 	public static final String INSERT = "insert";
 	public static final String DELETE = "delete";
+	public static final String QUERY = "query";
+	public static final String EXEC = "exec";
 
 	public static void exec(String db_option_flag, String filePath,
 			String table, String jdbcClass, String url, String where,
@@ -59,6 +61,10 @@ public class DBCommander {
 					password, table, where);
 		} else if (DELETE.equals(db_option_flag)) {
 			DeleteCommand.delete(jdbcClass, url, user, password, table, where);
+		} else if (QUERY.equals(db_option_flag)) {
+			SQLExec.query(filePath, jdbcClass, url, user, password);
+		} else if (EXEC.equals(db_option_flag)) {
+			SQLExec.exec(filePath, jdbcClass, url, user, password);
 		} else {
 			throw new Exception("invalid args");
 		}

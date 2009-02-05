@@ -10,7 +10,7 @@ import org.kikaineko.util.FileIO;
 
 public class Convertor {
 	private static Map map = null;
-	private static String MapFileName = "convert.properties";
+	private static String MapFileName = "ssu_convert.properties";
 
 	public static void init(String path) throws Exception {
 		File f = new File(path);
@@ -45,17 +45,6 @@ public class Convertor {
 				map.put(cc, k);
 			}
 		}
-	}
-
-	public static void main(String[] args) throws Exception {
-		String s="C:\\cygwin\\home\\masayuki\\project\\ssu_java\\4.txt";
-		init(s);
-		String s0=new String("\uFFE0");
-		String s0_=convert(s0);
-		System.out.println(s0);
-		System.out.println(s0_);
-		System.out.println((int)s0.charAt(0));
-		System.out.println((int)s0_.charAt(0));
 	}
 
 	protected static int calc(String s) {
