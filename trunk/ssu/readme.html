@@ -11,6 +11,7 @@ SSUは以下の機能を持ちます。<br>
 <br>
 <ul>
 <li><a href="#assert">豊富な検証関数</a></li>
+<li><a href="#assert_conv">各文字のコード強制変換モード</a></li>
 <li><a href="#helper">ヘルパー関数</a></li>
 <li><a href="#codecoverage">コードカバレッジ計測機能</a></li>
 <li><a href="#util">豊富なUtil関数</a></li>
@@ -23,6 +24,7 @@ SSUは以下の機能を持ちます。<br>
 <ul>
 <li><a href="#install">導入方法</a></li>
 <li><a href="#howto">使用方法</a></li>
+<li><a href="#suite">テストスイート使用方法</a></li>
 <li><a href="#moji">文字コード指定方法</a></li>
 </ul>
 <br>
@@ -347,6 +349,97 @@ assert_db*を使用する際の前提も参照してください。</td></tr>
 <tr bgcolor="#FFFFFF"><td colspan=2><a name="#assert_db_connect">assert_db_connect</a></td></tr>
 <tr bgcolor="#FFFFFF"><td colspan=2>DBとの接続のみを実行します。引数はありません。</td></tr>
 </table><br>
+<br>
+
+<a name="assert_conv"><b>各文字のコード強制変換モード</b></a><br>
+Java使用時の<a href="#moji">文字コード指定</a>をサポートする機能として、各文字のコードを強制的に変換する機能を提供します。<br>
+これは、WAVE DASH(波線）などのマッピングを解決するために提供されています。<br>
+<br>
+<a href="#moji">文字コード指定機能</a>では、全てのファイルアクセス、DBアクセス時の文字コードを指定しますが、
+この機能は、指定された一つ一つの文字を強制的に一つの文字にマッピングします。<br>
+ただし、本機能は本来的には異なる文字を強制的に同一文字とみなす処理ですので、使用においては十分に注意してください。<br/>
+<br>
+この機能には、ssu_convert.propertiesというファイルを使用します。
+サンプルとして、日本語使用でよく問題になる文字のマッピングを指定したssu_convert.propertiesをSSUに格納しています。<br/>
+ファイルの中身は以下のようになっています。
+
+<pre>
+#WAVE DASH
+\u301C=\uFF5E
+</pre>
+<br/>
+#行はコメント行として無視されます。また、各文字の指定はUTF8形式で指定してください。<br/>
+上記の指定では、「\uFF5E」という文字を「\u301C」という文字に強制変換掛けることを指定しています。<br/>
+複数の文字を一つの文字に強制変換掛けたい場合は、上記のような指定を複数行記述するか、あるいは<br/>
+\u301C=\uFF5E,\uFFF5F,・・・<br/>
+というように、カンマ区切りで指定してください。<br/>
+<br/>
+変換を行うタイミングは、ファイル・DBからデータを読み込んだ後です。<br/>
+つまり、Java内部の文字列として受け取った後に変換を実施します。
+純粋にUTF-8間の変換になるため、元のファイルを妥当でない文字コードで読み込んだ場合などはそもそもの文字が間違ってしまい、
+この機能が上手く動かなくなります。<br/>
+必須ではありませんが、本機能を使用する際には、文字コードを正しく指定してください。<br/>
+<br/>
+また、この機能は、現在のバージョンにおいてはassert_db*にのみ提供されています。<br/>
+<br><br>
+<table border=0 bgcolor="#000000" cellspacing=1 cellpadding=1>
+<tr bgcolor="#FFFFFF"><td colspan=2><a name="#assert_db_with_conv">assert_db_with_conv</a></td></tr>
+<tr bgcolor="#FFFFFF"><td colspan=2>assert_dbに対して文字のコード強制変換を実施します。<br/>
+assert_db*を使用する際の前提も参照してください。</td></tr>
+<tr bgcolor="#FFFFFF"><td colspan=2>引数</td></tr>
+<tr bgcolor="#FFFFFF"><td>$1</td><td>ファイルパス(CSV)</td></tr>
+<tr bgcolor="#FFFFFF"><td>$2</td><td>テーブル名（スキーマを指定したい場合も、ここで指定する）</td></tr>
+<tr bgcolor="#FFFFFF"><td>$3</td><td>ssu_convert_file_path（option）使用するconvertファイルへのパスを指定。
+ファイル名まで指定する場合には、ssu_convert.propertiesという名前でなくても問題ない。<br/>
+また、ここを指定しない場合、SSU_HOMEにあるssu_convert.propertiesが使用される。</td></tr>
+<tr bgcolor="#FFFFFF"><td>$4</td><td>where条件 (option)　：selectのwhereを指定したい場合はここに条件を指定。<br/>
+指定がない場合は単純に全件検索を実行する。<br/>
+ssu_convert_file_pathを設定しない場合にはここは指定できない。
+</td></tr>
+<tr bgcolor="#FFFFFF"><td>$5</td><td>comment (option)：where条件/ssu_convert_file_pathを省略した場合、commentは指定できない。<br/>
+これは引数の5番目がコメントであると判断されているためである。</td></tr>
+<tr bgcolor="#FFFFFF"><td>例：</td><td>　assert_db_with_conv "emp.csv" 'V$EMP'　</td></tr>
+</table><br>
+<br><br>
+<table border=0 bgcolor="#000000" cellspacing=1 cellpadding=1>
+<tr bgcolor="#FFFFFF"><td colspan=2><a name="#assert_db_ordered_with_conv">assert_db_ordered_with_conv</a></td></tr>
+<tr bgcolor="#FFFFFF"><td colspan=2>assert_db_orderedに対して文字のコード強制変換を実施します。<br/>
+assert_db*を使用する際の前提も参照してください。</td></tr>
+<tr bgcolor="#FFFFFF"><td colspan=2>引数</td></tr>
+<tr bgcolor="#FFFFFF"><td>$1</td><td>ファイルパス(CSV)</td></tr>
+<tr bgcolor="#FFFFFF"><td>$2</td><td>テーブル名（スキーマを指定したい場合も、ここで指定する）</td></tr>
+<tr bgcolor="#FFFFFF"><td>$3</td><td>ssu_convert_file_path（option）使用するconvertファイルへのパスを指定。
+ファイル名まで指定する場合には、ssu_convert.propertiesという名前でなくても問題ない。<br/>
+また、ここを指定しない場合、SSU_HOMEにあるssu_convert.propertiesが使用される。</td></tr>
+<tr bgcolor="#FFFFFF"><td>$4</td><td>where条件 (option)　：selectのwhereを指定したい場合はここに条件を指定。<br/>
+指定がない場合は単純に全件検索を実行する。<br/>
+ssu_convert_file_pathを設定しない場合にはここは指定できない。
+</td></tr>
+<tr bgcolor="#FFFFFF"><td>$5</td><td>comment (option)：where条件/ssu_convert_file_pathを省略した場合、commentは指定できない。<br/>
+これは引数の5番目がコメントであると判断されているためである。</td></tr>
+<tr bgcolor="#FFFFFF"><td>例：</td><td>　assert_db_ordered_with_conv "emp.csv" 'V$EMP'　</td></tr>
+</table><br>
+<br>
+<table border=0 bgcolor="#000000" cellspacing=1 cellpadding=1>
+<tr bgcolor="#FFFFFF"><td colspan=2><a name="#assert_db_include_with_conv">assert_db_include_with_conv</a></td></tr>
+<tr bgcolor="#FFFFFF"><td colspan=2>assert_db_includeに対して文字のコード強制変換を実施します。<br/>
+assert_db*を使用する際の前提も参照してください。</td></tr>
+<tr bgcolor="#FFFFFF"><td colspan=2>引数</td></tr>
+<tr bgcolor="#FFFFFF"><td>$1</td><td>ファイルパス(CSV)</td></tr>
+<tr bgcolor="#FFFFFF"><td>$2</td><td>テーブル名（スキーマを指定したい場合も、ここで指定する）</td></tr>
+<tr bgcolor="#FFFFFF"><td>$3</td><td>ssu_convert_file_path（option）使用するconvertファイルへのパスを指定。
+ファイル名まで指定する場合には、ssu_convert.propertiesという名前でなくても問題ない。<br/>
+また、ここを指定しない場合、SSU_HOMEにあるssu_convert.propertiesが使用される。</td></tr>
+<tr bgcolor="#FFFFFF"><td>$4</td><td>where条件 (option)　：selectのwhereを指定したい場合はここに条件を指定。<br/>
+指定がない場合は単純に全件検索を実行する。<br/>
+ssu_convert_file_pathを設定しない場合にはここは指定できない。
+</td></tr>
+<tr bgcolor="#FFFFFF"><td>$5</td><td>comment (option)：where条件/ssu_convert_file_pathを省略した場合、commentは指定できない。<br/>
+これは引数の5番目がコメントであると判断されているためである。</td></tr>
+<tr bgcolor="#FFFFFF"><td>例：</td><td>　assert_db_include_with_conv "emp.csv" 'V$EMP'　</td></tr>
+</table><br>
+<br><br>
+
 
 <a name="helper"><b>ヘルパー関数</b></a><br>
 ヘルパー関数とは、SSU特有の機能で、テスト終了時に元の状態に戻す機能のことです。<br>
@@ -753,7 +846,7 @@ assert_db*を使用する際の前提も参照してください。</td></tr>
 <a name="evi"><b>エビデンス取得関数</b></a><br>
 エビデンス取得用の関数です。DB、ファイル、ディレクトリをエビデンスとして所定のディレクトリに保存します。<br>
 デフォルトの保存先ディレクトリは以下の規則で作成されます。<br/>
-${SSU_SELFPATH}/evidence/ユーザー名/日付/testシェル名/test関数名<br/>
+${SSU_HOME}/evidence/ユーザー名/日付/testシェル名/test関数名<br/>
 <br/>
 保存先ディレクトリを変更したい場合は、SSU_EVIDENCE_BASEDIRという変数に保存先ディレクトリを指定してください。<br/>
 指定したディレクトリ配下に、/evidence/ユーザー名/日付/testシェル名/test関数名というディレクトリが作成されます。<br/>
@@ -844,7 +937,7 @@ TARGET_TEST_PATTERN="^test";<br>
 #!/usr/bin/sh
 . /home/masayuki/ssu/SSU.sh #1. Testツールを読み込む
 JAVA_CMD="/opt/java/bin/java"; #1.1. Javaへのパスを設定する（不要な場合もある）
-SSU_SELFPATH=".." #2. テストツールへの相対パスを指定する
+SSU_HOME=".." #2. テストツールへの相対パスを指定する
 
 TARGET_SHELL_FOR_COVERAGE="tax.sh" #3. カバレッジを取得したいシェルを相対パスで指定。
 
@@ -917,6 +1010,37 @@ afterTest
 <br>
 そして、最後に7のようにstartSSUを呼び出してください。<br>
 これがSSU.shを実行するための関数です。<br>
+<br>
+<br>
+
+<b><a name="#suite">テストスイート使用方法</a></b><br>
+複数のテストシェルを実行したい場合にテストスイートを使用することができます。<br/>
+ただし、同一ディレクトリに存在するテストのみをスイートに含めることが可能です。<br/>
+<br/>
+以下にテストスイートのサンプルコードを例示します。<br/>
+
+<pre style="background:#eaeaea;;">
+#!/usr/bin/sh
+. ../ssu/SSU.sh #1. Testツールを読み込む
+
+add_testCmd "sh test_assert.sh" #2. TestScriptの実行を指定する
+add_testCmd "sh test_connect.sh"
+
+startSSUSuite; #テストスイートを実行する
+</pre>
+<br>
+まずは、1でSSU.shを読み込みます。<br/>
+通常のテストスクリプトで必要なSSU_HOMEの設定などはテストスイートでは不要です。
+(各テストスクリプト内の値が使用されます)<br>
+<br>
+次に、add_testCmd関数にテストの実行コマンドを指定します。テストスイートでは、この設定した順序で実行されます。<br>
+ここで指定できるテストコードは基本的にテストスイートスクリプトと同一ディレクトリで無くてはいけません。
+これは、テストスクリプト自体のディレクトリと、テストスイート実行のディレクトリが異なると
+ディレクトリパスの整合性が取れなくなってしまうためです。<br>
+また、ここでテストスクリプト以外のテストの実行を指定するとエラーとなります。<br>
+最後に3でテストスイートの実行を開始します。<br>
+<br>
+スイートの実行では、エビデンスなどの格納先は一切変更されません。
 <br>
 <br>
 <br>
