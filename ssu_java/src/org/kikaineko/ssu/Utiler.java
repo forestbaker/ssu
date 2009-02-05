@@ -18,6 +18,14 @@ public class Utiler {
 		}
 	}
 
+	public static void includeInFile(String str,String fileName) throws Exception{
+		String s=FileIO.getFileData(fileName, FileIO.FileReadCode);
+		if(s.indexOf(str)!=-1){
+			System.out.print(1);
+		}else{
+			System.out.print(0);
+		}
+	}
 	public static void fileSame(String string, String string2) throws Throwable {
 		File f1 = new File(string.trim());
 		File f2 = new File(string2.trim());

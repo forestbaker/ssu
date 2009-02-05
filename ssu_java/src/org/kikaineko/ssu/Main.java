@@ -24,6 +24,8 @@ public class Main {
 				Utiler.exec(args[2], args[3]);
 			} else if (args[1].equals("utilfilesame")) {
 				Utiler.fileSame(args[2], args[3]);
+			} else if (args[1].equals("utilincludeinfile")) {
+				Utiler.includeInFile(args[2], args[3]);
 			} else if (args[1].equals("report")) {
 				Report.exec(args[2], args[3], args[4], args[5]);
 			} else {
