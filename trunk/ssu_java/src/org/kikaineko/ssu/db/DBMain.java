@@ -21,7 +21,7 @@ public class DBMain {
 						|| (!args[2].equals(DBCommander.SELECT_COMP)
 								&& !args[2]
 										.equals(DBCommander.SELECT_COMP_CONV)
-								&& !args[2].equals(DBCommander.SELECT_INC)
+										&& !args[2].equals(DBCommander.SELECT_INC)
 								&& !args[2].equals(DBCommander.SELECT_INC_CONV)
 								&& !args[2]
 										.equals(DBCommander.SELECT_COMP_ORDER)
@@ -31,6 +31,11 @@ public class DBMain {
 								&& !args[2].equals(DBCommander.COUNTNOT)
 								&& !args[2].equals(DBCommander.INSERT)
 								&& !args[2].equals(DBCommander.DELETE)
+								
+								
+								&& !args[2].equals(DBCommander.QUERY)
+								&& !args[2].equals(DBCommander.EXEC)
+								
 								&& !args[2].equals(DBCommander.SELECTOUT) && !args[2]
 								.equals(DBCommander.SELECTTO))) {
 					badArgs();
