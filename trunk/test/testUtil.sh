@@ -1,4 +1,4 @@
-. /home/masayuki/ssu/SSU.sh
+. ../ssu/SSU.sh
 
 beforeTest(){
         . /home/masayuki/ssu/Util.sh

@@ -1,4 +1,4 @@
-. /home/masayuki/ssu/SSU.sh
+. ../ssu/SSU.sh
 
 beforeTest(){
 	h_make_file aa
@@ -27,11 +27,23 @@ my_assert_log(){
 }
 
 
+test_assert_db_sql_q(){
+	h_make_file aa
+	echo "select count(1) from EMPe" > aa
+	u_db_sql_query aa 
+	echo "insert into EMP (EID) values ('111')" > aa
+	u_db_sql_exec aa
+	echo "select count(1) from EMP" > aa
+	u_db_sql_query aa
+}
+
+
+
 test_assert_db_normal(){
 	h_make_file bb
 	echo "T,EID" > bb
 	echo "2009/01/14 14:53:02.906,EID" >> bb
-	echo "20090114005302906,x  " >> bb
+	echo "2009011400530290,x  " >> bb
 	echo "20090114005302906,  ." >> bb
 	echo "\"20090115 01:53:02.906\",\" y \"" >> bb
 	echo "\"2009-01-15 02:53:02\",\" ' \"" >> bb
@@ -294,6 +306,12 @@ test_assert_db_kanji(){
 	assert_db hoge EMP
 	assert_db aaa EMP
 	
+	assert_db_connect
+}
+
+
+test_assert_db_connect2(){
+  assert_db_connect
 }
 
 SSU_SELFPATH="../ssu"
@@ -306,7 +324,7 @@ JDBC_PASSWORD="ioki0da";
 
 SSU_EVIDENCE_BASEDIR="./uuu"
 date
-#TARGET_TEST_PATTERN="test_assert_db_not_same_count"
+TARGET_TEST_PATTERN="test_assert_db_sql_q"
 #DEBUG_MODE=ON
 startSSU;
 date

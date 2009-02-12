@@ -1,4 +1,4 @@
-. /home/masayuki/ssu/SSU.sh
+. ../ssu/SSU.sh
 
 my_assert_log(){
 	typeset f=$1
@@ -75,12 +75,14 @@ test_assert_not_same_num(){
 test_assert_file(){
 	h_make_file aa
 	assert_file aa
-	h_mkdir ../gggg
-	h_mkdir ../gggg/bb
-	h_mkdir ../gggg/bb/cc
-	h_mkdir ../gggg/bb/cc/dd
-	h_make_file ../gggg/bb/cc/dd/aa
-	assert_file ../gggg/bb/cc/dd/aa
+	if [ -w ../ ];then
+		h_mkdir ../gggg
+		h_mkdir ../gggg/bb
+		h_mkdir ../gggg/bb/cc
+		h_mkdir ../gggg/bb/cc/dd
+		h_make_file ../gggg/bb/cc/dd/aa
+		assert_file ../gggg/bb/cc/dd/aa
+	fi
 	h_rm aa
 	
 	h_make_file cc
@@ -91,18 +93,19 @@ test_assert_file(){
 	assert_exit_code "assert_file ../gggg/bb/cc/dd/aa" 99 > cc
 	my_assert_log cc
 	
-	h_mkdir /gggggg
-	h_mkdir /gggggg/uuu
-	h_make_file /gggggg/uuu/ii
-	assert_file /gggggg/uuu/ii
-	h_rm /gggggg/uuu/ii
-	assert_exit_code "assert_file /gggggg/uuu/ii" 99 > cc
-	my_assert_log cc
+	if [ -w / ];then
+		h_mkdir /gggggg
+		h_mkdir /gggggg/uuu
+		h_make_file /gggggg/uuu/ii
+		assert_file /gggggg/uuu/ii
+		h_rm /gggggg/uuu/ii
+		assert_exit_code "assert_file /gggggg/uuu/ii" 99 > cc
+		my_assert_log cc
 	
-	h_make_file dd
-	assert_exit_code "assert_file /gggggg" 99 > cc
-	my_assert_log cc
-	
+		h_make_file dd
+		assert_exit_code "assert_file /gggggg" 99 > cc
+		my_assert_log cc
+	fi
 	
 	#ARG
 	assert_file cc pooh
@@ -272,16 +275,41 @@ test_assert_include_in_file(){
 	
 	assert_exit_code "assert_include_in_file poohpoohpooh ${SSU_SELFPATH}/ssu.jar" 99 > /dev/null 2>&1
 	
+	h_make_file aa
+	echo "uu" > aa
+	echo "ii" >> aa
+	
+	h_make_file bb
+	echo "u" > bb
+	echo "i" >> bb
+	typeset s=`cat bb`
+	assert_include_in_file "$s" aa
+	
+	echo "u" > bb
+	echo "i3" >> bb
+	s=`cat bb`
+	assert_include_in_file "$s" aa  > /dev/null &
+	typeset jid=$!;
+	wait $jid;
+	typeset r=$?
+	assert_num 99 $r
+	
 	#ARG
 	assert_include_in_file 11 uuuu/ii pooh
 	echo 111 > uuuu/ii
 	
-	assert_exit_code "assert_include_in_file poohpoohpooh ${SSU_SELFPATH}/ssu.jar pooh" 99 > aa
+	assert_exit_code "assert_include_in_file poohpoohpooh ${SSU_SELFPATH}/ssu.jar pooh" 99 > aa 2> /dev/null
 	my_assert_log aa
 	assert_include_in_file pooh aa
 	
-	assert_exit_code "assert_include_in_file poohpoohpooh ${SSU_SELFPATH}/ssu.jar pooh 1" 99 > aa
+	assert_exit_code "assert_include_in_file poohpoohpooh ${SSU_SELFPATH}/ssu.jar pooh 1" 99 > aa 2> /dev/null
 	assert_include_in_file "Wrong Arguments" aa
+	
+	h_make_file vv
+	assert_exit_code "assert_include_in_file poohpoohpooh vv pooh" 99 > aa 2> /dev/null
+	my_assert_log aa
+	assert_include_in_file pooh aa
+	
 }
 SSU_SELFPATH="../ssu"
 date
