@@ -200,10 +200,10 @@ test_assert_timer(){
 	plural_timer_report "s"
 }
 
-SSU_SELFPATH="../ssu"
+SSU_HOME="../ssu"
 date
-#TARGET_TEST_PATTERN="test_assert_timer"
-#DEBUG_MODE=ON
+#SSU_TEST_PATTERN="test_assert_timer"
+#SSU_DEBUG_MODE=ON
 startSSU;
 date
 
