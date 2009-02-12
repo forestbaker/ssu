@@ -11,8 +11,8 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		try {
-			if (args.length != 4 && args.length != 6) {
-				badArgs();
+			if (args.length != 4 && args.length != 6 && args.length != 7) {
+				badArgs(args);
 			}
 			FileIO.CodeFilePATH=args[0];
 			
@@ -28,8 +28,16 @@ public class Main {
 				Utiler.includeInFile(args[2], args[3]);
 			} else if (args[1].equals("report")) {
 				Report.exec(args[2], args[3], args[4], args[5]);
+			} else if (args[1].equals("timer")) {
+				Timer.exec(args[2], args[3], args[4], args[5], args[6]);
+			} else if (args[1].equals("gettime")) {
+				Timer.getTime(args[2], args[3], args[4], args[5]);
+			} else if (args[1].equals("timer_report")) {
+				Timer.report(args[2], args[3]);
+			} else if (args[1].equals("timer_ave")) {
+				Timer.assertAve(args[2], args[3]);
 			} else {
-				badArgs();
+				badArgs(args);
 			}
 		} catch (Throwable e) {
 			System.out.println(e.getMessage());
@@ -38,8 +46,11 @@ public class Main {
 		}
 	}
 
-	private static void badArgs() {
+	private static void badArgs(String[] args) {
 		System.err.println("bad args!");
+		for(int i=0;i<args.length;i++){
+			System.err.println(i+" = "+args[i]);
+		}
 		System.err.println("usage:");
 		System.err
 				.println("java -jar ssu.jar [option_flag] [inputfile] [outputfile/count_max]");
