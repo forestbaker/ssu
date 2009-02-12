@@ -1,6 +1,6 @@
 . ../ssu/SSU.sh
 
-SSU_SELFPATH="../ssu"
+SSU_HOME="../ssu"
 beforeTest(){
         . /home/masayuki/ssu/Util.sh
 }
@@ -42,8 +42,8 @@ mmm(){
 	typeset a="$1"
 	_ssu_find_shell_name $a
 }
-#DEBUG_MODE="ON"
-#TARGET_TEST_PATTERN="test_aaaadd"
+#SSU_DEBUG_MODE="ON"
+#SSU_TEST_PATTERN="test_aaaadd"
 date
 startSSU;
 date
