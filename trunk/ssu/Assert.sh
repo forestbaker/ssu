@@ -8,6 +8,212 @@ _ssu_AssertSetUp(){
 }
 
 ################################################################################
+# plural_timer_on
+################################################################################
+plural_timer_on(){
+	if [ x"$_ssu_plural_TimerStart" = "x" ];then
+		_ssu_plural_TimerStart=`_ssu_TempFileName "timerstart"`
+		_ssu_plural_TimerEnd=`_ssu_TempFileName "timerend"`
+		_ssu_plural_TimerDStart=`_ssu_TempFileName "timerstart"`
+		_ssu_plural_TimerDEnd=`_ssu_TempFileName "timerend"`
+		_ssu_plural_Times=`_ssu_TempFileName "times"`
+	fi
+	touch "$_ssu_plural_TimerStart"
+}
+################################################################################
+# plural_timer_off
+################################################################################
+plural_timer_off(){
+	touch "$_ssu_plural_TimerEnd"
+	typeset r=$?
+	if [ $r -ne 0 ];then
+		_ssu_ErrExit "plural_timer_off";
+	fi
+	
+	touch "$_ssu_plural_TimerDStart"
+	touch "$_ssu_plural_TimerDEnd"
+	
+	typeset actual_time=0
+	actual_time=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "gettime" "${_ssu_plural_TimerStart}" "${_ssu_plural_TimerEnd}" "$_ssu_plural_TimerDStart" "$_ssu_plural_TimerDEnd"`
+	echo $actual_time >> "$_ssu_plural_Times"
+}
+
+################################################################################
+# plural_timer_report
+################################################################################
+plural_timer_report(){
+	if [ ! -f "$_ssu_plural_Times" ];then
+		_ssu_ErrExit "plural_timer_report";
+	fi
+	_ssu_plural_TimerStart=""
+	typeset flag=".";
+	if [ $# = 1 ];then
+		flag="${1}"
+	fi
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "timer_report" "$flag" "$_ssu_plural_Times"
+}
+################################################################################
+# assert_plural_timer
+################################################################################
+assert_plural_timer(){
+	if [ ! -f "$_ssu_plural_Times" ];then
+		_ssu_ErrExit "assert_plural_timer";
+	fi
+	_ssu_plural_TimerStart=""
+
+	if [[ $# != 1 && $# != 2 ]]
+	then
+		_ssu_ErrExit "assert_plural_timer";
+	fi
+	typeset expect_time="${1}";
+	typeset comment=" ";
+	if [ $# = 2 ]
+	then
+		comment="${2}";
+	fi
+	touch "$_ssu_TimerDStart"
+	touch "$_ssu_TimerDEnd"
+	typeset actual_time=0
+	actual_time=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "timer_ave" "$expect_time" "$_ssu_plural_Times"`
+	_ssu_TimerEnd=""
+	if [ "${actual_time}" = "0" ]
+	then
+		_ssu_succeedLog "assert_plural_timer" "${comment}";
+	else
+		_ssu_FailLog_Base  "assert_plural_timer" "${expect_time}" "${actual_time}" "${comment}";
+	fi
+}
+################################################################################
+# check_plural_timer
+################################################################################
+check_plural_timer(){
+	if [ ! -f "$_ssu_plural_Times" ];then
+		_ssu_ErrExit "check_plural_timer";
+	fi
+	_ssu_plural_TimerStart=""
+
+	if [[ $# != 1 && $# != 2 ]]
+	then
+		_ssu_ErrExit "check_plural_timer";
+	fi
+	typeset expect_time="${1}";
+	typeset comment=" ";
+	if [ $# = 2 ]
+	then
+		comment="${2}";
+	fi
+	touch "$_ssu_TimerDStart"
+	touch "$_ssu_TimerDEnd"
+	typeset actual_time=0
+	actual_time=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "timer_ave" "$expect_time" "$_ssu_plural_Times"`
+	_ssu_TimerEnd=""
+	if [ "${actual_time}" = "0" ]
+	then
+		_ssu_succeedLog "check_plural_timer" "${comment}";
+	else
+		_ssu_FailLog_Base_nonExit  "check_plural_timer" "${expect_time}" "${actual_time}" "${comment}";
+	fi
+}
+
+################################################################################
+# timer_on
+################################################################################
+timer_on(){
+	_ssu_TimerStart=`_ssu_TempFileName "timerstart"`
+	_ssu_TimerEnd=`_ssu_TempFileName "timerend"`
+	_ssu_TimerDStart=`_ssu_TempFileName "timerstart"`
+	_ssu_TimerDEnd=`_ssu_TempFileName "timerend"`
+	touch "$_ssu_TimerStart"
+}
+################################################################################
+# assert_timer
+# $1 time [millis]
+# $2 comment (option)
+################################################################################
+assert_timer(){
+	touch "$_ssu_TimerEnd"
+	typeset r=$?
+	_ssu_AssertSetUp;
+	if [ $r -ne 0 ];then
+		_ssu_ErrExit "assert_timer";
+	fi
+	if [[ $# != 1 && $# != 2 ]]
+	then
+		_ssu_ErrExit "assert_timer";
+	fi
+	typeset expect_time="${1}";
+	typeset comment=" ";
+	if [ $# = 2 ]
+	then
+		comment="${2}";
+	fi
+	touch "$_ssu_TimerDStart"
+	touch "$_ssu_TimerDEnd"
+	typeset actual_time=0
+	actual_time=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "timer" "$expect_time" "${_ssu_TimerStart}" "${_ssu_TimerEnd}" "$_ssu_TimerDStart" "$_ssu_TimerDEnd"`
+	_ssu_TimerEnd=""
+	if [ "${actual_time}" = "0" ]
+	then
+		_ssu_succeedLog "assert_timer" "${comment}";
+	else
+		_ssu_FailLog_Base  "assert_timer" "${expect_time}" "${actual_time}" "${comment}";
+	fi
+}
+
+################################################################################
+# check_timer
+# $1 time [millis]
+# $2 comment (option)
+################################################################################
+check_timer(){
+	touch "$_ssu_TimerEnd"
+	typeset r=$?
+	_ssu_AssertSetUp;
+	if [ $r -ne 0 ];then
+		_ssu_ErrExit "check_timer";
+	fi
+	if [[ $# != 1 && $# != 2 ]]
+	then
+		_ssu_ErrExit "check_timer";
+	fi
+	typeset expect_time="${1}";
+	typeset comment=" ";
+	if [ $# = 2 ]
+	then
+		comment="${2}";
+	fi
+	touch "$_ssu_TimerDStart"
+	touch "$_ssu_TimerDEnd"
+	typeset actual_time=0
+	actual_time=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "timer" "$expect_time" "${_ssu_TimerStart}" "${_ssu_TimerEnd}" "$_ssu_TimerDStart" "$_ssu_TimerDEnd"`
+	_ssu_TimerEnd=""
+	if [ "${actual_time}" = "0" ]
+	then
+		_ssu_succeedLog "check_timer" "${comment}";
+	else
+		_ssu_FailLog_Base_nonExit  "check_timer" "${expect_time}" "${actual_time}" "${comment}";
+	fi
+}
+
+
+################################################################################
+# fail
+# $1 comment (option)
+################################################################################
+fail(){
+	_ssu_AssertSetUp;
+	typeset comment=" ";
+
+	if [ $# = 1 ]
+	then
+		comment="${1}";
+	fi
+	
+	_ssu_FailLog_fail "fail" "${comment}"
+}
+
+
+################################################################################
 # assert_num
 # number check function
 # $1 expect Value
@@ -476,7 +682,7 @@ assert_include_in_file(){
 		if [ $ll -eq 0 ];then
 			__count_line=`grep -c "${str}" "${target}"`;
 		else
-			__count_line=`${JAVA_CMD} $JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "utilincludeinfile" "${str}" "${target}"`
+			__count_line=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "utilincludeinfile" "${str}" "${target}"`
 		fi
 	else
 		_ssu_ErrExit "assert_include_in_file";
@@ -541,7 +747,7 @@ assert_not_include_in_file(){
 		if [ $ll -eq 0 ];then
 			__count_line=`grep -c "${str}" "${target}"`;
 		else
-			__count_line=`${JAVA_CMD} $JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "utilincludeinfile" "${str}" "${target}"`
+			__count_line=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "utilincludeinfile" "${str}" "${target}"`
 		fi
 	else
 		_ssu_ErrExit "assert_not_include_in_file";
@@ -575,7 +781,7 @@ assert_same_file(){
 	fi
 
 	#diff "${expect_file}" "${other_file}" > /dev/null
-	typeset same=`${JAVA_CMD} $JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "utilfilesame" "${expect_file}" "${other_file}"`
+	typeset same=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "utilfilesame" "${expect_file}" "${other_file}"`
 	typeset r=`echo "${same}" | wc -c`
 	if [ ${r} -gt 3 ]; then
 		_ssu_FailLog_SameFile "assert_same_file" "${expect_file}" "${other_file}" "${_comment}";
@@ -609,7 +815,7 @@ assert_not_same_file(){
 		_comment="${3}";
 	fi
 
-	typeset same=`${JAVA_CMD} $JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "utilfilesame" "${expect_file}" "${other_file}"`
+	typeset same=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "utilfilesame" "${expect_file}" "${other_file}"`
 	typeset r=`echo "${same}" | wc -c`
 	if [ ${r} -gt 3 ]; then
 		_ssu_FailLog_SameFile "assert_not_same_file" "${expect_file}" "${other_file}" "${_comment}";
@@ -720,7 +926,7 @@ assert_db(){
 		where="${3}";
 		comment="${4}";
 	fi
-	_ssu_TempVar=`${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectComp" "${file}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}`
+	_ssu_TempVar=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectComp" "${file}" "${table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}`
 	typeset rc=$?
 	if [ ${rc} -eq 0 ]; then
 		_ssu_succeedLog "assert_db" "${comment}";
@@ -764,7 +970,7 @@ assert_db_with_conv(){
 		where="${4}";
 		comment="${5}";
 	fi
-	_ssu_TempVar=`${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectComp.conv" "${file}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" "${JDBC_USER}" "${JDBC_PASSWORD}" "${cp_path}"`
+	_ssu_TempVar=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectComp.conv" "${file}" "${table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${where}" "${SSU_JDBC_USER}" "${SSU_JDBC_PASSWORD}" "${cp_path}"`
 	typeset rc=$?
 	if [ ${rc} -eq 0 ]; then
 		_ssu_succeedLog "assert_db_with_conv" "${comment}";
@@ -800,7 +1006,7 @@ assert_db_ordered(){
 		where="${3}";
 		comment="${4}";
 	fi
-	_ssu_TempVar=`${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectCompOrder" "${file}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}`
+	_ssu_TempVar=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectCompOrder" "${file}" "${table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}`
 	typeset rc=$?
 	if [ ${rc} -eq 0 ]; then
 		_ssu_succeedLog "assert_db_ordered" "${comment}";
@@ -845,7 +1051,7 @@ assert_db_ordered_with_conv(){
 		where="${4}";
 		comment="${5}";
 	fi
-	_ssu_TempVar=`${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectCompOrder.conv" "${file}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" "${JDBC_USER}" "${JDBC_PASSWORD}" "${cp_path}"`
+	_ssu_TempVar=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectCompOrder.conv" "${file}" "${table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${where}" "${SSU_JDBC_USER}" "${SSU_JDBC_PASSWORD}" "${cp_path}"`
 	typeset rc=$?
 	if [ ${rc} -eq 0 ]; then
 		_ssu_succeedLog "assert_db_ordered_with_conv" "${comment}";
@@ -881,7 +1087,7 @@ assert_db_include(){
 		where="${3}";
 		comment="${4}";
 	fi
-	_ssu_TempVar=`${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectInc" "${file}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}`
+	_ssu_TempVar=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectInc" "${file}" "${table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}`
 	typeset rc=$?
 	if [ ${rc} -eq 0 ]; then
 		_ssu_succeedLog "assert_db_include" "${comment}";
@@ -927,7 +1133,7 @@ assert_db_include_with_conv(){
 		where="${4}";
 		comment="${5}";
 	fi
-	_ssu_TempVar=`${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectInc.conv" "${file}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" "${JDBC_USER}" "${JDBC_PASSWORD}" "${cp_path}"`
+	_ssu_TempVar=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectInc.conv" "${file}" "${table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${where}" "${SSU_JDBC_USER}" "${SSU_JDBC_PASSWORD}" "${cp_path}"`
 	typeset rc=$?
 	if [ ${rc} -eq 0 ]; then
 		_ssu_succeedLog "assert_db_include_with_conv" "${comment}";
@@ -964,7 +1170,7 @@ assert_db_count(){
 		where="${3}";
 		comment="${4}";
 	fi
-	_ssu_TempVar=`${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "count" "${count}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}`
+	_ssu_TempVar=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "count" "${count}" "${table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}`
 	typeset rc=$?
 	if [ ${rc} -eq 0 ]; then
 		_ssu_succeedLog "assert_db_count" "${comment}";
@@ -1000,7 +1206,7 @@ assert_db_not_same_count(){
 		where="${3}";
 		comment="${4}";
 	fi
-	_ssu_TempVar=`${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "countnot" "${count}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}`
+	_ssu_TempVar=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "countnot" "${count}" "${table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}`
 	typeset rc=$?
 	if [ ${rc} -eq 0 ]; then
 		_ssu_succeedLog "assert_db_not_same_count" "${comment}";
@@ -1016,12 +1222,12 @@ assert_db_not_same_count(){
 ################################################################################
 assert_db_connect(){
 	_ssu_AssertSetUp;
-	${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBConnectTest "${JDBC_CLASS}" "${JDBC_URL}" ${JDBC_USER} ${JDBC_PASSWORD};
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBConnectTest "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD};
 	typeset rc=$?
 	if [ ${rc} -eq 0 ]; then
 		_ssu_succeedLog "assert_db_connect" "${comment}";
 	else
-		_ssu_FailLog_DB "assert_db_connect" "${JDBC_URL}" "${comment}";
+		_ssu_FailLog_DB "assert_db_connect" "${SSU_JDBC_URL}" "${comment}";
 	fi
 }
 
@@ -1037,6 +1243,13 @@ _ssu_FailLog_Base(){
 	typeset message2="actual Value : ${3}";
 	typeset comment="${4}";
 	_ssu_outputFailLogAndFailSet "${assert_name}" "${message1}" "${message2}" "${comment}"
+}
+_ssu_FailLog_Base_nonExit(){
+	typeset assert_name="${1}";
+	typeset message1="expect Value : ${2}";
+	typeset message2="actual Value : ${3}";
+	typeset comment="${4}";
+	_ssu_outputFailLogAndFailSet_nonExit "${assert_name}" "${message1}" "${message2}" "${comment}"
 }
 _ssu_FailLog_False(){
 	typeset assert_name="${1}";
@@ -1093,9 +1306,15 @@ _ssu_FailLog_DB(){
 	typeset assert_name="${1}";
 	typeset message1="${2}";
 	typeset comment="${3}";
-	_ssu_outputFailLogAndFailSet "${assert_name}" "${message1}" "${comment}"
+	_ssu_outputFailLogAndFailSet "${assert_name}" "${message1}" " " "${comment}"
 }
-_ssu_outputFailLogAndFailSet(){
+
+_ssu_FailLog_fail(){
+	typeset assert_name="${1}";
+	typeset comment="${2}";
+	_ssu_outputFailLogAndFailSet "${assert_name}" "${comment}" " " " "
+}
+_ssu_outputFailLogAndFailSet_nonExit(){
 	typeset assert_name="${1}";
 	typeset message1="${2}";
 	typeset message2="${3}";
@@ -1122,6 +1341,9 @@ _ssu_outputFailLogAndFailSet(){
 	fi
 	printf "\033[1;31m!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\033[0m\n" -e
 	printf "\n";
+}
+_ssu_outputFailLogAndFailSet(){
+	_ssu_outputFailLogAndFailSet_nonExit "$1" "$2" "$3" "$4"
 	exit 99;
 }
 
@@ -1156,7 +1378,7 @@ _ssu_succeedLog_DEBUG(){
 		mes="";
 	fi
 
-	if [ "${DEBUG_MODE}" = "ON" ]; then
+	if [ "${SSU_DEBUG_MODE}" = "ON" ]; then
 		echo "";
 		echo "************   Assertion   ******************";
 		echo " ${1} is passed."
@@ -1718,7 +1940,7 @@ _ssu_ModToNum(){
 _ssu_LsFulltime(){
 	typeset file="${1}"
 	typeset op="${2}"
-	${JAVA_CMD} $JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "util" "file-time" "${file}"
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "util" "file-time" "${file}"
 }
 
 _ssu_FromDateStyleToInt(){
