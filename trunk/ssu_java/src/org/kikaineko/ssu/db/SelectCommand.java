@@ -75,19 +75,19 @@ public class SelectCommand {
 	}
 
 	public static void selectAssertOrder(String filePath, String jdbcClass,
-			String url, String user, String password, String table, String where,String convertPath)
-			throws Throwable {
+			String url, String user, String password, String table,
+			String where, String convertPath) throws Throwable {
 		ArrayList fileData = FileIO.getFileDatas(new File(filePath),
 				FileIO.FileReadCodeToDB);
 		if (fileData.size() < 2) {
 			throw new SSUException("no data in " + filePath);
 		}
-		if (convertPath != null && convertPath.length()!=0) {
+		if (convertPath != null && convertPath.length() != 0) {
 			Convertor.init(convertPath);
-		}else{
-			convertPath=null;
+		} else {
+			convertPath = null;
 		}
-		
+
 		String head = (String) fileData.get(0);
 		fileData.remove(0);
 		List csvdata = CSVParser.getCSVLineList(fileData);
@@ -100,7 +100,8 @@ public class SelectCommand {
 			stmt = connect(jdbcClass, conn, url, user, password);
 
 			sql = "select " + head + " from " + table;
-			if (where != null && where.trim().length() != 0 && !where.trim().equals(".")) {
+			if (where != null && where.trim().length() != 0
+					&& !where.trim().equals(".")) {
 				sql += " " + where.trim();
 			}
 			// 問合せの実行
@@ -111,8 +112,10 @@ public class SelectCommand {
 			while (rset.next()) {
 				ArrayList temp = new ArrayList();
 				for (int i = 1; i <= max; i++) {
-					//temp.add(Mapper.normFromDB(rset, i, rsmd.getColumnType(i)));
-					Object o = Mapper.normFromDB(rset, i, rsmd.getColumnType(i));
+					// temp.add(Mapper.normFromDB(rset, i,
+					// rsmd.getColumnType(i)));
+					Object o = Mapper
+							.normFromDB(rset, i, rsmd.getColumnType(i));
 					if (convertPath != null && o instanceof String) {
 						String s = (String) o;
 						s = Convertor.convert(s);
@@ -129,8 +132,8 @@ public class SelectCommand {
 				List data = (List) csvdata.get(0);
 				List csvtmp = new ArrayList();
 				for (int i = 0; i < data.size(); i++) {
-					//csvtmp.add(Mapper.normFromCSV((String) data.get(i), rsmd
-						//	.getColumnType(i + 1)));
+					// csvtmp.add(Mapper.normFromCSV((String) data.get(i), rsmd
+					// .getColumnType(i + 1)));
 					Object o = Mapper.normFromCSV((String) data.get(i), rsmd
 							.getColumnType(i + 1));
 					if (convertPath != null && o instanceof String) {
@@ -179,7 +182,8 @@ public class SelectCommand {
 	}
 
 	/**
-	 * flagは、complete/includeの２つ。completeはCSVとDBが完全に一致する。includeはCSVの内容がDBに含まれていればよい。<br>
+	 * flagは、complete/includeの２つ。completeはCSVとDBが完全に一致する。
+	 * includeはCSVの内容がDBに含まれていればよい。<br>
 	 * flagにcomplete以外を指定した場合、includeと解釈される。
 	 * 
 	 * @param flag
@@ -198,10 +202,10 @@ public class SelectCommand {
 		if (!flag.equals("complete")) {
 			flag = "include";
 		}
-		if (convertPath != null && convertPath.length()!=0) {
+		if (convertPath != null && convertPath.length() != 0) {
 			Convertor.init(convertPath);
-		}else{
-			convertPath=null;
+		} else {
+			convertPath = null;
 		}
 		ArrayList fileData = FileIO.getFileDatas(new File(filePath),
 				FileIO.FileReadCodeToDB);
@@ -220,7 +224,8 @@ public class SelectCommand {
 			stmt = connect(jdbcClass, conn, url, user, password);
 
 			sql = "select " + head + " from " + table;
-			if (where != null && where.trim().length() != 0 && !where.trim().equals(".")) {
+			if (where != null && where.trim().length() != 0
+					&& !where.trim().equals(".")) {
 				sql += " " + where.trim();
 			}
 			// 問合せの実行
@@ -240,11 +245,21 @@ public class SelectCommand {
 									+ sql);
 				}
 				for (int j = 0; j < data.size(); j++) {
-					Object o = Mapper.normFromCSV((String) data.get(j), rsmd
-							.getColumnType(j + 1));
+					Object o = null;
+					try {
+						o = Mapper.normFromCSV((String) data.get(j), rsmd
+								.getColumnType(j + 1));
+					} catch (FormatException e) {
+						e.setData((String) data.get(j));
+						e.setColumnTypeName(rsmd.getColumnTypeName(j+1));
+						e.setColumnName(rsmd.getColumnName(j+1));
+						e.setCSVLine(i);
+						e.setCnmIndex(j);
+						throw e;
+					}
 					if (convertPath != null && o instanceof String) {
 						String s = (String) o;
-						
+
 						s = Convertor.convert(s);
 						csvtmp.add(s);
 					} else {
@@ -266,10 +281,10 @@ public class SelectCommand {
 				for (int i = 1; i <= max; i++) {
 					Object o = Mapper
 							.normFromDB(rset, i, rsmd.getColumnType(i));
-								
+
 					if (convertPath != null && o instanceof String) {
 						String s = (String) o;
-						
+
 						s = Convertor.convert(s);
 						temp.add(s);
 					} else {

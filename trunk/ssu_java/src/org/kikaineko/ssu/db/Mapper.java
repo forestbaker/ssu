@@ -80,8 +80,8 @@ public class Mapper {
 				return bd.toString();
 			return "";
 		case Types.DATE:
-			//java.sql.Date d = rset.getDate(name);
-			//return "\"" + TimeF.toS(d) + "\"";
+			// java.sql.Date d = rset.getDate(name);
+			// return "\"" + TimeF.toS(d) + "\"";
 			// TODO
 			java.sql.Timestamp ts0 = rset.getTimestamp(name);
 			return "\"" + TimeF.toS(ts0).split("\\.")[0] + "\"";
@@ -97,7 +97,17 @@ public class Mapper {
 		throw new SQLException(name + " is Uncontroled TYPE.");
 	}
 
-	public static Object normFromCSV(String s, int type) throws SQLException {
+	public static Object normFromCSV(String s, int type) throws Exception {
+		try {
+			return _normFromCSV(s, type);
+		}catch (SQLException se){
+			throw se;
+		} catch (Exception e) {
+			throw new FormatException(e);
+		}
+	}
+
+	private static Object _normFromCSV(String s, int type) throws SQLException {
 		String ss = s;
 		s = ss.trim();
 		switch (type) {
@@ -160,7 +170,7 @@ public class Mapper {
 			}
 
 		case Types.DATE:
-			//return TimeF.toSFromDate(s);
+			// return TimeF.toSFromDate(s);
 			// TODO
 			return TimeF.toSFromTimestamp(s).split("\\.")[0];
 		case Types.TIME:
@@ -235,9 +245,8 @@ public class Mapper {
 			return "";
 		case Types.DATE:
 			/*
-			java.sql.Date d = rset.getDate(i);
-			return TimeF.toS(d);
-			*/
+			 * java.sql.Date d = rset.getDate(i); return TimeF.toS(d);
+			 */
 			// TODO
 			java.sql.Timestamp ts0 = rset.getTimestamp(i);
 			return TimeF.toS(ts0).split("\\.")[0];
