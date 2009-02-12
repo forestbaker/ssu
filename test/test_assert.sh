@@ -311,10 +311,10 @@ test_assert_include_in_file(){
 	assert_include_in_file pooh aa
 	
 }
-SSU_SELFPATH="../ssu"
+SSU_HOME="../ssu"
 date
-#TARGET_TEST_PATTERN="test_assert_include_in_file"
-#DEBUG_MODE=ON
+#SSU_TEST_PATTERN="test_assert_include_in_file"
+#SSU_DEBUG_MODE=ON
 startSSU;
 date
 
