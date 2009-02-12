@@ -42,7 +42,7 @@ JDBC_JAR="oracle/ojdbc14.jar";
 JDBC_CLASS="oracle.jdbc.driver.OracleDriver";
 JDBC_URL="jdbc:oracle:thin:@localhost:1521:xe";
 JDBC_USER="system";
-JDBC_PASSWORD="ioki0da";
+JDBC_PASSWORD="tiger";
 
 date
 #TARGET_TEST_PATTERN="test_assert_db_normal"
