@@ -631,7 +631,7 @@ u_f_getTimestamp(){
 		echo "cannot find ${file}";
 		return 1;
 	fi
-	${JAVA_CMD} $JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "util" "file-time" "${file}"
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "util" "file-time" "${file}"
 }
 
 ################################################################################
@@ -654,7 +654,7 @@ u_db_insert(){
 		where="${3}";
 	fi
 	
-	${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "insert" "${file}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "insert" "${file}" "${table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
 	typeset r=$?
 	if [ $r -ne 0 ]
 	then
@@ -681,7 +681,7 @@ u_db_delete(){
 		where="${2}";
 	fi
 	
-	${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "delete" ".." "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "delete" ".." "${table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
 	typeset r=$?
 	if [ $r -ne 0 ]
 	then
@@ -710,7 +710,7 @@ if [[ $# != 2 && $# != 3 ]]
 		where="${3}";
 	fi
 	
-	${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectto" "${file}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectto" "${file}" "${table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
 	typeset r=$?
 	if [ $r -ne 0 ]
 	then
@@ -738,7 +738,7 @@ u_db_select(){
 		where="${2}";
 	fi
 	
-	${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectout" ".." "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectout" ".." "${table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
 	typeset r=$?
 	if [ $r -ne 0 ]
 	then
@@ -758,7 +758,7 @@ u_db_sql_query(){
 		return 1;
 	fi
 	typeset file="${1}";
-	${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "query" "$file" ".." "${JDBC_CLASS}" "${JDBC_URL}" " " ${JDBC_USER} ${JDBC_PASSWORD}
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "query" "$file" ".." "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" " " ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
 	typeset r=$?
 	if [ $r -ne 0 ]
 	then
@@ -778,7 +778,7 @@ u_db_sql_exec(){
 		return 1;
 	fi
 	typeset file="${1}";
-	${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "exec" "$file" ".." "${JDBC_CLASS}" "${JDBC_URL}" " " ${JDBC_USER} ${JDBC_PASSWORD}
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "exec" "$file" ".." "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" " " ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
 	typeset r=$?
 	if [ $r -ne 0 ]
 	then
@@ -810,7 +810,7 @@ if [[ $# != 1 && $# != 2 ]]
 	typeset file=`_ssu_util_evi_FileName "${name}"`
 	
 	typeset where=" ";
-	${JAVA_CMD} $JAVA_OPTION -cp "${JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectto" "${file}" "${table}" "${JDBC_CLASS}" "${JDBC_URL}" "${where}" ${JDBC_USER} ${JDBC_PASSWORD}
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectto" "${file}" "${table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
 	typeset r=$?
 	if [ $r -ne 0 ]
 	then

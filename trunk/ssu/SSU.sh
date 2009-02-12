@@ -19,10 +19,10 @@
 # You can use this tool as xUnit.
 # This tool requires Asser.sh and .jar and Util.sh
 #
-# author : Masayuki Ioki,Takumi Hosaka
+# author : Masayuki Ioki,Takumi Hosaka,Teruyuki Takazawa
 # Version : 0.5
-# Date ; 2009.01.29
-_ssu_version="0.5 :: 2009.02.02"
+# Date ; 2009.02.10
+_ssu_version="0.5 :: 2009.02.10"
 ################################################################################
 ################################################################################
 ## You MUST Define "SSU_HOME" in your test_case.
@@ -36,39 +36,92 @@ SSU_HOME=""
 ################################################################################
 ## Options -start-
 
+SSU_DEBUG_MODE=OFF;
 DEBUG_MODE=OFF;
+SSU_TEST_PATTERN="^test";
 TARGET_TEST_PATTERN="^test";
 SSU_EVIDENCE_BASEDIR="";
 SSU_CHARCODE=""
 
-## TARGET_SHELL_FOR_COVERAGE="../src/foo.sh"
-## if you want to check coverage,please define TARGET_SHELL_FOR_COVERAGE.
-## TARGET_SHELL_FOR_COVERAGE is a relative path-name to target shell from your test_case.
-## like TARGET_SHELL_FOR_COVERAGE="tax.sh" (/home/foo/testcase/test.sh , /home/foo/testcase/tax.sh)
+## SSU_TARGET_FOR_COVERAGE="../src/foo.sh"
+## if you want to check coverage,please define SSU_TARGET_FOR_COVERAGE.
+## SSU_TARGET_FOR_COVERAGE is a relative path-name to target shell from your test_case.
+## like SSU_TARGET_FOR_COVERAGE="tax.sh" (/home/foo/testcase/test.sh , /home/foo/testcase/tax.sh)
+SSU_TARGET_FOR_COVERAGE="";
 TARGET_SHELL_FOR_COVERAGE="";
 
 ## SSU requires Java.
 ## Please define Your JavaPath.
-## eg. JAVA_CMD="/opt/java/bin/java"
+## eg. SSU_JAVA_CMD="/opt/java/bin/java"
 JAVA_CMD="java";
 JAVA_OPTION=""
+SSU_JAVA_CMD="java";
+SSU_JAVA_OPTION=""
 
 ## If you use assert_db*, please set these vars.
-## e.g. JDBC_JAR="/opt/oraclexe/app/oracle/product/10.2.0/server/jdbc/lib/ojdbc14.jar";
-##      JDBC_CLASS="oracle.jdbc.driver.OracleDriver";
-##      JDBC_URL="jdbc:oracle:thin:@localhost:1521:xe";
-##      JDBC_USER="pooh";
-##      JDBC_PASSWORD="piglet";
+## e.g. SSU_JDBC_JAR="/opt/oraclexe/app/oracle/product/10.2.0/server/jdbc/lib/ojdbc14.jar";
+##      SSU_JDBC_CLASS="oracle.jdbc.driver.OracleDriver";
+##      SSU_JDBC_URL="jdbc:oracle:thin:@localhost:1521:xe";
+##      SSU_JDBC_USER="pooh";
+##      SSU_JDBC_PASSWORD="piglet";
 JDBC_JAR="";
 JDBC_CLASS="";
 JDBC_URL="";
 JDBC_USER="";
 JDBC_PASSWORD="";
 
+SSU_JDBC_JAR="";
+SSU_JDBC_CLASS="";
+SSU_JDBC_URL="";
+SSU_JDBC_USER="";
+SSU_JDBC_PASSWORD="";
 
 ## Options -end-
 ################################################################################
 ################################################################################
+################################################################################
+################################################################################
+
+_ssu_old_to_new(){
+	if [ "$SSU_HOME" = "" ];then
+		SSU_HOME="$SSU_SELFPATH"
+	fi
+	
+	if [ "$SSU_DEBUG_MODE" = "OFF" ];then
+		SSU_DEBUG_MODE="$DEBUG_MODE"
+	fi
+	if [ "$SSU_TEST_PATTERN" = "^test" ];then
+		SSU_TEST_PATTERN="$TARGET_TEST_PATTERN"
+	fi
+	
+	if [ "$SSU_TARGET_FOR_COVERAGE" = "" ];then
+		SSU_TARGET_FOR_COVERAGE="$TARGET_SHELL_FOR_COVERAGE"
+	fi
+	
+	if [ "$SSU_JAVA_CMD" = "java" ];then
+		SSU_JAVA_CMD="$JAVA_CMD"
+	fi
+	if [ "$SSU_JAVA_OPTION" = "" ];then
+		SSU_JAVA_OPTION="$JAVA_OPTION"
+	fi
+	
+	if [ "$SSU_JDBC_JAR" = "" ];then
+		SSU_JDBC_JAR="$JDBC_JAR"
+	fi
+	if [ "$SSU_JDBC_CLASS" = "" ];then
+		SSU_JDBC_CLASS="$JDBC_CLASS"
+	fi
+	if [ "$SSU_JDBC_URL" = "" ];then
+		SSU_JDBC_URL="$JDBC_URL"
+	fi
+	if [ "$SSU_JDBC_USER" = "" ];then
+		SSU_JDBC_USER="$JDBC_USER"
+	fi
+	if [ "$SSU_JDBC_PASSWORD" = "" ];then
+		SSU_JDBC_PASSWORD="$JDBC_PASSWORD"
+	fi
+}
+
 ################################################################################
 ################################################################################
 
@@ -115,7 +168,7 @@ fi
 ################################################################################
 _ssu_BeforeTest(){
 
-	if [ "${DEBUG_MODE}" = "ON" ]; then
+	if [ "${SSU_DEBUG_MODE}" = "ON" ]; then
 		echo "";
 		echo "###########################################################################";
 		echo "Start : ${_ssu_casename}";
@@ -142,7 +195,7 @@ beforeTest(){
 ################################################################################
 _ssu_SetUp(){
 
-	if [ "${DEBUG_MODE}" = "ON" ]; then
+	if [ "${SSU_DEBUG_MODE}" = "ON" ]; then
 		typeset __case_name=$1
 		echo "";
 		echo "------------------------------------------------------------------";
@@ -170,7 +223,7 @@ _ssu_TearDown(){
 	tearDown;
 	_ssu_TeardownForEvidence_test
 	_ssu_tearDown_h;
-	if [ "${DEBUG_MODE}" = "ON" ]; then
+	if [ "${SSU_DEBUG_MODE}" = "ON" ]; then
 		typeset _case_num=$1;
 		echo "TestCase END : ${__case_num}";
 		echo "------------------------------------------------------------------";
@@ -192,7 +245,7 @@ tearDown(){
 ################################################################################
 _ssu_AfterTest(){
 
-        if [ "${DEBUG_MODE}" = "ON" ]; then
+        if [ "${SSU_DEBUG_MODE}" = "ON" ]; then
 		typeset sh_name=`basename $0`;
                 echo "";
                 echo "Done : ${sh_name}";
@@ -241,8 +294,8 @@ _ssu_DoSSU(){
 		_ssu_CurrentTestName=${_ssu_TestArray[$_ssu_cnt]};
 		_ssu_mkdir_evi_test
 		
-		if [ "${DEBUG_MODE}" != "ON" ]; then
-			#typeset mes=`${JAVA_CMD} $JAVA_OPTION -jar  ${_ssu_UtilJar} "${SSU_CHARCODE}" "report" "START ${_ssu_CurrentTestName}" "${_ssu_cnt}" "${test_cnt_max}" "${color}"`
+		if [ "${SSU_DEBUG_MODE}" != "ON" ]; then
+			#typeset mes=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar  ${_ssu_UtilJar} "${SSU_CHARCODE}" "report" "START ${_ssu_CurrentTestName}" "${_ssu_cnt}" "${test_cnt_max}" "${color}"`
 			#printf "\r${mes}" -e
 			_ssu_display_bar "START ${_ssu_CurrentTestName}" "${_ssu_cnt}" "${test_cnt_max}" "${color}"
 		fi
@@ -266,16 +319,16 @@ _ssu_DoSSU(){
 		
 		_ssu_cnt=$((${_ssu_cnt}+1));
 		
-		if [ "${DEBUG_MODE}" != "ON" ]; then
-			#typeset mes=`${JAVA_CMD} -Xint -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "report" "END   ${_ssu_CurrentTestName}" "${_ssu_cnt}" "${test_cnt_max}" "${color}"`
+		if [ "${SSU_DEBUG_MODE}" != "ON" ]; then
+			#typeset mes=`${SSU_JAVA_CMD} -Xint -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "report" "END   ${_ssu_CurrentTestName}" "${_ssu_cnt}" "${test_cnt_max}" "${color}"`
 			#printf "\r${mes}" -e
 			_ssu_display_bar "END   ${_ssu_CurrentTestName}" "${_ssu_cnt}" "${test_cnt_max}" "${color}"
 		fi
 		
 	done
 	
-	if [ "${DEBUG_MODE}" != "ON" ]; then
-		#typeset mes=`${JAVA_CMD} -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "report" "TEST END" "${_ssu_cnt}" "${test_cnt_max}" "${color}"`
+	if [ "${SSU_DEBUG_MODE}" != "ON" ]; then
+		#typeset mes=`${SSU_JAVA_CMD} -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "report" "TEST END" "${_ssu_cnt}" "${test_cnt_max}" "${color}"`
 		#printf "\r${mes}" -e
 		_ssu_display_bar "TEST END" "${_ssu_cnt}" "${test_cnt_max}" "${color}"
 	fi
@@ -374,13 +427,12 @@ trap _ssu_trap_function 0 1 2 3 15
 
 
 ################################################################################
-# find functions whose name match TARGET_TEST_PATTERN.And execute.
+# find functions whose name match SSU_TEST_PATTERN.And execute.
 ################################################################################
 startSSU(){
 	## Checking
-	if [ "$SSU_SELFPATH" != "" ];then
-		SSU_HOME="$SSU_SELFPATH"
-	fi
+	_ssu_old_to_new
+	
 	typeset td=`dirname ${SSU_HOME}`;
 	typeset tf=`basename ${SSU_HOME}`;
 	
@@ -411,7 +463,7 @@ startSSU(){
 	fi
 	
 	
-	${JAVA_CMD} -version > /dev/null 2>&1
+	${SSU_JAVA_CMD} -version > /dev/null 2>&1
 	typeset rc=$?
 	if [ ${rc} -ne 0 ]
 	then
@@ -459,7 +511,7 @@ startSSU(){
 	
 	_ssu_SetupForEvidence
 	
-	typeset test_funcs=`typeset -f |sed 's/function //'| sed 's/()//' | grep ${TARGET_TEST_PATTERN}`;
+	typeset test_funcs=`typeset -f |sed 's/function //'| sed 's/()//' | grep ${SSU_TEST_PATTERN}`;
 
 	typeset t="";
 	i=0;
@@ -476,32 +528,32 @@ startSSU(){
 #####################################################################################################
 ## below's are For Coverage.
 _ssu_CheckCoverage(){
-	if [ "${TARGET_SHELL_FOR_COVERAGE}" != "" ];
+	if [ "${SSU_TARGET_FOR_COVERAGE}" != "" ];
 	then
-		if [ ! -f "${TARGET_SHELL_FOR_COVERAGE}" ];then
-			echo "${TARGET_SHELL_FOR_COVERAGE} is wrong."
-			echo "Plase set correct TARGET_SHELL_FOR_COVERAGE."
+		if [ ! -f "${SSU_TARGET_FOR_COVERAGE}" ];then
+			echo "${SSU_TARGET_FOR_COVERAGE} is wrong."
+			echo "Plase set correct SSU_TARGET_FOR_COVERAGE."
 			exit 1;
 		fi
-		_ssu_TARGET_SHELL_FILE=`basename "${TARGET_SHELL_FOR_COVERAGE}"`;
+		_ssu_TARGET_SHELL_FILE=`basename "${SSU_TARGET_FOR_COVERAGE}"`;
 		typeset rc=$?;
 		if [ $rc -ne 0 ]
 		then
-			echo "Cannot read TARGET_SHELL_FOR_COVERAGE !";
+			echo "Cannot read SSU_TARGET_FOR_COVERAGE !";
 			exit 1;
 		fi
-		_ssu_TARGET_SHELL_DIR=`dirname "${TARGET_SHELL_FOR_COVERAGE}"`;
+		_ssu_TARGET_SHELL_DIR=`dirname "${SSU_TARGET_FOR_COVERAGE}"`;
 		rc=$?;
 		if [ $rc -ne 0 ]
 		then
-			echo "Cannot read TARGET_SHELL_FOR_COVERAGE !";
+			echo "Cannot read SSU_TARGET_FOR_COVERAGE !";
 			exit 1;
 		fi
 	fi
 }
 
 _ssu_SetupForCoverage(){
-	if [ "${TARGET_SHELL_FOR_COVERAGE}" != "" ];
+	if [ "${SSU_TARGET_FOR_COVERAGE}" != "" ];
 	then
 		_ssu_BACKUP_TARGET=`_ssu_TempFileName "${_ssu_TARGET_SHELL_FILE}"`;
 		typeset rc=$?;
@@ -532,14 +584,14 @@ _ssu_SetupForCoverage(){
 			exit 1;
 		fi
 		
-		typeset same=`${JAVA_CMD} $JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "utilfilesame" "${_ssu_TARGET_SHELL_DIR}/${_ssu_TARGET_SHELL_FILE}" "${_ssu_BACKUP_TARGET}"`
+		typeset same=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "utilfilesame" "${_ssu_TARGET_SHELL_DIR}/${_ssu_TARGET_SHELL_FILE}" "${_ssu_BACKUP_TARGET}"`
 		if [ $same -eq 1 ]
 		then
 			echo "Cannot BackUP ${_ssu_TARGET_SHELL_FILE} !";
 			exit 1;
 		fi
 		
-		${JAVA_CMD} $JAVA_OPTION -jar "${_ssu_UtilJar}" "${SSU_CHARCODE}" new "${_ssu_BACKUP_TARGET}" "${_ssu_COVERAGE_RESULT}" > "${_ssu_TARGET_SHELL_DIR}/${_ssu_TARGET_SHELL_FILE}" 2> "${_ssu_COVERAGE_EXPECTED}"
+		${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar "${_ssu_UtilJar}" "${SSU_CHARCODE}" new "${_ssu_BACKUP_TARGET}" "${_ssu_COVERAGE_RESULT}" > "${_ssu_TARGET_SHELL_DIR}/${_ssu_TARGET_SHELL_FILE}" 2> "${_ssu_COVERAGE_EXPECTED}"
 		typeset rc=$?;
 		if [ $rc -ne 0 ]
 		then
@@ -557,9 +609,9 @@ _ssu_SetupForCoverage(){
 }
 
 _ssu_TearDownForCoverage(){
-	if [  "${TARGET_SHELL_FOR_COVERAGE}" != "" ];
+	if [  "${SSU_TARGET_FOR_COVERAGE}" != "" ];
 	then
-		${JAVA_CMD} $JAVA_OPTION -jar "${_ssu_UtilJar}" "${SSU_CHARCODE}" analyze "${_ssu_COVERAGE_EXPECTED}" "${_ssu_COVERAGE_RESULT}"
+		${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar "${_ssu_UtilJar}" "${SSU_CHARCODE}" analyze "${_ssu_COVERAGE_EXPECTED}" "${_ssu_COVERAGE_RESULT}"
 		if [ ! -f "${_ssu_BACKUP_TARGET}" ]
 		then
 			return 0;
@@ -575,7 +627,7 @@ _ssu_TearDownForCoverage(){
 		rm -f "${_ssu_COVERAGE_EXPECTED}";
 		rm -f "${_ssu_COVERAGE_RESULT}";
 	fi
-	TARGET_SHELL_FOR_COVERAGE=""
+	SSU_TARGET_FOR_COVERAGE=""
 }
 
 
