@@ -3,7 +3,7 @@ package org.kikaineko.ssu.db;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
-public class TimeF {
+class TimeF {
 
 	public static String toSFromTime(String time) {
 		if (time == null || time.length() == 0) {
