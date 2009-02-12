@@ -1,12 +1,12 @@
 . ../ssu/SSU.sh
 . ../ssu/Assert.sh
 . ../ssu/Util.sh
-JAVA_CMD="java";
-JDBC_JAR="oracle/ojdbc14.jar";
-JDBC_CLASS="oracle.jdbc.driver.OracleDriver";
-JDBC_URL="jdbc:oracle:thin:@localhost:1521:xe";
-JDBC_USER="system";
-JDBC_PASSWORD="tiger";
+SSU_JAVA_CMD="java";
+SSU_JDBC_JAR="oracle/ojdbc14.jar";
+SSU_JDBC_CLASS="oracle.jdbc.driver.OracleDriver";
+SSU_JDBC_URL="jdbc:oracle:thin:@localhost:1521:xe";
+SSU_JDBC_USER="system";
+SSU_JDBC_PASSWORD="tiger";
 
 _ssu_UtilJar="../ssu/ssu.jar"
 _ssu_jarsep=";"
