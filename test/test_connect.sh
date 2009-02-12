@@ -314,18 +314,18 @@ test_assert_db_connect2(){
   assert_db_connect
 }
 
-SSU_SELFPATH="../ssu"
+SSU_HOME="../ssu"
 
-JDBC_JAR="oracle/ojdbc14.jar";
-JDBC_CLASS="oracle.jdbc.driver.OracleDriver";
-JDBC_URL="jdbc:oracle:thin:@localhost:1521:xe";
-JDBC_USER="system";
-JDBC_PASSWORD="tiger";
+SSU_JDBC_JAR="oracle/ojdbc14.jar";
+SSU_JDBC_CLASS="oracle.jdbc.driver.OracleDriver";
+SSU_JDBC_URL="jdbc:oracle:thin:@localhost:1521:xe";
+SSU_JDBC_USER="system";
+SSU_JDBC_PASSWORD="tiger";
 
 SSU_EVIDENCE_BASEDIR="./uuu"
 date
-TARGET_TEST_PATTERN="test_assert_db_sql_q"
-#DEBUG_MODE=ON
+SSU_TEST_PATTERN="test_assert_db_sql_q"
+#SSU_DEBUG_MODE=ON
 startSSU;
 date
 
