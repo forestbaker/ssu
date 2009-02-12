@@ -16,6 +16,7 @@ SSUは以下の機能を持ちます。<br>
 <li><a href="#codecoverage">コードカバレッジ計測機能</a></li>
 <li><a href="#util">豊富なUtil関数</a></li>
 <li><a href="#evi">エビデンス取得関数</a></li>
+<li><a href="#perf">パフォーマンス測定機能</a></li>
 <li><a href="#beforeafter">テスト前後の共通化</a></li>
 <li><a href="#debug">デバックモード</a></li>
 <li><a href="#target">特定のテストのみの実行</a></li>
@@ -235,18 +236,18 @@ SSUでは、DBの検証のためのassertを提供します。<br/>
 このDB接続にはJDBCを利用するため、各種の値設定が必要です。具体的には以下の変数を設定する必要があります。<br/>
 <br/>
 <table border=0 bgcolor="#000000" cellspacing=1 cellpadding=1>
-<tr bgcolor="#FFFFFF"><td>JDBC_JAR</td><td>JDBC用のJARのパスを設定します。各種DBMSが提供するJARを指定してください。</td></tr>
-<tr bgcolor="#FFFFFF"><td>JDBC_CLASS</td><td>各種DBMSが提供するJDBC用のDriverを指定してください。</td></tr>
-<tr bgcolor="#FFFFFF"><td>JDBC_URL</td><td>接続するURLを指定してください。</td></tr>
-<tr bgcolor="#FFFFFF"><td>JDBC_USER</td><td>接続するユーザを指定してください。これとパスワードを設定しない場合、ユーザ指定なしで接続します。</td></tr>
-<tr bgcolor="#FFFFFF"><td>JDBC_PASSWORD</td><td>接続するパスワードを指定してください。これとユーザを設定しない場合、ユーザ指定なしで接続します。</td></tr>
+<tr bgcolor="#FFFFFF"><td>SSU_JDBC_JAR</td><td>JDBC用のJARのパスを設定します。各種DBMSが提供するJARを指定してください。</td></tr>
+<tr bgcolor="#FFFFFF"><td>SSU_JDBC_CLASS</td><td>各種DBMSが提供するJDBC用のDriverを指定してください。</td></tr>
+<tr bgcolor="#FFFFFF"><td>SSU_JDBC_URL</td><td>接続するURLを指定してください。</td></tr>
+<tr bgcolor="#FFFFFF"><td>SSU_JDBC_USER</td><td>接続するユーザを指定してください。これとパスワードを設定しない場合、ユーザ指定なしで接続します。</td></tr>
+<tr bgcolor="#FFFFFF"><td>SSU_JDBC_PASSWORD</td><td>接続するパスワードを指定してください。これとユーザを設定しない場合、ユーザ指定なしで接続します。</td></tr>
 </table><br/>
 設定例：<br/>
-JDBC_JAR="oracle/ojdbc14.jar";<br/>
-JDBC_CLASS="oracle.jdbc.driver.OracleDriver";<br/>
-JDBC_URL="jdbc:oracle:thin:@localhost:1521:xe";<br/>
-JDBC_USER="system";<br/>
-JDBC_PASSWORD="pooh";<br/>
+SSU_JDBC_JAR="oracle/ojdbc14.jar";<br/>
+SSU_JDBC_CLASS="oracle.jdbc.driver.OracleDriver";<br/>
+SSU_JDBC_URL="jdbc:oracle:thin:@localhost:1521:xe";<br/>
+SSU_JDBC_USER="system";<br/>
+SSU_JDBC_PASSWORD="pooh";<br/>
 <br/><br/>
 assert_db*系では、ファイルの内容とDBを比較しますが、そのファイルのフォーマットは以下の通りです。<br/>
 <br/>
@@ -555,7 +556,7 @@ h_rm piglet<br>
 SSUでは、特定のシェルスクリプトに対してコードカバレッジを測定することが可能です。<br>
 テストコード中に<br>
 <br>
-TARGET_SHELL_FOR_COVERAGE="tax.sh" <br>
+SSU_TARGET_FOR_COVERAGE="tax.sh" <br>
 <br>
 というように、カバレッジを測定したいシェルの相対パスを記述してください。<br>
 全てのテストの実行が終了した後にコードのカバレッジが測定されます。<br>
@@ -575,10 +576,10 @@ below lines unpassed.<br>
 <br>
 <br>
 <font color=red>注意：</font><br>
-カバレッジ測定機能を使用すると、TARGET_SHELL_FOR_COVERAGEに指定されたファイルが測定用ファイルに変換されます。<br>
-そのためTARGET_SHELL_FOR_COVERAGEに指定したファイル、及びそのディレクトリに書き込み権限が必要です。<br>
-また、TARGET_SHELL_FOR_COVERAGEに指定したファイルに定義した関数などの計測をしたい場合で、且つ測定用ファイルに変換する前の関数を読み込んでいる場合は、
-再度TARGET_SHELL_FOR_COVERAGEに指定したファイルを読み込み直してください。beforeTest関数などを使用すると良いでしょう。<br>
+カバレッジ測定機能を使用すると、SSU_TARGET_FOR_COVERAGEに指定されたファイルが測定用ファイルに変換されます。<br>
+そのためSSU_TARGET_FOR_COVERAGEに指定したファイル、及びそのディレクトリに書き込み権限が必要です。<br>
+また、SSU_TARGET_FOR_COVERAGEに指定したファイルに定義した関数などの計測をしたい場合で、且つ測定用ファイルに変換する前の関数を読み込んでいる場合は、
+再度SSU_TARGET_FOR_COVERAGEに指定したファイルを読み込み直してください。beforeTest関数などを使用すると良いでしょう。<br>
 （測定用に変換されていない関数が実行される可能性を防ぐためです）<br>
 <br>
 <br>
@@ -795,8 +796,7 @@ DB関係
 <table border=0 bgcolor="#000000" cellspacing=1 cellpadding=1>
 <tr bgcolor="#FFFFFF"><td colspan=2><a name="#u_db_insert">u_db_insert</a></td></tr>
 <tr bgcolor="#FFFFFF"><td colspan=2>引数で与えられたファイルのをinsertします。<br/>
-このUtil関数が対応しているのはOracleとDB2だけです。また、Oracleの日付のフォーマットは以下のフォーマット以外は正常にinsertされません。
-（DB2はファイルに記述されたフォーマットのままinsertされます）<br/>
+このUtil関数が対応しているのはOracleだけです。また、Oracleの日付のフォーマットは以下のフォーマット以外は正常にinsertされません。<br/>
 <ul>
 <li>Date型：yyyy/mm/dd、yyyy-mm-dd 、yyyymmdd</li>
 <li>Timestamp型：yyyy/mm/dd hh24:mi:ss 、yyyy-mm-dd hh24:mi:ss 、yyyymmdd hh24:mi:ss.SSS (時刻は「:」ではなく「/」or「-」でも対応します)
@@ -897,21 +897,143 @@ beforeTest(){<br>
 }<br>
 <br>
 <br>
+<a name="#perf"><b>パフォーマンス測定機能</b></a><br>
+SSUではパフォーマンスを測定する補助機能を提供しています。<br/>
+この機能は2種類あります。「1回の測定」と「複数回の測定」です。<br/>
+<br>
+<b>・1回の測定</b><br>
+以下のサンプルコードを見てください。<br/>
+<pre>
+test_time(){
+	timer_on #1
+	#.. なんらかの処理
+	assert_timer 1000 #2
+}
+</pre>
+<br/>
+timer_onから、assert_timerまでの時間を測定します。<br/>
+上記のコードでは、#1のtimer_onから、#2のassert_timerまでが「1000ミリ秒」以内であるかどうかを検証します。<br/>
+<br/>
+時間の検証にはassert_timerとcheck_timerの2つを提供しています。これらの違いは、「assert_timer」が検証に失敗すると
+そこれでテスト関数の実行を終了させます（通常のassert関数と同じ挙動です）。<br/>
+これに対して、check_timerは検証に失敗してもテスト関数を止めません。単にエラーを報告するだけです。<br/>
+<br/>
+注意：この時間測定処理のためにも時間が、わずかですが必要になるためあまりも厳しい時間の測定は注意してください。<br/>
+<br/>
+<table border=0 bgcolor="#000000" cellspacing=1 cellpadding=1>
+<tr bgcolor="#FFFFFF"><td colspan=2><a name="#timer_on">timer_on</a></td></tr>
+<tr bgcolor="#FFFFFF"><td colspan=2>時間を測定する直前に、timer_onを呼び出してください。引数はありません。</td></tr>
+</table><br><br>
+<table border=0 bgcolor="#000000" cellspacing=1 cellpadding=1>
+<tr bgcolor="#FFFFFF"><td colspan=2><a name="#assert_timer">assert_timer</a></td></tr>
+<tr bgcolor="#FFFFFF"><td colspan=2>timer_onからの時間が引数で指定した時間以内であるかを検証します。</td></tr>
+<tr bgcolor="#FFFFFF"><td colspan=2>引数</td></tr>
+<tr bgcolor="#FFFFFF"><td>$1</td><td>指定時間（ミリ秒）</td></tr>
+<tr bgcolor="#FFFFFF"><td>$2</td><td>コメント (option)</td></tr>
+</table><br><br>
+<table border=0 bgcolor="#000000" cellspacing=1 cellpadding=1>
+<tr bgcolor="#FFFFFF"><td colspan=2><a name="#check_timer">check_timer</a></td></tr>
+<tr bgcolor="#FFFFFF"><td colspan=2>timer_onからの時間が引数で指定した時間以内であるかを検証します。<br>
+check_timerはassert_timerと異なりテストの実行は止めません。（単にエラーを報告するだけです）</td></tr>
+<tr bgcolor="#FFFFFF"><td colspan=2>引数</td></tr>
+<tr bgcolor="#FFFFFF"><td>$1</td><td>指定時間（ミリ秒）</td></tr>
+<tr bgcolor="#FFFFFF"><td>$2</td><td>コメント (option)</td></tr>
+</table><br><br>
+<br>
+
+<b>・複数回の測定</b><br>
+複数回の測定は、複数回実行時間を取得して、その平均や標準偏差を取得します。<br>
+機能の使用方法も「1回の測定」とは異なります。<br>
+以下のサンプルコードを見てください。<br/>
+<pre>
+test_time(){
+	typeset cnt=0
+	while [ $cnt -lt 10 ]
+	do
+		plural_timer_on #1
+		#なんらかの処理
+		plural_timer_off #2
+		cnt=$(($cnt + 1))
+	done
+	plural_timer_report #3
+}
+</pre>
+<br>
+複数回の測定では、plural_timer_onからplural_timer_offまでの時間を測定します。<br>
+plural_timer_onとplural_timer_offのセットを複数回呼べば、その呼んだ回数で平均や標準偏差を計算します。
+そして、最後に測定結果をレポートさせているのが#3のplural_timer_reportです。<br>
+<br>
+以下のような、レポートを表示します。<br>
+<pre>
+average = 349.8 milli sec.
+standard-deviation = 138.950206908806 milli sec.
+max = 765 milli sec.
+min = 282 milli sec.
+count = 10
+</pre>
+<br>
+また、1回の測定と同様に検証も可能です。assert_plural_timerとcheck_plural_timerの2つがあります。使い方はassert_timerと同様です。<br>
+但し、平均値と比較されます。<br>
+<br>
+<br/>
+<table border=0 bgcolor="#000000" cellspacing=1 cellpadding=1>
+<tr bgcolor="#FFFFFF"><td colspan=2><a name="#plural_timer_on">plural_timer_on</a></td></tr>
+<tr bgcolor="#FFFFFF"><td colspan=2>時間を測定する直前に、plural_timer_onを呼び出してください。引数はありません。</td></tr>
+</table><br>
+<table border=0 bgcolor="#000000" cellspacing=1 cellpadding=1>
+<tr bgcolor="#FFFFFF"><td colspan=2><a name="#plural_timer_off">plural_timer_off</a></td></tr>
+<tr bgcolor="#FFFFFF"><td colspan=2>時間を測定する直後に、plural_timer_offを呼び出してください。引数はありません。</td></tr>
+</table><br>
+<br>
+<table border=0 bgcolor="#000000" cellspacing=1 cellpadding=1>
+<tr bgcolor="#FFFFFF"><td colspan=2><a name="#plural_timer_report">plural_timer_report</a></td></tr>
+<tr bgcolor="#FFFFFF"><td colspan=2>複数回の測定のレポートを出力します。引数なしで呼び出した場合、全てのレポートを出力します。
+引数を指定した場合、該当する測定値のみ、出力します。</td></tr>
+<tr bgcolor="#FFFFFF"><td colspan=2>引数</td></tr>
+<tr bgcolor="#FFFFFF"><td>$1</td><td>測定値指定（option）：<br>
+<ul>
+<li>ave : 平均値を出力します。</li>
+<li>sd  : 標準偏差を出力します。</li>
+<li>max : 最大値を出力します。</li>
+<li>min : 最小値を出力します。</li>
+<li>count : 取得件数を出力します。</li>
+</ul>
+</td></tr>
+</table><br><br>
+<table border=0 bgcolor="#000000" cellspacing=1 cellpadding=1>
+<tr bgcolor="#FFFFFF"><td colspan=2><a name="#assert_plural_timer">assert_plural_timer</a></td></tr>
+<tr bgcolor="#FFFFFF"><td colspan=2>平均時間が引数で指定した時間以内であるかを検証します</td></tr>
+<tr bgcolor="#FFFFFF"><td colspan=2>引数</td></tr>
+<tr bgcolor="#FFFFFF"><td>$1</td><td>指定時間（ミリ秒）</td></tr>
+<tr bgcolor="#FFFFFF"><td>$2</td><td>コメント (option)</td></tr>
+</table><br><br>
+<table border=0 bgcolor="#000000" cellspacing=1 cellpadding=1>
+<tr bgcolor="#FFFFFF"><td colspan=2><a name="#check_plural_timer">check_plural_timer</a></td></tr>
+<tr bgcolor="#FFFFFF"><td colspan=2>平均時間が引数で指定した時間以内であるかを検証します。<br>
+check_plural_timerはassert_plural_timerと異なりテストの実行は止めません。（単にエラーを報告するだけです）</td></tr>
+<tr bgcolor="#FFFFFF"><td colspan=2>引数</td></tr>
+<tr bgcolor="#FFFFFF"><td>$1</td><td>指定時間（ミリ秒）</td></tr>
+<tr bgcolor="#FFFFFF"><td>$2</td><td>コメント (option)</td></tr>
+</table><br><br>
+<br>
+
+<br>
+<br>
 <a name="#debug"><b>デバッグモード</b></a><br>
 SSUでは、デバックモードを用いることで、より詳細な情報を出力することができます。<br>
 テストコード内で<br>
 <br>
-DEBUG_MODE=ON<br>
+SSU_DEBUG_MODE=ON<br>
 <br>
 と、してください。<br>
 デバックモードを有効に使用するには、assert関数の引数でコメントを指定するほうが良いでしょう。<br>
 <br>
 <br>
 <a name="#target"><b>特定のテストのみの実行</b></a><br>
-SSUでは、TARGET_TEST_PATTERNという変数を用いて、実行するテストを決定しています。<br>
+SSUでは、SSU_TEST_PATTERNという変数を用いて、実行するテストを決定しています。<br>
 デフォルトは<br>
 <br>
-TARGET_TEST_PATTERN="^test";<br>
+SSU_TEST_PATTERN="^test";<br>
 <br>
 となっており、testから始まる関数名を全て実行するようになっています。<br>
 この変数をテストコードで再定義することによって、特定のテストのみ実行することが可能になります。<br>
@@ -936,10 +1058,10 @@ TARGET_TEST_PATTERN="^test";<br>
 <pre style="background:#eaeaea;;">
 #!/usr/bin/sh
 . /home/masayuki/ssu/SSU.sh #1. Testツールを読み込む
-JAVA_CMD="/opt/java/bin/java"; #1.1. Javaへのパスを設定する（不要な場合もある）
+SSU_JAVA_CMD="/opt/java/bin/java"; #1.1. Javaへのパスを設定する（不要な場合もある）
 SSU_HOME=".." #2. テストツールへの相対パスを指定する
 
-TARGET_SHELL_FOR_COVERAGE="tax.sh" #3. カバレッジを取得したいシェルを相対パスで指定。
+SSU_TARGET_FOR_COVERAGE="tax.sh" #3. カバレッジを取得したいシェルを相対パスで指定。
 
 #4. before afterを定義
 beforeTest(){
@@ -979,7 +1101,7 @@ startSSU; #7. Testを実行する
 </pre>
 <br>
 まずは、1でSSU.shを読み込みます。<br>
-そして、SSUではJavaを使用するため、1.1でJAVA_CMDを指定しています。既にJavaへのパスが通っている場合には不要です。<br>
+そして、SSUではJavaを使用するため、1.1でSSU_JAVA_CMDを指定しています。既にJavaへのパスが通っている場合には不要です。<br>
 次に2で、SSU.shへの相対パスを定義してください。<br>
 この2つは必須です。<br>
 <br>
@@ -1087,8 +1209,9 @@ FileWriteCodeFromDB=Shift_JIS
 http://www.apache.org/licenses/LICENSE-2.0<br>
 <br>
 また作者は<br>
-Masayuki Ioki (youzou5 -at- hotmail.com)と<br>
-Takumi Hosakaです。<br>
+Masayuki Ioki (kikainekox -at- google.com)と<br>
+Takumi Hosaka<br>
+Teruyuki Takazawaです。<br>
 <br>
 Version : 0.5<br>
 Date ; 2009.01.20<br>
