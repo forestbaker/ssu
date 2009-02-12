@@ -302,12 +302,12 @@ test_u_f_getTimestamp(){
 	touch temptemp_f
 	assert_FileDateOrder temptemp_f ">" "${t}"
 }
-#TARGET_TEST_PATTERN="^test_u_str_toFilePermissionNumber";
-SSU_SELFPATH="../ssu"
-#TARGET_SHELL_FOR_COVERAGE="Util.sh"
+#SSU_TEST_PATTERN="^test_u_str_toFilePermissionNumber";
+SSU_HOME="../ssu"
+#SSU_TARGET_FOR_COVERAGE="Util.sh"
 date
 
-#DEBUG_MODE=ON;
+#SSU_DEBUG_MODE=ON;
 startSSU;
 date
 
