@@ -639,7 +639,7 @@ _ssu_mkdir_evi(){
 	typeset dname=$1;
 	if [[ ! -d "${dname}" ]]
 	then
-		mkdir "${dname}"
+		mkdir -p "${dname}"
 		r=$?;
 		if [ $r -ne 0 ]
 		then
