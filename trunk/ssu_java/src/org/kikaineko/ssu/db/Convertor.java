@@ -39,9 +39,9 @@ public class Convertor {
 			} else {
 				vals = new String[] { ss[1] };
 			}
-			Character k = Character.valueOf((char) calc(key));
+			Character k = new Character((char) calc(key));
 			for (int j = 0; j < vals.length; j++) {
-				Character cc = Character.valueOf((char) calc(vals[j].trim()));
+				Character cc = new Character((char) calc(vals[j].trim()));
 				map.put(cc, k);
 			}
 		}
@@ -82,7 +82,7 @@ public class Convertor {
 		char[] cs = s.toCharArray();
 		char[] res = new char[cs.length];
 		for (int i = 0; i < cs.length; i++) {
-			Character c = Character.valueOf(cs[i]);
+			Character c = new Character(cs[i]);
 			Object o = map.get(c);
 			if (o != null) {
 				res[i] = ((Character) o).charValue();

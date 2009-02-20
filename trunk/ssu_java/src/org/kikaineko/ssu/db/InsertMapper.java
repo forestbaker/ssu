@@ -88,7 +88,7 @@ public class InsertMapper {
 		case Types.NUMERIC:
 		case Types.DECIMAL:
 			if (!isEmpty(s)) {
-				return BigDecimal.valueOf(Double.parseDouble(s)).toString();
+				return new BigDecimal(Double.parseDouble(s)).toString();
 			} else {
 				return null;
 			}

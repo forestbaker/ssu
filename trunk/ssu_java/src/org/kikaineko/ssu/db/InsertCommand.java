@@ -108,7 +108,7 @@ public class InsertCommand {
 			for (int i = 0; i < rsmd.getColumnCount(); i++) {
 				String s = rsmd.getColumnName(i + 1);
 				names.add(s);
-				map.put(s, Integer.valueOf(rsmd.getColumnType(i + 1)));
+				map.put(s, new Integer(rsmd.getColumnType(i + 1)));
 			}
 
 		} catch (Exception e) {
