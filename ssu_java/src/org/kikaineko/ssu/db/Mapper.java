@@ -55,24 +55,24 @@ public class Mapper {
 		case Types.TINYINT:
 		case Types.SMALLINT:
 			short sc = rset.getShort(name);
-			return Short.valueOf(sc).toString();
+			return Short.toString(sc);
 
 		case Types.INTEGER:
 			int j = rset.getInt(name);
-			return Integer.valueOf(j).toString();
+			return Integer.toString(j);
 
 		case Types.BIGINT:
 			long l = rset.getLong(name);
-			return Long.valueOf(l).toString();
+			return Long.toString(l);
 
 		case Types.REAL:
 			float f = rset.getFloat(name);
-			return Float.valueOf(f).toString();
+			return Float.toString(f);
 
 		case Types.FLOAT:
 		case Types.DOUBLE:
 			double dd = rset.getDouble(name);
-			return Double.valueOf(dd).toString();
+			return Double.toString(dd);
 		case Types.NUMERIC:
 		case Types.DECIMAL:
 			BigDecimal bd = rset.getBigDecimal(name);
@@ -133,33 +133,33 @@ public class Mapper {
 			if (!isEmpty(s)) {
 				return Short.valueOf(s);
 			} else {
-				return Short.valueOf((short) 0);
+				return new Short((short) 0);
 			}
 		case Types.INTEGER:
 			if (!isEmpty(s)) {
-				return Integer.valueOf(s);
+				return new Integer(s);
 			} else {
-				return Integer.valueOf(0);
+				return new Integer(0);
 			}
 		case Types.BIGINT:
 			if (!isEmpty(s)) {
-				return Long.valueOf(s);
+				return new Long(s);
 			} else {
-				return Long.valueOf(0);
+				return new Long(0);
 			}
 
 		case Types.REAL:
 			if (!isEmpty(s)) {
-				return Float.valueOf(s);
+				return new Float(s);
 			} else {
-				return Float.valueOf(0);
+				return new Float(0);
 			}
 		case Types.FLOAT:
 		case Types.DOUBLE:
 			if (!isEmpty(s)) {
-				return Double.valueOf(s);
+				return new Double(s);
 			} else {
-				return Double.valueOf(0);
+				return new Double(0);
 			}
 		case Types.NUMERIC:
 		case Types.DECIMAL:
@@ -213,29 +213,29 @@ public class Mapper {
 			return "";
 		case Types.BIT:
 			boolean b = rset.getBoolean(i);
-			return Boolean.valueOf(b);
+			return new Boolean(b);
 
 		case Types.TINYINT:
 		case Types.SMALLINT:
 			short sc = rset.getShort(i);
-			return Short.valueOf(sc);
+			return new Short(sc);
 
 		case Types.INTEGER:
 			int j = rset.getInt(i);
-			return Integer.valueOf(j);
+			return new Integer(j);
 
 		case Types.BIGINT:
 			long l = rset.getLong(i);
-			return Long.valueOf(l);
+			return new Long(l);
 
 		case Types.REAL:
 			float f = rset.getFloat(i);
-			return Float.valueOf(f);
+			return new Float(f);
 
 		case Types.FLOAT:
 		case Types.DOUBLE:
 			double dd = rset.getDouble(i);
-			return Double.valueOf(dd);
+			return new Double(dd);
 		case Types.NUMERIC:
 		case Types.DECIMAL:
 			BigDecimal bd = rset.getBigDecimal(i);

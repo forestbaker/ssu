@@ -51,11 +51,11 @@ public class SQLExec {
 			List names = new ArrayList();
 			List types = new ArrayList();
 			names.add(rsmd.getColumnName(1));
-			types.add(Integer.valueOf(rsmd.getColumnType(1)));
+			types.add(new Integer(rsmd.getColumnType(1)));
 			sb.append(rsmd.getColumnName(1));
 			for (int i = 1; i < rsmd.getColumnCount(); i++) {
 				names.add(rsmd.getColumnName(i + 1));
-				types.add(Integer.valueOf(rsmd.getColumnType(i + 1)));
+				types.add(new Integer(rsmd.getColumnType(i + 1)));
 				sb.append(",");
 				sb.append(rsmd.getColumnName(i + 1));
 			}
