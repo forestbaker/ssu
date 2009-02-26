@@ -1,8 +1,5 @@
-. ~/ssu/SSU.sh
-#. /home/posaka/ssu/SSU.sh
-
-SSU_SELFPATH="."
-#TARGET_SHELL_FOR_COVERAGE="Assert.sh"
+. ../../ssu/SSU.sh
+SSU_HOME="../../ssu"
 
 beforeTest(){
 	h_make_file tmp_0.txt
