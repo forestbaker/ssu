@@ -11,7 +11,7 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		try {
-			if (args.length != 4 && args.length != 6 && args.length != 7) {
+			if (args.length != 4 && args.length != 5 && args.length != 6 && args.length != 7) {
 				badArgs(args);
 			}
 			FileIO.CodeFilePATH=args[0];
@@ -19,7 +19,7 @@ public class Main {
 			if (args[1].equals("new")) {
 				NewSourceMaker.createNewSource(args[2], args[3]);
 			} else if (args[1].equals("analyze")) {
-				Analyzer.analyze(args[2], args[3]);
+				Analyzer.analyze(args[2], args[3],args[4]);
 			} else if (args[1].equals("util")) {
 				Utiler.exec(args[2], args[3]);
 			} else if (args[1].equals("utilfilesame")) {

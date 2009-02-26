@@ -9,5 +9,6 @@ public interface Shell {
 	public static final String END_KAKKO="}";
 	public static final String ELIF="elif";
 	public static final String ELSE="else";
+	public static final String PIPE="|";
 	
 }

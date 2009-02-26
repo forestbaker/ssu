@@ -75,7 +75,7 @@ public class LineKindController implements LineKind, Shell {
 
 	private boolean isContinueLine(TokenArray tokens) {
 		int last = tokens.getKind(tokens.length() - 1);
-		if (last == TokenKind.Esc)
+		if (last == TokenKind.Esc || last==TokenKind.SingleBar)
 			return true;
 		return false;
 	}

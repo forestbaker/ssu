@@ -7,7 +7,7 @@ import org.kikaineko.util.FileIO;
 
 public class Analyzer {
 
-	public static void analyze(String expectedFile, String resultFile)
+	public static void analyze(String expectedFile, String resultFile,String name)
 			throws Exception {
 		ArrayList resultlines = cleaned(FileIO.getFileDatas(resultFile,FileIO.FileReadCode));
 		ArrayList tempResult = new ArrayList();
@@ -43,7 +43,7 @@ public class Analyzer {
 			}
 		}
 		float doneLines = expecteds.length - cnt;
-		result(sb, doneLines, expectedlines.size());
+		result(sb, doneLines, expectedlines.size(),name);
 	}
 
 	private static ArrayList cleaned(ArrayList fileDatas) {
@@ -57,10 +57,11 @@ public class Analyzer {
 		return tmp;
 	}
 
-	protected static void result(StringBuffer sb, float doneLines, int max) {
+	protected static void result(StringBuffer sb, float doneLines, int max,String name) {
 		int rate = (int) (((doneLines) / max) * 100);
 		System.out.println("==Coverage Report.==========================");
 		if (sb.length() > 0) {
+			System.out.println(name);
 			System.out.println(rate + "% passed!(" + (int) (doneLines) + "/"
 					+ max + "[passedCommandLines/allCommandLines])");
 			if (max - doneLines > 1) {
