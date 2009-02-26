@@ -36,19 +36,15 @@ SSU_HOME=""
 ################################################################################
 ## Options -start-
 
+if [ x"$_ssu_SUITE_DEBUG_MODE" = "x" ];then
+	_ssu_SUITE_DEBUG_MODE="";
+fi
 SSU_DEBUG_MODE=OFF;
 DEBUG_MODE=OFF;
 SSU_TEST_PATTERN="^test";
 TARGET_TEST_PATTERN="^test";
 SSU_EVIDENCE_BASEDIR="";
 SSU_CHARCODE=""
-
-## SSU_TARGET_FOR_COVERAGE="../src/foo.sh"
-## if you want to check coverage,please define SSU_TARGET_FOR_COVERAGE.
-## SSU_TARGET_FOR_COVERAGE is a relative path-name to target shell from your test_case.
-## like SSU_TARGET_FOR_COVERAGE="tax.sh" (/home/foo/testcase/test.sh , /home/foo/testcase/tax.sh)
-SSU_TARGET_FOR_COVERAGE="";
-TARGET_SHELL_FOR_COVERAGE="";
 
 ## SSU requires Java.
 ## Please define Your JavaPath.
@@ -140,7 +136,9 @@ _ssu_Lock=""
 
 _ssu_succeedLog_INNER="_ssu_succeedLog_DEBUG"
 
-_ssu_suite_inner_flag="off"
+if [ "$_ssu_suite_inner_flag" != "on" ];then
+	_ssu_suite_inner_flag="off"
+fi
 ## suite 
 ################################################################################
 _ssu_casename=`basename $0`
@@ -186,7 +184,7 @@ _ssu_BeforeTest(){
 # This is dummy.Plese override.
 ################################################################################
 beforeTest(){
-	typeset dummy="";
+	typeset __beforeTest_dummy="";
 }
 
 ################################################################################
@@ -196,10 +194,10 @@ beforeTest(){
 _ssu_SetUp(){
 
 	if [ "${SSU_DEBUG_MODE}" = "ON" ]; then
-		typeset __case_name=$1
+		typeset ___ssu_SetUp_case_name=$1
 		echo "";
 		echo "------------------------------------------------------------------";
-		echo "TestCase Start : ${__case_name}";
+		echo "TestCase Start : ${___ssu_SetUp_case_name}";
 	fi
 	
 	setUp;
@@ -211,7 +209,7 @@ _ssu_SetUp(){
 # This is dummy.Plese override.
 ################################################################################
 setUp(){
-	typeset dummy="";
+	typeset __setUp_dummy="";
 }
 
 ################################################################################
@@ -224,8 +222,8 @@ _ssu_TearDown(){
 	_ssu_TeardownForEvidence_test
 	_ssu_tearDown_h;
 	if [ "${SSU_DEBUG_MODE}" = "ON" ]; then
-		typeset _case_num=$1;
-		echo "TestCase END : ${__case_num}";
+		typeset ___ssu_TearDown_case_num=$1;
+		echo "TestCase END : ${___ssu_TearDown_case_num}";
 		echo "------------------------------------------------------------------";
 		echo "";
 	fi
@@ -237,7 +235,7 @@ _ssu_TearDown(){
 # this is dummy.
 ################################################################################
 tearDown(){
-	typeset dummy=;
+	typeset __tearDown_dummy=;
 }
 
 ################################################################################
@@ -246,9 +244,9 @@ tearDown(){
 _ssu_AfterTest(){
 
         if [ "${SSU_DEBUG_MODE}" = "ON" ]; then
-		typeset sh_name=`basename $0`;
+		typeset ___ssu_AfterTest_sh_name=`basename $0`;
                 echo "";
-                echo "Done : ${sh_name}";
+                echo "Done : ${___ssu_AfterTest_sh_name}";
                 echo "###########################################################################";
         fi
 
@@ -261,7 +259,7 @@ _ssu_AfterTest(){
 # This is dummy.Plese override.
 ################################################################################
 afterTest(){
-        typeset dummy="";
+        typeset __afterTest_dummy="";
 }
 
 
@@ -279,13 +277,11 @@ _ssu_DoSSU(){
 	_ssu_countOfSuccessTest=0;
 	_ssu_countOfFailedTest=0;
 
-
-	_ssu_CheckCoverage
 	_ssu_SetupForCoverage
 
 	_ssu_BeforeTest;
-	typeset test_cnt_max=${#_ssu_TestArray[*]}
-	typeset color="green";
+	typeset ___ssu_DoSSU_test_cnt_max=${#_ssu_TestArray[*]}
+	typeset ___ssu_DoSSU_color="green";
 	
 	#Each Test Run!
 	while [ ${_ssu_cnt} -lt ${#_ssu_TestArray[*]} ]
@@ -295,42 +291,36 @@ _ssu_DoSSU(){
 		_ssu_mkdir_evi_test
 		
 		if [ "${SSU_DEBUG_MODE}" != "ON" ]; then
-			#typeset mes=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar  ${_ssu_UtilJar} "${SSU_CHARCODE}" "report" "START ${_ssu_CurrentTestName}" "${_ssu_cnt}" "${test_cnt_max}" "${color}"`
-			#printf "\r${mes}" -e
-			_ssu_display_bar "START ${_ssu_CurrentTestName}" "${_ssu_cnt}" "${test_cnt_max}" "${color}"
+			_ssu_display_bar "START ${_ssu_CurrentTestName}" "${_ssu_cnt}" "${___ssu_DoSSU_test_cnt_max}" "${___ssu_DoSSU_color}"
 		fi
 		
 		#testing
 		_ssu_test_run &
 		_ssu_TestJobID=$!;
 		wait ${_ssu_TestJobID};
-		typeset test_rc=$?;
+		typeset ___ssu_DoSSU_test_rc=$?;
 		_ssu_TestJobID="";
 		
 		#result testing
-		if [ ${test_rc} -eq 0 ] 
+		if [ ${___ssu_DoSSU_test_rc} -eq 0 ] 
 		then 
 			_ssu_countOfSuccessTest=$((${_ssu_countOfSuccessTest}+1))
 		else
 			_ssu_countOfFailedTest=$((${_ssu_countOfFailedTest}+1))
-			color="red"
+			___ssu_DoSSU_color="red"
 			_ssu_suite_color="red"
 		fi
 		
 		_ssu_cnt=$((${_ssu_cnt}+1));
 		
 		if [ "${SSU_DEBUG_MODE}" != "ON" ]; then
-			#typeset mes=`${SSU_JAVA_CMD} -Xint -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "report" "END   ${_ssu_CurrentTestName}" "${_ssu_cnt}" "${test_cnt_max}" "${color}"`
-			#printf "\r${mes}" -e
-			_ssu_display_bar "END   ${_ssu_CurrentTestName}" "${_ssu_cnt}" "${test_cnt_max}" "${color}"
+			_ssu_display_bar "END   ${_ssu_CurrentTestName}" "${_ssu_cnt}" "${___ssu_DoSSU_test_cnt_max}" "${___ssu_DoSSU_color}"
 		fi
 		
 	done
 	
 	if [ "${SSU_DEBUG_MODE}" != "ON" ]; then
-		#typeset mes=`${SSU_JAVA_CMD} -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "report" "TEST END" "${_ssu_cnt}" "${test_cnt_max}" "${color}"`
-		#printf "\r${mes}" -e
-		_ssu_display_bar "TEST END" "${_ssu_cnt}" "${test_cnt_max}" "${color}"
+		_ssu_display_bar "TEST END" "${_ssu_cnt}" "${___ssu_DoSSU_test_cnt_max}" "${___ssu_DoSSU_color}"
 	fi
 	
 	if [ "$_ssu_suite_inner_flag" != "on" ];then
@@ -401,15 +391,15 @@ _ssu_trap_function(){
 	trap "" 1 2 3 15
 	unset _ssu_TestArray
 	if [ ! -z "${_ssu_TestJobID}" ]; then
-		typeset status=`cat ${_ssu_Lock}`
-		if [ "${status}" = "0" -o "${status}" = "1" ]; then
+		typeset ___ssu_trap_function_status=`cat ${_ssu_Lock}`
+		if [ "${___ssu_trap_function_status}" = "0" -o "${___ssu_trap_function_status}" = "1" ]; then
 			kill -15 ${_ssu_TestJobID}
 		fi
-		status=`cat ${_ssu_Lock}`
-		while [ "${status}" != "3" ];
+		___ssu_trap_function_status=`cat ${_ssu_Lock}`
+		while [ "${___ssu_trap_function_status}" != "3" ];
 		do
 			sleep 1
-			status=`cat ${_ssu_Lock}`
+			___ssu_trap_function_status=`cat ${_ssu_Lock}`
 		done
 
 		_ssu_TestJobID=""
@@ -432,11 +422,14 @@ trap _ssu_trap_function 0 1 2 3 15
 startSSU(){
 	## Checking
 	_ssu_old_to_new
+	if [ x"$_ssu_SUITE_DEBUG_MODE" != "x" ];then
+		SSU_DEBUG_MODE="$_ssu_SUITE_DEBUG_MODE"
+	fi
 	
-	typeset td=`dirname ${SSU_HOME}`;
-	typeset tf=`basename ${SSU_HOME}`;
+	typeset __startSSU_td=`dirname ${SSU_HOME}`;
+	typeset __startSSU_tf=`basename ${SSU_HOME}`;
 	
-	SSU_HOME=${td}/${tf}
+	SSU_HOME=${__startSSU_td}/${__startSSU_tf}
 	
 	
 	if [[ ! -d "${SSU_HOME}" || ! -f "${SSU_HOME}/SSU.sh" ]];then
@@ -456,6 +449,11 @@ startSSU(){
 		echo "We need Assert.sh"
 		exit 1;
 	fi
+	if [ ! -f "${SSU_HOME}/Helper.sh" ];then
+		echo "Not Found Helper.sh in ${SSU_HOME}"
+		echo "We need Helper.sh"
+		exit 1;
+	fi
 	if [ ! -f "${SSU_HOME}/ssu.jar" ];then
 		echo "Not Found ssu.jar in ${SSU_HOME}"
 		echo "We need ssu.jar"
@@ -464,14 +462,16 @@ startSSU(){
 	
 	
 	${SSU_JAVA_CMD} -version > /dev/null 2>&1
-	typeset rc=$?
-	if [ ${rc} -ne 0 ]
+	typeset __startSSU_rc=$?
+	if [ ${__startSSU_rc} -ne 0 ]
 	then
 		echo "Not Found java"
 		echo "We need java!"
 		exit 1;
 	fi
 	
+	. ${SSU_HOME}/Helper.sh
+	. ${SSU_HOME}/AssertExt.sh
 	. ${SSU_HOME}/Assert.sh
 	. ${SSU_HOME}/Util.sh
 
@@ -479,22 +479,22 @@ startSSU(){
 
 	#make work dir
 	_ssu_WorkDir="${SSU_HOME}"/$$;
-	typeset i=1;
-	while [[ -d "${_ssu_WorkDir}${i}" ]] 
+	typeset __startSSU_i=1;
+	while [[ -d "${_ssu_WorkDir}${__startSSU_i}" ]] 
 	do
-		i=$((${i}+1))
+		__startSSU_i=$((${__startSSU_i}+1))
 	done
-	mkdir "${_ssu_WorkDir}${i}";
-	rc=$?
-	if [ ${rc} -ne 0 ]
+	mkdir "${_ssu_WorkDir}${__startSSU_i}";
+	__startSSU_rc=$?
+	if [ ${__startSSU_rc} -ne 0 ]
 	then
-		echo "We Cannot create work dir!! ${_ssu_WorkDir}${i}"
+		echo "We Cannot create work dir!! ${_ssu_WorkDir}${__startSSU_i}"
 		exit 1;
 	fi
-	_ssu_WorkDir="${_ssu_WorkDir}${i}";
+	_ssu_WorkDir="${_ssu_WorkDir}${__startSSU_i}";
 	touch ${_ssu_WorkDir}/lock;
-	rc=$?
-	if [ ${rc} -ne 0 ]
+	__startSSU_rc=$?
+	if [ ${__startSSU_rc} -ne 0 ]
 	then
 		echo "We Cannot create lock file!!"
 		exit 1;
@@ -503,22 +503,22 @@ startSSU(){
 	echo "0" > ${_ssu_Lock};
 	#end
 	
-	typeset isCygwin=`uname |grep CYGWIN`;
-	if [ ! -z "${isCygwin}" ]
+	typeset __startSSU_isCygwin=`uname |grep CYGWIN`;
+	if [ ! -z "${__startSSU_isCygwin}" ]
 	then
 		_ssu_jarsep=";"
 	fi
 	
 	_ssu_SetupForEvidence
 	
-	typeset test_funcs=`typeset -f |sed 's/function //'| sed 's/()//' | grep ${SSU_TEST_PATTERN}`;
+	typeset __startSSU_test_funcs=`typeset -f |sed 's/function //'| sed 's/()//' | grep ${SSU_TEST_PATTERN}`;
 
-	typeset t="";
-	i=0;
-	for t in ${test_funcs}
+	typeset __startSSU_t="";
+	__startSSU_i=0;
+	for __startSSU_t in ${__startSSU_test_funcs}
 	do
-		_ssu_TestArray[$i]=$t
-		i=$(($i+1))
+		_ssu_TestArray[$__startSSU_i]=$__startSSU_t
+		__startSSU_i=$(($__startSSU_i+1))
 	done
 
 	_ssu_DoSSU;
@@ -527,123 +527,176 @@ startSSU(){
 
 #####################################################################################################
 ## below's are For Coverage.
+add_ssuCoverageTarget(){
+	if [ $# -ne 1 ];then
+		echo "Coverage Error!"
+		echo "Please give me your CoverageTarget."
+		exit 1
+	fi
+	typeset __add_ssuCoverageTarget_target="$1"
+	_ssu_CheckCoverage "$__add_ssuCoverageTarget_target"
+	typeset __add_ssuCoverageTarget_ind=`echo ${#_ssu_CoverageTargets[*]}`
+	_ssu_CoverageTargets[${__add_ssuCoverageTarget_ind}]="$__add_ssuCoverageTarget_target"
+}
+
 _ssu_CheckCoverage(){
-	if [ "${SSU_TARGET_FOR_COVERAGE}" != "" ];
+	typeset ___ssu_CheckCoverage_target="$1" 
+	if [ "${___ssu_CheckCoverage_target}" = "" ];
 	then
-		if [ ! -f "${SSU_TARGET_FOR_COVERAGE}" ];then
-			echo "${SSU_TARGET_FOR_COVERAGE} is wrong."
-			echo "Plase set correct SSU_TARGET_FOR_COVERAGE."
-			exit 1;
-		fi
-		_ssu_TARGET_SHELL_FILE=`basename "${SSU_TARGET_FOR_COVERAGE}"`;
-		typeset rc=$?;
-		if [ $rc -ne 0 ]
-		then
-			echo "Cannot read SSU_TARGET_FOR_COVERAGE !";
-			exit 1;
-		fi
-		_ssu_TARGET_SHELL_DIR=`dirname "${SSU_TARGET_FOR_COVERAGE}"`;
-		rc=$?;
-		if [ $rc -ne 0 ]
-		then
-			echo "Cannot read SSU_TARGET_FOR_COVERAGE !";
-			exit 1;
-		fi
+		echo "Coverage Error!"
+		echo "Please give me your CoverageTarget."
+		exit 1
+	fi
+	
+	if [ ! -f "${___ssu_CheckCoverage_target}" ];then
+		echo "Coverage Error!"
+		echo "${___ssu_CheckCoverage_target} is wrong."
+		echo "Plase set correct your CoverageTarget Shell or permission error?"
+		exit 1;
+	fi
+	
+	if [ ! -w "${___ssu_CheckCoverage_target}" ];then
+		echo "Coverage Error!"
+		echo "${___ssu_CheckCoverage_target} is wrong."
+		echo "Plase set correct your CoverageTarget Shell or permission error?"
+		exit 1;
+	fi
+	
+	typeset ___ssu_CheckCoverage_d=`dirname "${___ssu_CheckCoverage_target}"`;
+	if [ ! -w "${___ssu_CheckCoverage_d}" ];then
+		echo "Coverage Error!"
+		echo "${___ssu_CheckCoverage_target} is wrong."
+		echo "Plase set correct your CoverageTarget Shell or Dir-permission error?"
+		exit 1;
 	fi
 }
 
 _ssu_SetupForCoverage(){
-	if [ "${SSU_TARGET_FOR_COVERAGE}" != "" ];
+	typeset ___ssu_SetupForCoverage_ind=`echo ${#_ssu_CoverageTargets[*]}`
+	if [ ${___ssu_SetupForCoverage_ind} -eq 0 ];then
+		return 0
+	fi
+	___ssu_SetupForCoverage_ind=0
+	while [ ${___ssu_SetupForCoverage_ind} -lt ${#_ssu_CoverageTargets[*]} ]
+	do
+		typeset ___ssu_SetupForCoverage_target=${_ssu_CoverageTargets[$___ssu_SetupForCoverage_ind]};
+		_ssu_iSetup4C "${___ssu_SetupForCoverage_target}"
+		___ssu_SetupForCoverage_ind=$((${___ssu_SetupForCoverage_ind}+1));
+	done
+}
+_ssu_iSetup4C(){
+	typeset ___ssu_iSetup4C_target="${1}"
+	typeset ___ssu_iSetup4C_b=`basename ${___ssu_iSetup4C_target}`
+	typeset ___ssu_iSetup4C_backup=`_ssu_TempFileName "${___ssu_iSetup4C_b}"`;
+	
+	typeset ___ssu_iSetup4C_rc=$?;
+	if [ $___ssu_iSetup4C_rc -ne 0 ]
 	then
-		_ssu_BACKUP_TARGET=`_ssu_TempFileName "${_ssu_TARGET_SHELL_FILE}"`;
-		typeset rc=$?;
-		if [ $rc -ne 0 ]
-		then
-			echo "Cannot BackUP ${_ssu_TARGET_SHELL_FILE} !";
-			exit 1;
-		fi
-		_ssu_COVERAGE_EXPECTED=`_ssu_TempFileName expect_f`;
-		rc=$?;
-		if [ $rc -ne 0 ]
-		then
-			echo "Cannot make a file in ${_ssu_WorkDir} !";
-			exit 1;
-		fi
-		_ssu_COVERAGE_RESULT=`_ssu_TempFileName result_f`;
-		rc=$?;
-		if [ $rc -ne 0 ]
-		then
-			echo "Cannot make a file in ${_ssu_WorkDir} !";
-			exit 1;
-		fi
-		cp -p "${_ssu_TARGET_SHELL_DIR}/${_ssu_TARGET_SHELL_FILE}" "${_ssu_BACKUP_TARGET}";
-		rc=$?;
-		if [ $rc -ne 0 ]
-		then
-			echo "Cannot BackUP ${_ssu_TARGET_SHELL_FILE} !";
-			exit 1;
-		fi
-		
-		typeset same=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "utilfilesame" "${_ssu_TARGET_SHELL_DIR}/${_ssu_TARGET_SHELL_FILE}" "${_ssu_BACKUP_TARGET}"`
-		if [ $same -eq 1 ]
-		then
-			echo "Cannot BackUP ${_ssu_TARGET_SHELL_FILE} !";
-			exit 1;
-		fi
-		
-		${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar "${_ssu_UtilJar}" "${SSU_CHARCODE}" new "${_ssu_BACKUP_TARGET}" "${_ssu_COVERAGE_RESULT}" > "${_ssu_TARGET_SHELL_DIR}/${_ssu_TARGET_SHELL_FILE}" 2> "${_ssu_COVERAGE_EXPECTED}"
-		typeset rc=$?;
-		if [ $rc -ne 0 ]
-		then
-			echo "Cannot Over Write To ${_ssu_TARGET_SHELL_FILE}!";
-			echo "Do you open ${_ssu_TARGET_SHELL_FILE} ?";
-			exit 1;
-		fi
-		
-		typeset isCygwin=`uname |grep CYGWIN`;
-		if [ ! -z ${isCygwin} ];then
-			dos2unix "${_ssu_TARGET_SHELL_DIR}/${_ssu_TARGET_SHELL_FILE}" 2> /dev/null
-			dos2unix "${_ssu_COVERAGE_RESULT}" 2> /dev/null
-		fi
+		echo "Cannot BackUP ${___ssu_iSetup4C_target} !";
+		exit 1;
+	fi
+	typeset ___ssu_iSetup4C_expect_f=`_ssu_TempFileName expect_f`;
+	___ssu_iSetup4C_rc=$?;
+	if [ $___ssu_iSetup4C_rc -ne 0 ]
+	then
+		echo "Cannot make a file in ${_ssu_WorkDir} !";
+		exit 1;
+	fi
+	typeset ___ssu_iSetup4C_result_f=`_ssu_TempFileName result_f`;
+	___ssu_iSetup4C_rc=$?;
+	if [ $___ssu_iSetup4C_rc -ne 0 ]
+	then
+		echo "Cannot make a file in ${_ssu_WorkDir} !";
+		exit 1;
+	fi
+	cp -p "${___ssu_iSetup4C_target}" "${___ssu_iSetup4C_backup}";
+	___ssu_iSetup4C_rc=$?;
+	if [ $___ssu_iSetup4C_rc -ne 0 ]
+	then
+		echo "Cannot BackUP ${___ssu_iSetup4C_target} !";
+		exit 1;
+	fi
+	
+	typeset ___ssu_iSetup4C_same=`${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "utilfilesame" "${___ssu_iSetup4C_target}" "${___ssu_iSetup4C_backup}"`
+	if [ $___ssu_iSetup4C_same -eq 1 ]
+	then
+		echo "Cannot BackUP ${___ssu_iSetup4C_target} !";
+		exit 1;
+	fi
+	
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar "${_ssu_UtilJar}" "${SSU_CHARCODE}" new "${___ssu_iSetup4C_backup}" "${___ssu_iSetup4C_result_f}" > "${___ssu_iSetup4C_target}" 2> "${___ssu_iSetup4C_expect_f}"
+	___ssu_iSetup4C_rc=$?;
+	if [ $___ssu_iSetup4C_rc -ne 0 ]
+	then
+		echo "Cannot Over Write To ${___ssu_iSetup4C_target}!";
+		echo "Do you open ${___ssu_iSetup4C_target} ?";
+		exit 1;
+	fi
+	
+	typeset ___ssu_iSetup4C_ind=`echo ${#_ssu_CoverageBackups[*]}`
+	_ssu_CoverageBackups[${___ssu_iSetup4C_ind}]="$___ssu_iSetup4C_backup"
+	_ssu_CoverageResult_fs[${___ssu_iSetup4C_ind}]="$___ssu_iSetup4C_result_f"
+	_ssu_CoverageExpect_fs[${___ssu_iSetup4C_ind}]="$___ssu_iSetup4C_expect_f"
+	
+	typeset ___ssu_iSetup4C_isCygwin=`uname |grep CYGWIN`;
+	if [ ! -z ${___ssu_iSetup4C_isCygwin} ];then
+		dos2unix "${___ssu_iSetup4C_target}" 2> /dev/null
+		dos2unix "${___ssu_iSetup4C_result_f}" 2> /dev/null
 	fi
 }
 
 _ssu_TearDownForCoverage(){
-	if [  "${SSU_TARGET_FOR_COVERAGE}" != "" ];
-	then
-		${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar "${_ssu_UtilJar}" "${SSU_CHARCODE}" analyze "${_ssu_COVERAGE_EXPECTED}" "${_ssu_COVERAGE_RESULT}"
-		if [ ! -f "${_ssu_BACKUP_TARGET}" ]
-		then
-			return 0;
-		fi
-		
-		if [ -s "${_ssu_BACKUP_TARGET}" ]
-		then
-			cp -p "${_ssu_BACKUP_TARGET}" "${_ssu_TARGET_SHELL_DIR}/${_ssu_TARGET_SHELL_FILE}" &
-			typeset j=$!
-			wait $j;
-		fi
-		rm -f "${_ssu_BACKUP_TARGET}"
-		rm -f "${_ssu_COVERAGE_EXPECTED}";
-		rm -f "${_ssu_COVERAGE_RESULT}";
+	typeset ___ssu_TearDownForCoverage_ind=`echo ${#_ssu_CoverageTargets[*]}`
+	if [ ${___ssu_TearDownForCoverage_ind} -eq 0 ];then
+		return 0
 	fi
-	SSU_TARGET_FOR_COVERAGE=""
+	___ssu_TearDownForCoverage_ind=0
+	while [ ${___ssu_TearDownForCoverage_ind} -lt ${#_ssu_CoverageTargets[*]} ]
+	do
+		_ssu_iTearDown4C "${___ssu_TearDownForCoverage_ind}"
+		___ssu_TearDownForCoverage_ind=$((${___ssu_TearDownForCoverage_ind}+1));
+	done
+	unset _ssu_CoverageTargets
+	unset _ssu_CoverageBackups
+	unset _ssu_CoverageResult_fs
+	unset _ssu_CoverageExpect_fs
 }
-
-
+_ssu_iTearDown4C(){
+	typeset ___ssu_iTearDown4C_ind=${1}
+	typeset ___ssu_iTearDown4C_target=${_ssu_CoverageTargets[$___ssu_iTearDown4C_ind]}
+	typeset ___ssu_iTearDown4C_backup=${_ssu_CoverageBackups[${___ssu_iTearDown4C_ind}]}
+	typeset ___ssu_iTearDown4C_result_f=${_ssu_CoverageResult_fs[${___ssu_iTearDown4C_ind}]}
+	typeset ___ssu_iTearDown4C_expect_f=${_ssu_CoverageExpect_fs[${___ssu_iTearDown4C_ind}]}
+	
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar "${_ssu_UtilJar}" "${SSU_CHARCODE}" analyze "${___ssu_iTearDown4C_expect_f}" "${___ssu_iTearDown4C_result_f}" "${___ssu_iTearDown4C_target}"
+	if [ ! -f "${___ssu_iTearDown4C_backup}" ]
+	then
+		return 1;
+	fi
+	
+	if [ -s "${___ssu_iTearDown4C_backup}" ]
+	then
+		cp -p "${___ssu_iTearDown4C_backup}" "${___ssu_iTearDown4C_target}" &
+		typeset ___ssu_iTearDown4C_j=$!
+		wait $___ssu_iTearDown4C_j;
+	fi
+	rm -f "${___ssu_iTearDown4C_backup}"
+	rm -f "${___ssu_iTearDown4C_expect_f}";
+	rm -f "${___ssu_iTearDown4C_result_f}";
+}
 
 #####################################################################################################
 ## below's are For Evidence.
 
 _ssu_mkdir_evi(){
-	typeset dname=$1;
-	if [[ ! -d "${dname}" ]]
+	typeset ___ssu_mkdir_evi_dname=$1;
+	if [[ ! -d "${___ssu_mkdir_evi_dname}" ]]
 	then
-		mkdir -p "${dname}"
-		r=$?;
-		if [ $r -ne 0 ]
+		mkdir -p "${___ssu_mkdir_evi_dname}"
+		typeset ___ssu_mkdir_evi_r=$?;
+		if [ $___ssu_mkdir_evi_r -ne 0 ]
 		then
-			echo "Cannot creake Dir!! ${dname}"
+			echo "Cannot creake Dir!! ${___ssu_mkdir_evi_dname}"
 			exit 1;
 		fi
 	fi
@@ -655,40 +708,39 @@ _ssu_mkdir_evi_test(){
 }
 
 _ssu_SetupForEvidence(){
-	typeset evi_dir=${SSU_HOME}
+	typeset ___ssu_SetupForEvidence_evi_dir=${SSU_HOME}
 	if [ "${SSU_EVIDENCE_BASEDIR}" != "" ]
 	then
-		evi_dir=${SSU_EVIDENCE_BASEDIR}
+		___ssu_SetupForEvidence_evi_dir=${SSU_EVIDENCE_BASEDIR}
 	fi
 
-	typeset r="";
-	typeset dname="${evi_dir}/evidence"
-	_ssu_mkdir_evi "${dname}"
+	typeset ___ssu_SetupForEvidence_dname="${___ssu_SetupForEvidence_evi_dir}/evidence"
+	_ssu_mkdir_evi "${___ssu_SetupForEvidence_dname}"
 	
-	typeset usr=`whoami`
-	dname="${dname}/${usr}"
-	_ssu_mkdir_evi "${dname}"
+	typeset ___ssu_SetupForEvidence_usr=`whoami`
+	___ssu_SetupForEvidence_dname="${___ssu_SetupForEvidence_dname}/${___ssu_SetupForEvidence_usr}"
+	_ssu_mkdir_evi "${___ssu_SetupForEvidence_dname}"
 	
-	typeset f_t=`_ssu_LsFulltime "${_ssu_Lock}"`
-	typeset f_num=`_ssu_FromDateStyleToInt "${f_t}"`
-	dname="${dname}/${f_num}"
-	_ssu_mkdir_evi "${dname}"
+	typeset ___ssu_SetupForEvidence_f_t=`_ssu_LsFulltime "${_ssu_Lock}"`
+	typeset ___ssu_SetupForEvidence_f_num=`_ssu_FromDateStyleToInt "${___ssu_SetupForEvidence_f_t}"`
+	___ssu_SetupForEvidence_dname="${___ssu_SetupForEvidence_dname}/${___ssu_SetupForEvidence_f_num}"
+	_ssu_mkdir_evi "${___ssu_SetupForEvidence_dname}"
 	
-	dname="${dname}/${_ssu_casename}"
-	_ssu_mkdir_evi "${dname}"
+	___ssu_SetupForEvidence_dname="${___ssu_SetupForEvidence_dname}/${_ssu_casename}"
+	_ssu_mkdir_evi "${___ssu_SetupForEvidence_dname}"
 	
-	SSU_EVIDENCE_BASEDIR="${dname}"
+	SSU_EVIDENCE_BASEDIR="${___ssu_SetupForEvidence_dname}"
 
 }
 
 _ssu_teardown_rmdir(){
-	typeset dd="$1";
-	if [ -d "${dd}" ]
+	typeset ___ssu_teardown_rmdir_dd="$1";
+	if [ -d "${___ssu_teardown_rmdir_dd}" ]
 	then
-		typeset l=`ls ${dd} |wc -l`
-		if [ $l = 0 ]
+		typeset ___ssu_teardown_rmdir_l=`ls ${___ssu_teardown_rmdir_dd} |wc -l`
+		if [ $___ssu_teardown_rmdir_l = 0 ]
 		then
-			rm -fr "${dd}"
+			rm -fr "${___ssu_teardown_rmdir_dd}"
 		fi
 	fi
 }
@@ -700,21 +752,21 @@ _ssu_TeardownForEvidence_test(){
 	fi
 }
 _ssu_TeardownForEvidence(){
-	typeset d="${SSU_EVIDENCE_BASEDIR}"
+	typeset ___ssu_TeardownForEvidence_d="${SSU_EVIDENCE_BASEDIR}"
 	#casename
-	_ssu_teardown_rmdir "${d}"
+	_ssu_teardown_rmdir "${___ssu_TeardownForEvidence_d}"
 	
 	#time
-	d=`dirname "${d}"`
-	_ssu_teardown_rmdir "${d}"
+	___ssu_TeardownForEvidence_d=`dirname "${___ssu_TeardownForEvidence_d}"`
+	_ssu_teardown_rmdir "${___ssu_TeardownForEvidence_d}"
 	
 	#usr
-	d=`dirname "${d}"`
-	_ssu_teardown_rmdir "${d}"
+	___ssu_TeardownForEvidence_d=`dirname "${___ssu_TeardownForEvidence_d}"`
+	_ssu_teardown_rmdir "${___ssu_TeardownForEvidence_d}"
 	
 	#evi
-	d=`dirname "${d}"`
-	_ssu_teardown_rmdir "${d}"
+	___ssu_TeardownForEvidence_d=`dirname "${___ssu_TeardownForEvidence_d}"`
+	_ssu_teardown_rmdir "${___ssu_TeardownForEvidence_d}"
 	
 }
 
@@ -735,104 +787,107 @@ fi
 
 _ssu_display_bar(){
 	if [ "$_ssu_suite_mode" = "on" ];then
-		_ssu_display_bar_suite "$1" "$2" "$3"
+		_ssu_bar_suite "$1" "$2" "$3"
 	else
-		_ssu_display_bar_not_suite "$1" "$2" "$3" "$4"
+		_ssu_bar_test "$1" "$2" "$3" "$4"
 	fi
 }
-_ssu_display_bar_not_suite() {
-    typeset testname=$1
-    typeset cnt=$2
-    typeset max=$3
-    typeset color=$4
-    typeset pre=0
-    typeset post=0
-    ((pre=cnt * _ssu_LENG / max))
-    ((post=pre + 1))
+_ssu_bar_test() {
+    typeset ___ssu_bar_test_testname=$1
+    typeset ___ssu_bar_test_cnt=$2
+    typeset ___ssu_bar_test_max=$3
+    typeset ___ssu_bar_test_color=$4
+    typeset ___ssu_bar_test_pre=0
+    typeset ___ssu_bar_test_post=0
+    ((___ssu_bar_test_pre=___ssu_bar_test_cnt * _ssu_LENG / ___ssu_bar_test_max))
+    ((___ssu_bar_test_post=___ssu_bar_test_pre + 1))
 
-    typeset sb=`printf "%-${_ssu_LENG}.${_ssu_LENG}s" " ${testname} (done: ${cnt}/${max}) "`
+    typeset ___ssu_bar_test_sb=`printf "%-${_ssu_LENG}.${_ssu_LENG}s" " ${___ssu_bar_test_testname} (done: ${___ssu_bar_test_cnt}/${___ssu_bar_test_max}) "`
 
-    typeset p1=`expr substr "$sb" 1 $pre`
-    typeset p2=`expr substr "$sb" $post $_ssu_LENG`
-    typeset col=$_ssu_RED
-    if [[ z$color = "zgreen" ]]; then
-        col=$_ssu_GREEN
+    typeset ___ssu_bar_test_p1=`expr substr "$___ssu_bar_test_sb" 1 $___ssu_bar_test_pre`
+    typeset ___ssu_bar_test_p2=`expr substr "$___ssu_bar_test_sb" $___ssu_bar_test_post $_ssu_LENG`
+    typeset ___ssu_bar_test_col=$_ssu_RED
+    if [[ z$___ssu_bar_test_color = "zgreen" ]]; then
+        ___ssu_bar_test_col=$_ssu_GREEN
     fi
-    printf "\r${col}${p1}${_ssu_END}${_ssu_CYAN}${p2}${_ssu_END}" -e
+    printf "\r${___ssu_bar_test_col}${___ssu_bar_test_p1}${_ssu_END}${_ssu_CYAN}${___ssu_bar_test_p2}${_ssu_END}" -e
 }
 
-_ssu_display_bar_suite() {
-    typeset testname=$1
-    typeset cnt=$2
-    typeset max=$3
-    typeset color=$_ssu_suite_color
-    typeset suite_cnt=$_ssu_suite_test_cnt
-    typeset suite_max=$_ssu_suite_test_max
-    typeset d1=0
-    ((d1=suite_cnt * _ssu_LENG / suite_max))
+_ssu_bar_suite() {
+    typeset ___ssu_bar_suite_testname=$1
+    typeset ___ssu_bar_suite_cnt=$2
+    typeset ___ssu_bar_suite_max=$3
+    typeset ___ssu_bar_suite_color=$_ssu_suite_color
+    typeset ___ssu_bar_suite_suite_cnt=$_ssu_suite_test_cnt
+    typeset ___ssu_bar_suite_suite_max=$_ssu_suite_test_max
+    typeset ___ssu_bar_suite_d1=0
+    ((___ssu_bar_suite_d1=___ssu_bar_suite_suite_cnt * _ssu_LENG / ___ssu_bar_suite_suite_max))
     
-    typeset d3=0
-    typeset i=0
-    ((i=suite_cnt + 1))
-    ((d3=i * _ssu_LENG/suite_max))
+    typeset ___ssu_bar_suite_d3=0
+    typeset ___ssu_bar_suite_i=0
+    ((___ssu_bar_suite_i=___ssu_bar_suite_suite_cnt + 1))
+    ((___ssu_bar_suite_d3=___ssu_bar_suite_i * _ssu_LENG/___ssu_bar_suite_suite_max))
     
-    typeset d2=0
-    i=0
-    typeset j=0
-    ((i=cnt * _ssu_LENG))
-    ((j=suite_max * max))
-    ((d2=i / j))
-    ((d2=d1 + d2))
-    if [ $cnt -eq $max ];then
-    	d2=$d3
+    typeset ___ssu_bar_suite_d2=0
+    ___ssu_bar_suite_i=0
+    typeset ___ssu_bar_suite_j=0
+    ((___ssu_bar_suite_i=___ssu_bar_suite_cnt * _ssu_LENG))
+    ((___ssu_bar_suite_j=___ssu_bar_suite_suite_max * ___ssu_bar_suite_max))
+    ((___ssu_bar_suite_d2=___ssu_bar_suite_i / ___ssu_bar_suite_j))
+    ((___ssu_bar_suite_d2=___ssu_bar_suite_d1 + ___ssu_bar_suite_d2))
+    if [ $___ssu_bar_suite_cnt -eq $___ssu_bar_suite_max ];then
+    	___ssu_bar_suite_d2=$___ssu_bar_suite_d3
     fi
 	
-	typeset d2_next=0
-	((d2_next=d2 + 1))
-	typeset d3_next=0
-	((d3_next=d3 + 1))
+	typeset ___ssu_bar_suite_d2_next=0
+	((___ssu_bar_suite_d2_next=___ssu_bar_suite_d2 + 1))
+	typeset ___ssu_bar_suite_d3_next=0
+	((___ssu_bar_suite_d3_next=___ssu_bar_suite_d3 + 1))
 	
-	typeset ii=0
-	((ii=d3 - d2))
+	typeset ___ssu_bar_suite_ii=0
+	((___ssu_bar_suite_ii=___ssu_bar_suite_d3 - ___ssu_bar_suite_d2))
 	
-    ((suite_cnt=suite_cnt + 1))
-    typeset sb=`printf "%-${_ssu_LENG}.${_ssu_LENG}s" " ${testname}/$_ssu_casename (done: ${cnt}/${max}@${suite_cnt}/${suite_max}) "`
+    ((___ssu_bar_suite_suite_cnt=___ssu_bar_suite_suite_cnt + 1))
+    typeset ___ssu_bar_suite_sb=`printf "%-${_ssu_LENG}.${_ssu_LENG}s" " ${___ssu_bar_suite_testname}/$_ssu_casename (done: ${___ssu_bar_suite_cnt}/${___ssu_bar_suite_cnt}@${___ssu_bar_suite_suite_cnt}/${___ssu_bar_suite_suite_max}) "`
 
-    typeset p1=`expr substr "$sb" 1 $d2`
-    typeset p2=`expr substr "$sb" $d2_next $ii`
-    typeset p3=`expr substr "$sb" $d3_next $_ssu_LENG`
+    typeset ___ssu_bar_suite_p1=`expr substr "$___ssu_bar_suite_sb" 1 $___ssu_bar_suite_d2`
+    typeset ___ssu_bar_suite_p2=`expr substr "$___ssu_bar_suite_sb" $___ssu_bar_suite_d2_next $___ssu_bar_suite_ii`
+    typeset ___ssu_bar_suite_p3=`expr substr "$___ssu_bar_suite_sb" $___ssu_bar_suite_d3_next $_ssu_LENG`
     
-    typeset col=$_ssu_RED
-    if [[ z$color = "zgreen" ]]; then
-        col=$_ssu_GREEN
+    typeset ___ssu_bar_suite_col=$_ssu_RED
+    if [[ z$___ssu_bar_suite_color = "zgreen" ]]; then
+        ___ssu_bar_suite_col=$_ssu_GREEN
     fi
-    printf "\r${col}${p1}${_ssu_END}${_ssu_BROWN}${p2}${_ssu_BROWN}${_ssu_CYAN}${p3}${_ssu_END}" -e
+    printf "\r${___ssu_bar_suite_col}${___ssu_bar_suite_p1}${_ssu_END}${_ssu_BROWN}${___ssu_bar_suite_p2}${_ssu_BROWN}${_ssu_CYAN}${___ssu_bar_suite_p3}${_ssu_END}" -e
 }
 
 ################################################################################
 # test suite
 ################################################################################
+set_SUITE_DEBUG_MODE(){
+	_ssu_SUITE_DEBUG_MODE="$1"
+}
 
-add_testCmd(){
+add_SSUTestCmd(){
 	if [ $# -ne 1 ];then
 		echo "Please give me yout testCmd."
 		exit 1
 	fi
-	typeset cmd="$1"
-	typeset name=`_ssu_find_shell_name $cmd`
-	typeset ind=`echo ${#_ssu_suiteTestCmds[*]}`
-	_ssu_suiteTestCmds[${ind}]="$cmd"
-	_ssu_suiteTestShellNames[${ind}]="$name"
+	typeset __add_SSUTestCmd_cmd="$1"
+	typeset __add_SSUTestCmd_name=`_ssu_find_shell_name $__add_SSUTestCmd_cmd`
+	typeset __add_SSUTestCmd_ind=`echo ${#_ssu_suiteTestCmds[*]}`
+	_ssu_suiteTestCmds[${__add_SSUTestCmd_ind}]="$__add_SSUTestCmd_cmd"
+	_ssu_suiteTestShellNames[${__add_SSUTestCmd_ind}]="$__add_SSUTestCmd_name"
 }
 
 _ssu_find_shell_name(){
-	typeset v
-	for v in $*
+	typeset ___ssu_find_shell_name_v
+	for ___ssu_find_shell_name_v in $*
 	do
-		if [ -f $v ];then
-			typeset c=`grep startSSU $v | grep -v -c startSSUSuite`
-			if [ $c -ne 0 ];then
-				basename $v
+		if [ -f $___ssu_find_shell_name_v ];then
+			typeset ___ssu_find_shell_name_c=`grep startSSU $___ssu_find_shell_name_v | grep -v -c startSSUSuite`
+			if [ $___ssu_find_shell_name_c -ne 0 ];then
+				basename $___ssu_find_shell_name_v
 				return 0
 			fi
 		fi
@@ -847,22 +902,24 @@ startSSUSuite(){
 	export _ssu_suite_test_cnt
 	export _ssu_suite_test_max
 	export _ssu_suite_testName
+	export _ssu_suite_inner_flag
+	export _ssu_SUITE_DEBUG_MODE
 	_ssu_suite_mode="on"
-	_ssu_suite_inner_flag="on"
+	_ssu_suite_inner_flag=on
 	_ssu_suite_countOfSuccessTest=0
 	_ssu_suite_countOfFailedTest=0
 	_ssu_suite_test_cnt=0
 	_ssu_suite_test_max=`echo ${#_ssu_suiteTestCmds[*]}`
-	while [ ${_ssu_suite_test_cnt} -lt ${#_ssu_suiteTestCmds[*]} ]
+	while [ ${_ssu_suite_test_cnt} -lt ${_ssu_suite_test_max} ]
 	do
-		typeset _ssu_CurrentTestCmd=${_ssu_suiteTestCmds[$_ssu_suite_test_cnt]};
+		typeset __startSSUSuite_CurrentTestCmd=${_ssu_suiteTestCmds[$_ssu_suite_test_cnt]};
 		_ssu_suite_testName=${_ssu_suiteTestShellNames[$_ssu_suite_test_cnt]}
-		$_ssu_CurrentTestCmd &
-		typeset _ssu_suite_TestJobID=$!
-		wait $_ssu_suite_TestJobID
-		typeset r=$?
-		_ssu_suite_TestJobID=""
-		if [ $r -ne 0 ];then
+		$__startSSUSuite_CurrentTestCmd &
+		typeset __startSSUSuite_suite_TestJobID=$!
+		wait $__startSSUSuite_suite_TestJobID
+		typeset __startSSUSuite_r=$?
+		__startSSUSuite_suite_TestJobID=""
+		if [ $__startSSUSuite_r -ne 0 ];then
 			_ssu_suite_color="red"
 			_ssu_suite_countOfFailedTest=$((${_ssu_suite_countOfFailedTest}+1))
 		else
@@ -874,7 +931,9 @@ startSSUSuite(){
 }
 
 _ssu_suite_SystemOut(){
-	if [[ ${_ssu_suite_test_max} -eq 0 ]]
+	typeset ___ssu_suite_SystemOut_all=0
+	((___ssu_suite_SystemOut_all=_ssu_suite_countOfSuccessTest + _ssu_suite_countOfFailedTest))
+	if [[ ${_ssu_suite_test_max} -ne ${___ssu_suite_SystemOut_all} ]]
 	then
 		return 0;
 	fi
