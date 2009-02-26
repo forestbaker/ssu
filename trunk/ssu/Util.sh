@@ -1,4 +1,18 @@
 #!/bin/sh
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+# either express or implied. See the License for the specific language
+# governing permissions and limitations under the License.
+#
+################################################################################
 
 ################################################################################
 #String
@@ -14,13 +28,13 @@ u_str_capitalize(){
 		_ssu_util_ExitLog "u_str_capitalize";
 		return 1;
 	fi
-	typeset str=${1}
-	typeset num=`echo ${#str}`
-	str=`echo ${str} | tr [:upper:] [:lower:]`
-	typeset c=`echo ${str}|cut -c 1`
-	c=`echo ${c} | tr [:lower:] [:upper:]`
-	typeset other=`echo ${str}|cut -c 2-${num}`
-	echo ${c}${other}
+	typeset __u_str_capitalize_str=${1}
+	typeset __u_str_capitalize_num=`echo ${#__u_str_capitalize_str}`
+	__u_str_capitalize_str=`echo ${__u_str_capitalize_str} | tr [:upper:] [:lower:]`
+	typeset __u_str_capitalize_c=`echo ${__u_str_capitalize_str}|cut -c 1`
+	__u_str_capitalize_c=`echo ${__u_str_capitalize_c} | tr [:lower:] [:upper:]`
+	typeset __u_str_capitalize_other=`echo ${__u_str_capitalize_str}|cut -c 2-${__u_str_capitalize_num}`
+	echo ${__u_str_capitalize_c}${__u_str_capitalize_other}
 }
 
 ################################################################################
@@ -35,15 +49,15 @@ u_str_chop(){
 		_ssu_util_ExitLog "u_str_chop";
 		return 1;
 	fi
-	typeset str=`echo "${1}"`
-	typeset num=`echo ${#str}`
-	if [[ ${num} -eq 0 ]];then
+	typeset __u_str_chop_str=`echo "${1}"`
+	typeset __u_str_chop_num=`echo ${#__u_str_chop_str}`
+	if [[ ${__u_str_chop_num} -eq 0 ]];then
 		echo "";
 		return 0;
 	fi
-	num=$((${num} - 1))
-	typeset other=`echo "${str}"|cut -c 1-${num}`
-	echo "${other}"
+	__u_str_chop_num=$((${__u_str_chop_num} - 1))
+	typeset __u_str_chop_other=`echo "${__u_str_chop_str}"|cut -c 1-${__u_str_chop_num}`
+	echo "${__u_str_chop_other}"
 }
 
 ################################################################################
@@ -58,8 +72,8 @@ u_str_delete(){
 		_ssu_util_ExitLog "u_str_delete";
 		return 1;
 	fi
-	typeset str=`echo "${1}" | tr -d "${2}"`
-	echo "${str}"
+	typeset __u_str_delete_str=`echo "${1}" | tr -d "${2}"`
+	echo "${__u_str_delete_str}"
 }
 
 ################################################################################
@@ -73,8 +87,8 @@ u_str_downcase(){
 		_ssu_util_ExitLog "u_str_downcase";
 		return 1;
 	fi
-	typeset str=`echo "${1}" | tr [:upper:] [:lower:]`
-	echo "${str}"
+	typeset __u_str_downcase_str=`echo "${1}" | tr [:upper:] [:lower:]`
+	echo "${__u_str_downcase_str}"
 }
 
 ################################################################################
@@ -111,16 +125,16 @@ u_str_gsub(){
 		_ssu_util_ExitLog "u_str_gsub";
 		return 1;
 	fi
-	typeset str="${1}";
-	typeset pattern="${2}";
-	typeset replace="${3}";
-	if [ -z "${replace}" ]
+	typeset __u_str_gsub_str="${1}";
+	typeset __u_str_gsub_pattern="${2}";
+	typeset __u_str_gsub_replace="${3}";
+	if [ -z "${__u_str_gsub_replace}" ]
 	then
-		typeset new_str=`echo "${str}" | tr -d "${pattern}"`
+		typeset __u_str_gsub_new_str=`echo "${__u_str_gsub_str}" | tr -d "${__u_str_gsub_pattern}"`
 	else
-		typeset new_str=`echo "${str}" | tr "${pattern}" "${replace}"`
+		typeset __u_str_gsub_new_str=`echo "${__u_str_gsub_str}" | tr "${__u_str_gsub_pattern}" "${__u_str_gsub_replace}"`
 	fi
-	echo "${new_str}"
+	echo "${__u_str_gsub_new_str}"
 }
 
 ################################################################################
@@ -137,9 +151,9 @@ u_str_isInclude(){
 		_ssu_util_ExitLog "u_str_isInclude";
 		return 1;
 	fi
-	typeset str="${1}";
-	typeset other="${2}";
-	echo "${str}" | grep "${other}" > /dev/null 2>&1
+	typeset __u_str_isInclude_str="${1}";
+	typeset __u_str_isInclude_other="${2}";
+	echo "${__u_str_isInclude_str}" | grep "${__u_str_isInclude_other}" > /dev/null 2>&1
 	if [[ $? -eq 0 ]]
 	then
 		echo 0;
@@ -162,29 +176,29 @@ u_str_index(){
 		_ssu_util_ExitLog "u_str_index";
 		return 1;
 	fi
-	typeset str="${1}";
-	typeset str_num=${#str}
-	typeset other="${2}";
-	typeset other_num=${#other}
+	typeset __u_str_index_str="${1}";
+	typeset __u_str_index_str_num=${#__u_str_index_str}
+	typeset __u_str_index_other="${2}";
+	typeset __u_str_index_other_num=${#__u_str_index_other}
 
-	if [[ ${other_num} -gt ${str_num} ]]
+	if [[ ${__u_str_index_other_num} -gt ${__u_str_index_str_num} ]]
 	then
 		echo "-1"
 		return 0;
 	fi
-	typeset max=$((${str_num} - ${other_num}))
-	typeset i=0;
-	typeset j=0;
-	typeset s="";
-	while [ ${i} -le ${max} ]
+	typeset __u_str_index_max=$((${__u_str_index_str_num} - ${__u_str_index_other_num}))
+	typeset __u_str_index_i=0;
+	typeset __u_str_index_j=0;
+	typeset __u_str_index_s="";
+	while [ ${__u_str_index_i} -le ${__u_str_index_max} ]
 	do
-		j=$((${i}+${other_num}))
-		i=$((${i}+1))
-		s=`echo "${str}" |cut -c ${i}-${j}`
-		if [ "${s}" = "${other}" ]
+		__u_str_index_j=$((${__u_str_index_i}+${__u_str_index_other_num}))
+		__u_str_index_i=$((${__u_str_index_i}+1))
+		__u_str_index_s=`echo "${__u_str_index_str}" |cut -c ${__u_str_index_i}-${__u_str_index_j}`
+		if [ "${__u_str_index_s}" = "${__u_str_index_other}" ]
 		then
-			i=$((${i}-1))
-			echo ${i}
+			__u_str_index_i=$((${__u_str_index_i}-1))
+			echo ${__u_str_index_i}
 			return 0;
 		fi
 	done
@@ -205,32 +219,32 @@ u_str_insert(){
 		_ssu_util_ExitLog "u_str_insert";
 		return 1;
 	fi
-	typeset str="${1}"
-	typeset index=${2}
-	typeset other="${3}"
-	typeset size=${#str}
-	if [[ ${index} -lt 0 ]]
+	typeset __u_str_insert_str="${1}"
+	typeset __u_str_insert_index=${2}
+	typeset __u_str_insert_other="${3}"
+	typeset __u_str_insert_size=${#__u_str_insert_str}
+	if [[ ${__u_str_insert_index} -lt 0 ]]
 	then
 		echo "index must be over 0"
 		return 1;
-	elif [[ ${index} -gt ${size} ]]
+	elif [[ ${__u_str_insert_index} -gt ${__u_str_insert_size} ]]
 	then
 		echo "index out of string"
 		return 1;
 	fi
-	if [[ ${index} -eq ${size} ]]
+	if [[ ${__u_str_insert_index} -eq ${__u_str_insert_size} ]]
 	then
-		echo "${str}""${other}"
+		echo "${__u_str_insert_str}""${__u_str_insert_other}"
 		return 0;
-	elif [[ ${index} -eq 0 ]]
+	elif [[ ${__u_str_insert_index} -eq 0 ]]
 	then
-		echo "${other}""${str}"
+		echo "${__u_str_insert_other}""${__u_str_insert_str}"
 		return 0;
 	fi
-	typeset pre=`echo "${str}" |cut -c 1-${index}`
-	index=$((${index}+1))
-	typeset post=`echo "${str}" | cut -c ${index}-${size}`
-	echo "${pre}""${other}""${post}"
+	typeset __u_str_insert_pre=`echo "${__u_str_insert_str}" |cut -c 1-${__u_str_insert_index}`
+	__u_str_insert_index=$((${__u_str_insert_index}+1))
+	typeset __u_str_insert_post=`echo "${__u_str_insert_str}" | cut -c ${__u_str_insert_index}-${__u_str_insert_size}`
+	echo "${__u_str_insert_pre}""${__u_str_insert_other}""${__u_str_insert_post}"
 }
 
 ################################################################################
@@ -244,23 +258,23 @@ u_str_reverse(){
 		_ssu_util_ExitLog "u_str_reverse";
 		return 1;
 	fi
-	typeset str=`echo "${1}"`
-	typeset size=${#str}
-	if [[ ${size} -eq 0 || ${size} -eq 1 ]]
+	typeset __u_str_reverse_str=`echo "${1}"`
+	typeset __u_str_reverse_size=${#__u_str_reverse_str}
+	if [[ ${__u_str_reverse_size} -eq 0 || ${__u_str_reverse_size} -eq 1 ]]
 	then
-		echo "${str}"
+		echo "${__u_str_reverse_str}"
 		return 0;
 	fi
-	typeset i=${size}
-	typeset s=""
-	typeset new_str=""
-	while [ ${i} -gt 0 ]
+	typeset __u_str_reverse_i=${__u_str_reverse_size}
+	typeset __u_str_reverse_s=""
+	typeset __u_str_reverse_new_str=""
+	while [ ${__u_str_reverse_i} -gt 0 ]
 	do
-		s=`echo ${str} | cut -c ${i}`
-		new_str="${new_str}""${s}"
-		i=$((${i}-1))
+		__u_str_reverse_s=`echo ${__u_str_reverse_str} | cut -c ${__u_str_reverse_i}`
+		__u_str_reverse_new_str="${__u_str_reverse_new_str}""${__u_str_reverse_s}"
+		__u_str_reverse_i=$((${__u_str_reverse_i}-1))
 	done
-	echo "${new_str}"
+	echo "${__u_str_reverse_new_str}"
 }
 
 ################################################################################
@@ -274,8 +288,8 @@ u_str_size(){
 		_ssu_util_ExitLog "u_str_size";
 		return 1;
 	fi
-	typeset str=`echo "${1}"`
-	echo ${#str}
+	typeset __u_str_size_str=`echo "${1}"`
+	echo ${#__u_str_size_str}
 }
 
 ################################################################################
@@ -291,28 +305,28 @@ u_str_split(){
 		_ssu_util_ExitLog "u_str_split";
 		return 1;
 	fi
-	typeset str="${1}"
-	typeset max=${#str}
-	typeset index=${2}
-	index=$((${index}+1))
-	typeset i=1
-	typeset _index=1
-	typeset s="";
-	while [ ${_index} -le ${index} ]
+	typeset __u_str_split_str="${1}"
+	typeset __u_str_split_max=${#__u_str_split_str}
+	typeset __u_str_split_index=${2}
+	__u_str_split_index=$((${__u_str_split_index}+1))
+	typeset __u_str_split_i=1
+	typeset __u_str_split_index=1
+	typeset __u_str_split_s="";
+	while [ ${__u_str_split_index} -le ${__u_str_split_index} ]
 	do
-		s=`echo "${str}" | cut -d " " -f ${i}`
-		if [[ ! -z "${s}" ]]
+		__u_str_split_s=`echo "${__u_str_split_str}" | cut -d " " -f ${__u_str_split_i}`
+		if [[ ! -z "${__u_str_split_s}" ]]
 		then
-			_index=$((${_index}+1))
+			__u_str_split_index=$((${__u_str_split_index}+1))
 		fi
-		i=$((${i}+1))
-		if [[ ${i} -gt ${max} ]]
+		__u_str_split_i=$((${__u_str_split_i}+1))
+		if [[ ${__u_str_split_i} -gt ${__u_str_split_max} ]]
 		then
 			echo "index is out of string range";
 			return 1;
 		fi
 	done
-	echo "${s}"
+	echo "${__u_str_split_s}"
 }
 
 ################################################################################
@@ -326,8 +340,8 @@ u_str_upcase(){
 		_ssu_util_ExitLog "u_str_upcase";
 		return 1;
 	fi
-	typeset str=`echo "${1}" | tr [:lower:] [:upper:]`
-	echo "${str}"
+	typeset __u_str_upcase_str=`echo "${1}" | tr [:lower:] [:upper:]`
+	echo "${__u_str_upcase_str}"
 }
 
 ################################################################################
@@ -342,59 +356,59 @@ u_str_toFilePermissionNumber(){
 		_ssu_util_ExitLog "u_str_toFilePermissionNumber";
 		return 1;
 	fi
-	typeset str="${1}"
-	typeset number=""
-	typeset s="";
-	typeset istart=1
-	typeset iend=0
-	typeset i="";
-	if [[ ${#str} -gt 9 ]]
+	typeset __u_str_toFilePermissionNumber_str="${1}"
+	typeset __u_str_toFilePermissionNumber_number=""
+	typeset __u_str_toFilePermissionNumber_s="";
+	typeset __u_str_toFilePermissionNumber_istart=1
+	typeset __u_str_toFilePermissionNumber_iend=0
+	typeset __u_str_toFilePermissionNumber_i="";
+	if [[ ${#__u_str_toFilePermissionNumber_str} -gt 9 ]]
 	then
 		_ssu_util_ExitLog "u_str_toFilePermissionNumber";
 		return 1;
 	fi
-	while [ ${istart} -lt 8 ]
+	while [ ${__u_str_toFilePermissionNumber_istart} -lt 8 ]
 	do
-		iend=$((${istart}+2))
-		s=`echo "${str}" | cut -c ${istart}-${iend}`
-		if [ ! -z "${s}" ]
+		__u_str_toFilePermissionNumber_iend=$((${__u_str_toFilePermissionNumber_istart}+2))
+		__u_str_toFilePermissionNumber_s=`echo "${__u_str_toFilePermissionNumber_str}" | cut -c ${__u_str_toFilePermissionNumber_istart}-${__u_str_toFilePermissionNumber_iend}`
+		if [ ! -z "${__u_str_toFilePermissionNumber_s}" ]
 		then
-			i=`u_str_toFilePermissionNumber_inner "${s}"`
+			__u_str_toFilePermissionNumber_i=`u_str_toFilePermissionNumber_inner "${__u_str_toFilePermissionNumber_s}"`
 			if [[ $? -ne 0 ]]
 			then
 				_ssu_util_ExitLog "u_str_toFilePermissionNumber";
 				return 1;
 			fi
-			number="${number}""${i}"
+			__u_str_toFilePermissionNumber_number="${__u_str_toFilePermissionNumber_number}""${__u_str_toFilePermissionNumber_i}"
 		fi
-		istart=$((${istart}+3))
+		__u_str_toFilePermissionNumber_istart=$((${__u_str_toFilePermissionNumber_istart}+3))
 	done
-	echo ${number}
+	echo ${__u_str_toFilePermissionNumber_number}
 }
 u_str_toFilePermissionNumber_inner(){
-	typeset i=0;
-	typeset t=`echo ${1} | cut -c 1`
-	if [ ${t} = "r" ];then
-		i=$((${i}+4))
-	elif [ ${t} != "-" ]
+	typeset __u_str_toFilePermissionNumber_inner_i=0;
+	typeset __u_str_toFilePermissionNumber_inner_t=`echo ${1} | cut -c 1`
+	if [ ${__u_str_toFilePermissionNumber_inner_t} = "r" ];then
+		__u_str_toFilePermissionNumber_inner_i=$((${__u_str_toFilePermissionNumber_inner_i}+4))
+	elif [ ${__u_str_toFilePermissionNumber_inner_t} != "-" ]
 	then
 		return 1;
 	fi
-	t=`echo ${1} | cut -c 2`
-	if [ ${t} = "w" ];then
-		i=$((${i}+2))
-	elif [ ${t} != "-" ]
+	__u_str_toFilePermissionNumber_inner_t=`echo ${1} | cut -c 2`
+	if [ ${__u_str_toFilePermissionNumber_inner_t} = "w" ];then
+		__u_str_toFilePermissionNumber_inner_i=$((${__u_str_toFilePermissionNumber_inner_i}+2))
+	elif [ ${__u_str_toFilePermissionNumber_inner_t} != "-" ]
 	then
 		return 1;
 	fi
-	t=`echo ${1} | cut -c 3`
-	if [ ${t} = "x" ];then
-		i=$((${i}+1))
-	elif [ ${t} != "-" ]
+	__u_str_toFilePermissionNumber_inner_t=`echo ${1} | cut -c 3`
+	if [ ${__u_str_toFilePermissionNumber_inner_t} = "x" ];then
+		__u_str_toFilePermissionNumber_inner_i=$((${__u_str_toFilePermissionNumber_inner_i}+1))
+	elif [ ${__u_str_toFilePermissionNumber_inner_t} != "-" ]
 	then
 		return 1;
 	fi
-	echo ${i}
+	echo ${__u_str_toFilePermissionNumber_inner_i}
 }
 
 
@@ -413,50 +427,50 @@ u_num_toFilePermission(){
 		return 1;
 	fi
 	
-	typeset number="${1}"
-	typeset str=""
-	typeset s="";
-	typeset istart=1
-	typeset i="";
-	if [[ ${#number} -gt 3 ]]
+	typeset __u_num_toFilePermission_number="${1}"
+	typeset __u_num_toFilePermission_str=""
+	typeset __u_num_toFilePermission_s="";
+	typeset __u_num_toFilePermission_istart=1
+	typeset __u_num_toFilePermission_i="";
+	if [[ ${#__u_num_toFilePermission_number} -gt 3 ]]
 	then
 		_ssu_util_ExitLog "u_num_toFilePermission";
 		return 1;
 	fi
-	while [ ${istart} -lt 4 ]
+	while [ ${__u_num_toFilePermission_istart} -lt 4 ]
 	do
-		s=`echo "${number}" | cut -c ${istart}`
-		if [ ! -z "${s}" ]
+		__u_num_toFilePermission_s=`echo "${__u_num_toFilePermission_number}" | cut -c ${__u_num_toFilePermission_istart}`
+		if [ ! -z "${__u_num_toFilePermission_s}" ]
 		then
-			i=`u_num_toFilePermission_inner "${s}"`
+			__u_num_toFilePermission_i=`u_num_toFilePermission_inner "${__u_num_toFilePermission_s}"`
 			if [[ $? -ne 0 ]]
 			then
 				_ssu_util_ExitLog "u_num_toFilePermission";
 				return 1;
 			fi
-			str="${str}""${i}"
+			__u_num_toFilePermission_str="${__u_num_toFilePermission_str}""${__u_num_toFilePermission_i}"
 		fi
-		istart=$((${istart}+1))
+		__u_num_toFilePermission_istart=$((${__u_num_toFilePermission_istart}+1))
 	done
-	echo ${str}
+	echo ${__u_num_toFilePermission_str}
 }
 u_num_toFilePermission_inner(){
-	typeset i=${1}
-	if [ ${i} -eq 7 ];then
+	typeset __u_num_toFilePermission_inner_i=${1}
+	if [ ${__u_num_toFilePermission_inner_i} -eq 7 ];then
 		echo "rwx"
-	elif [ ${i} -eq 6 ];then
+	elif [ ${__u_num_toFilePermission_inner_i} -eq 6 ];then
 		echo "rw-"
-	elif [ ${i} -eq 5 ];then
+	elif [ ${__u_num_toFilePermission_inner_i} -eq 5 ];then
 		echo "r-x"
-	elif [ ${i} -eq 4 ];then
+	elif [ ${__u_num_toFilePermission_inner_i} -eq 4 ];then
 		echo "r--"
-	elif [ ${i} -eq 3 ];then
+	elif [ ${__u_num_toFilePermission_inner_i} -eq 3 ];then
 		echo "-wx"
-	elif [ ${i} -eq 2 ];then
+	elif [ ${__u_num_toFilePermission_inner_i} -eq 2 ];then
 		echo "-w-"
-	elif [ ${i} -eq 1 ];then
+	elif [ ${__u_num_toFilePermission_inner_i} -eq 1 ];then
 		echo "--x"
-	elif [ ${i} -eq 0 ];then
+	elif [ ${__u_num_toFilePermission_inner_i} -eq 0 ];then
 		echo "---"
 	else
 		return 1;
@@ -478,8 +492,8 @@ u_f_isFile(){
 		_ssu_util_ExitLog "u_f_isFile";
 		return 1;
 	fi
-	typeset file="${1}"
-	if [[ -f "${file}" || -L "${file}" ]]
+	typeset __u_f_isFile_file="${1}"
+	if [[ -f "${__u_f_isFile_file}" || -L "${__u_f_isFile_file}" ]]
 	then
 		echo 0;
 		return 0;
@@ -500,8 +514,8 @@ u_f_isDir(){
 		_ssu_util_ExitLog "u_f_isDir";
 		return 1;
 	fi
-	typeset dir="${1}"
-	if [[ -d "${dir}" ]]
+	typeset __u_f_isDir_dir="${1}"
+	if [[ -d "${__u_f_isDir_dir}" ]]
 	then
 		echo 0;
 		return 0;
@@ -519,14 +533,14 @@ u_f_getPermission(){
 		_ssu_util_ExitLog "u_f_getPermission";
 		return 1;
 	fi
-	typeset file="${1}"
-	if [[ ! -f "${file}" && ! -d "${file}" && ! -L "${file}" ]]
+	typeset __u_f_getPermission_file="${1}"
+	if [[ ! -f "${__u_f_getPermission_file}" && ! -d "${__u_f_getPermission_file}" && ! -L "${__u_f_getPermission_file}" ]]
 	then
-		echo "cannot find ${file}";
+		echo "cannot find ${__u_f_getPermission_file}";
 		return 1;
 	fi
-	typeset perm=`ls -ld "${file}" | cut -d " " -f 1 |cut -c 2-10`
-	echo ${perm}
+	typeset __u_f_getPermission_perm=`ls -ld "${__u_f_getPermission_file}" | cut -d " " -f 1 |cut -c 2-10`
+	echo ${__u_f_getPermission_perm}
 }
 
 ################################################################################
@@ -539,15 +553,15 @@ u_f_getSize(){
 		_ssu_util_ExitLog "u_f_getSize";
 		return 1;
 	fi
-	typeset file="${1}"
-	if [[ ! -f "${file}" && ! -d "${file}" && ! -L "${file}" ]]
+	typeset __u_f_getSize_file="${1}"
+	if [[ ! -f "${__u_f_getSize_file}" && ! -d "${__u_f_getSize_file}" && ! -L "${__u_f_getSize_file}" ]]
 	then
-		echo "cannot find ${file}";
+		echo "cannot find ${__u_f_getSize_file}";
 		return 1;
 	fi
-	typeset status=`ls -lod "${file}"`
-	typeset size=`u_str_split "${status}" 3`
-	echo ${size}
+	typeset __u_f_getSize_status=`ls -lod "${__u_f_getSize_file}"`
+	typeset __u_f_getSize_size=`u_str_split "${__u_f_getSize_status}" 3`
+	echo ${__u_f_getSize_size}
 }
 
 
@@ -561,15 +575,15 @@ u_f_getUser(){
 		_ssu_util_ExitLog "u_f_getUser";
 		return 1;
 	fi
-	typeset file="${1}"
-	if [[ ! -f "${file}" && ! -d "${file}" && ! -L "${file}" ]]
+	typeset __u_f_getUser_file="${1}"
+	if [[ ! -f "${__u_f_getUser_file}" && ! -d "${__u_f_getUser_file}" && ! -L "${__u_f_getUser_file}" ]]
 	then
-		echo "cannot find ${file}";
+		echo "cannot find ${__u_f_getUser_file}";
 		return 1;
 	fi
-	typeset status=`ls -lod "${file}"`
-	typeset u=`u_str_split "${status}" 2`
-	echo ${u}
+	typeset __u_f_getUser_status=`ls -lod "${__u_f_getUser_file}"`
+	typeset __u_f_getUser_u=`u_str_split "${__u_f_getUser_status}" 2`
+	echo ${__u_f_getUser_u}
 }
 
 ################################################################################
@@ -582,15 +596,15 @@ u_f_getGroup(){
 		_ssu_util_ExitLog "u_f_getGroup";
 		return 1;
 	fi
-	typeset file="${1}"
-	if [[ ! -f "${file}" && ! -d "${file}" && ! -L "${file}" ]]
+	typeset __u_f_getGroup_file="${1}"
+	if [[ ! -f "${__u_f_getGroup_file}" && ! -d "${__u_f_getGroup_file}" && ! -L "${__u_f_getGroup_file}" ]]
 	then
-		echo "cannot find ${file}";
+		echo "cannot find ${__u_f_getGroup_file}";
 		return 1;
 	fi
-	typeset status=`ls -ld "${file}"`
-	typeset g=`u_str_split "${status}" 3`
-	echo ${g}
+	typeset __u_f_getGroup_status=`ls -ld "${__u_f_getGroup_file}"`
+	typeset __u_f_getGroup_g=`u_str_split "${__u_f_getGroup_status}" 3`
+	echo ${__u_f_getGroup_g}
 }
 
 ################################################################################
@@ -603,16 +617,16 @@ u_f_getOwn(){
 		_ssu_util_ExitLog "u_f_getOwn";
 		return 1;
 	fi
-	typeset file="${1}"
-	if [[ ! -f "${file}" && ! -d "${file}" && ! -L "${file}" ]]
+	typeset __u_f_getOwn_file="${1}"
+	if [[ ! -f "${__u_f_getOwn_file}" && ! -d "${__u_f_getOwn_file}" && ! -L "${__u_f_getOwn_file}" ]]
 	then
-		echo "cannot find ${file}";
+		echo "cannot find ${__u_f_getOwn_file}";
 		return 1;
 	fi
-	typeset status=`ls -ld "${file}"`
-	typeset u=`u_str_split "${status}" 2`
-	typeset g=`u_str_split "${status}" 3`
-	echo "${u}"."${g}"
+	typeset __u_f_getOwn_status=`ls -ld "${__u_f_getOwn_file}"`
+	typeset __u_f_getOwn_u=`u_str_split "${__u_f_getOwn_status}" 2`
+	typeset __u_f_getOwn_g=`u_str_split "${__u_f_getOwn_status}" 3`
+	echo "${__u_f_getOwn_u}"."${__u_f_getOwn_g}"
 }
 
 ################################################################################
@@ -625,13 +639,13 @@ u_f_getTimestamp(){
 		_ssu_util_ExitLog "u_f_getTimestamp";
 		return 1;
 	fi
-	typeset file="${1}"
-	if [[ ! -f "${file}" && ! -d "${file}" && ! -L "${file}" ]]
+	typeset __u_f_getTimestamp_file="${1}"
+	if [[ ! -f "${__u_f_getTimestamp_file}" && ! -d "${__u_f_getTimestamp_file}" && ! -L "${__u_f_getTimestamp_file}" ]]
 	then
-		echo "cannot find ${file}";
+		echo "cannot find ${__u_f_getTimestamp_file}";
 		return 1;
 	fi
-	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "util" "file-time" "${file}"
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar ${_ssu_UtilJar} "${SSU_CHARCODE}" "util" "file-time" "${__u_f_getTimestamp_file}"
 }
 
 ################################################################################
@@ -646,20 +660,20 @@ u_db_insert(){
 		_ssu_util_ExitLog "u_db_insert";
 		return 1;
 	fi
-	typeset file="${1}";
-	typeset table="${2}";
-	typeset where=" ";
+	typeset __u_db_insert_file="${1}";
+	typeset __u_db_insert_table="${2}";
+	typeset __u_db_insert_where=" ";
 	if [ $# = 3 ]
 	then
-		where="${3}";
+		__u_db_insert_where="${3}";
 	fi
 	
-	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "insert" "${file}" "${table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
-	typeset r=$?
-	if [ $r -ne 0 ]
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "insert" "${__u_db_insert_file}" "${__u_db_insert_table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${__u_db_insert_where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
+	typeset __u_db_insert_r=$?
+	if [ $__u_db_insert_r -ne 0 ]
 	then
-		echo "u_db_insert error!! ${table} ${file}"
-		return $r
+		echo "u_db_insert error!! ${__u_db_insert_table} ${__u_db_insert_file}"
+		return $__u_db_insert_r
 	fi
 }
 
@@ -674,19 +688,19 @@ u_db_delete(){
 		_ssu_util_ExitLog "u_db_delete";
 		return 1;
 	fi
-	typeset table="${1}";
-	typeset where=" ";
+	typeset __u_db_delete_table="${1}";
+	typeset __u_db_delete_where=" ";
 	if [ $# = 2 ]
 	then
-		where="${2}";
+		__u_db_delete_where="${2}";
 	fi
 	
-	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "delete" ".." "${table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
-	typeset r=$?
-	if [ $r -ne 0 ]
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "delete" ".." "${__u_db_delete_table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${__u_db_delete_where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
+	typeset __u_db_delete_r=$?
+	if [ $__u_db_delete_r -ne 0 ]
 	then
-		echo "u_db_delete error!! ${table}"
-		return $r
+		echo "u_db_delete error!! ${__u_db_delete_table}"
+		return $__u_db_delete_r
 	fi
 }
 
@@ -702,20 +716,20 @@ if [[ $# != 2 && $# != 3 ]]
 		_ssu_util_ExitLog "u_db_select_to";
 		return 1;
 	fi
-	typeset file="${1}";
-	typeset table="${2}";
-	typeset where=" ";
+	typeset __u_db_select_to_file="${1}";
+	typeset __u_db_select_to_table="${2}";
+	typeset __u_db_select_to_where=" ";
 	if [ $# = 3 ]
 	then
-		where="${3}";
+		__u_db_select_to_where="${3}";
 	fi
 	
-	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectto" "${file}" "${table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
-	typeset r=$?
-	if [ $r -ne 0 ]
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectto" "${__u_db_select_to_file}" "${__u_db_select_to_table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${__u_db_select_to_where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
+	typeset __u_db_select_to_r=$?
+	if [ $__u_db_select_to_r -ne 0 ]
 	then
-		echo "u_db_select_to error!! ${table} ${file}"
-		return $r
+		echo "u_db_select_to error!! ${__u_db_select_to_table} ${__u_db_select_to_file}"
+		return $__u_db_select_to_r
 	fi
 }
 
@@ -731,19 +745,19 @@ u_db_select(){
 		_ssu_util_ExitLog "u_db_select";
 		return 1;
 	fi
-	typeset table="${1}";
-	typeset where=" ";
+	typeset __u_db_select_table="${1}";
+	typeset __u_db_select_where=" ";
 	if [ $# = 2 ]
 	then
-		where="${2}";
+		__u_db_select_where="${2}";
 	fi
 	
-	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectout" ".." "${table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
-	typeset r=$?
-	if [ $r -ne 0 ]
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectout" ".." "${__u_db_select_table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${__u_db_select_where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
+	typeset __u_db_select_r=$?
+	if [ $__u_db_select_r -ne 0 ]
 	then
-		echo "u_db_select error!! ${table}"
-		return $r
+		echo "u_db_select error!! ${__u_db_select_table}"
+		return $__u_db_select_r
 	fi
 }
 
@@ -757,13 +771,13 @@ u_db_sql_query(){
 		_ssu_util_ExitLog "u_db_sql_query";
 		return 1;
 	fi
-	typeset file="${1}";
-	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "query" "$file" ".." "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" " " ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
-	typeset r=$?
-	if [ $r -ne 0 ]
+	typeset __u_db_sql_query_file="${1}";
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "query" "$__u_db_sql_query_file" ".." "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" " " ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
+	typeset __u_db_sql_query_r=$?
+	if [ $__u_db_sql_query_r -ne 0 ]
 	then
-		echo "u_db_sql_query error!! ${file}"
-		return $r
+		echo "u_db_sql_query error!! ${__u_db_sql_query_file}"
+		return $__u_db_sql_query_r
 	fi
 }
 
@@ -777,13 +791,13 @@ u_db_sql_exec(){
 		_ssu_util_ExitLog "u_db_sql_exec";
 		return 1;
 	fi
-	typeset file="${1}";
-	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "exec" "$file" ".." "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" " " ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
-	typeset r=$?
-	if [ $r -ne 0 ]
+	typeset __u_db_sql_exec_file="${1}";
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "exec" "$__u_db_sql_exec_file" ".." "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" " " ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
+	typeset __u_db_sql_exec_r=$?
+	if [ $__u_db_sql_exec_r -ne 0 ]
 	then
-		echo "u_db_sql_exec error!! ${file}"
-		return $r
+		echo "u_db_sql_exec error!! ${__u_db_sql_exec_file}"
+		return $__u_db_sql_exec_r
 	fi
 }
 
@@ -799,23 +813,23 @@ if [[ $# != 1 && $# != 2 ]]
 		_ssu_util_ExitLog "u_evi_db";
 		return 1;
 	fi
-	typeset table="${1}";
-	typeset name="${table}";
+	typeset __u_evi_db_table="${1}";
+	typeset __u_evi_db_name="${__u_evi_db_table}";
 	if [ $# = 2 ]
 	then
-		name="${2}";
+		__u_evi_db_name="${2}";
 	fi
-	name=`basename "${name}"`
+	__u_evi_db_name=`basename "${__u_evi_db_name}"`
 	
-	typeset file=`_ssu_util_evi_FileName "${name}"`
+	typeset __u_evi_db_file=`_ssu_util_evi_FileName "${__u_evi_db_name}"`
 	
-	typeset where=" ";
-	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectto" "${file}" "${table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
-	typeset r=$?
-	if [ $r -ne 0 ]
+	typeset __u_evi_db_where=" ";
+	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "selectto" "${__u_evi_db_file}" "${__u_evi_db_table}" "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" "${__u_evi_db_where}" ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
+	typeset __u_evi_db_r=$?
+	if [ $__u_evi_db_r -ne 0 ]
 	then
-		echo "u_evi_db error!! ${table} ${file}"
-		return $r
+		echo "u_evi_db error!! ${__u_evi_db_table} ${__u_evi_db_file}"
+		return $__u_evi_db_r
 	fi
 }
 
@@ -830,21 +844,21 @@ if [[ $# != 1 && $# != 2 ]]
 		_ssu_util_ExitLog "u_evi_file";
 		return 1;
 	fi
-	typeset moto="${1}";
-	typeset name=`basename "${moto}"`
+	typeset __u_evi_file_moto="${1}";
+	typeset __u_evi_file_name=`basename "${__u_evi_file_moto}"`
 	if [ $# = 2 ]
 	then
-		name="${2}";
+		__u_evi_file_name="${2}";
 	fi
-	name=`basename "${name}"`
+	__u_evi_file_name=`basename "${__u_evi_file_name}"`
 	
-	typeset file=`_ssu_util_evi_FileName "${name}"`
-	cp -pf "${moto}" "${file}"
-	typeset r=$?
-	if [ $r -ne 0 ]
+	typeset __u_evi_file_file=`_ssu_util_evi_FileName "${__u_evi_file_name}"`
+	cp -pf "${__u_evi_file_moto}" "${__u_evi_file_file}"
+	typeset __u_evi_file_r=$?
+	if [ $__u_evi_file_r -ne 0 ]
 	then
-		echo "u_evi_file error!! ${moto} ${file}"
-		return $r
+		echo "u_evi_file error!! ${__u_evi_file_moto} ${__u_evi_file_file}"
+		return $__u_evi_file_r
 	fi
 }
 
@@ -859,30 +873,30 @@ if [[ $# != 1 && $# != 2 ]]
 		_ssu_util_ExitLog "u_evi_file";
 		return 1;
 	fi
-	typeset moto="${1}";
-	typeset name=`basename "${moto}"`
+	typeset __u_evi_dir_moto="${1}";
+	typeset __u_evi_dir_name=`basename "${__u_evi_dir_moto}"`
 	if [ $# = 2 ]
 	then
-		name="${2}";
+		__u_evi_dir_name="${2}";
 	fi
-	name=`basename "${name}"`
+	__u_evi_dir_name=`basename "${__u_evi_dir_name}"`
 	
-	typeset dir=`_ssu_util_evi_FileName "${name}"`
-	rm ${dir}
-	mkdir ${dir}
-	typeset r=$?
-	if [ $r -ne 0 ]
+	typeset __u_evi_dir_dir=`_ssu_util_evi_FileName "${__u_evi_dir_name}"`
+	rm ${__u_evi_dir_dir}
+	mkdir ${__u_evi_dir_dir}
+	typeset __u_evi_dir_r=$?
+	if [ $__u_evi_dir_r -ne 0 ]
 	then
-		echo "u_evi_dir error!!:cannot create dir: ${moto} ${dir}"
-		return $r
+		echo "u_evi_dir error!!:cannot create dir: ${__u_evi_dir_moto} ${__u_evi_dir_dir}"
+		return $__u_evi_dir_r
 	fi
 	
-	cp -pfr "${moto}" "${dir}"
-	r=$?
-	if [ $r -ne 0 ]
+	cp -pfr "${__u_evi_dir_moto}" "${__u_evi_dir_dir}"
+	__u_evi_dir_r=$?
+	if [ $__u_evi_dir_r -ne 0 ]
 	then
-		echo "u_evi_dir error!! ${moto} ${dir}"
-		return $r
+		echo "u_evi_dir error!! ${__u_evi_dir_moto} ${__u_evi_dir_dir}"
+		return $__u_evi_dir_r
 	fi
 }
 
@@ -898,14 +912,14 @@ _ssu_util_ExitLog(){
 }
 
 _ssu_util_evi_FileName(){
-	typeset name=`basename $1`
-	typeset tempName=${name}"_"
-	typeset i=1
-	while [[ -a ${_ssu_evi_dir}/"${tempName}${i}.log" ]] 
+	typeset ___ssu_util_evi_FileName_name=`basename $1`
+	typeset ___ssu_util_evi_FileName_tempName=${___ssu_util_evi_FileName_name}"_"
+	typeset ___ssu_util_evi_FileName_i=1
+	while [[ -a ${_ssu_evi_dir}/"${___ssu_util_evi_FileName_tempName}${___ssu_util_evi_FileName_i}.log" ]] 
 	do
-		i=$((${i}+1))
+		___ssu_util_evi_FileName_i=$((${___ssu_util_evi_FileName_i}+1))
 	done
-	touch ${_ssu_evi_dir}/"${tempName}${i}.log"
-	echo ${_ssu_evi_dir}/"${tempName}${i}.log"
+	touch ${_ssu_evi_dir}/"${___ssu_util_evi_FileName_tempName}${___ssu_util_evi_FileName_i}.log"
+	echo ${_ssu_evi_dir}/"${___ssu_util_evi_FileName_tempName}${___ssu_util_evi_FileName_i}.log"
 }
 
