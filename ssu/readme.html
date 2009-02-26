@@ -554,16 +554,19 @@ h_rm piglet<br>
 <br>
 <a name="codecoverage"><b>コードカバレッジ計測機能</b></a><br>
 SSUでは、特定のシェルスクリプトに対してコードカバレッジを測定することが可能です。<br>
-テストコード中に<br>
+テストコード中でstartSSUを実行する前に、下記のような関数を呼び出してください。<br>
 <br>
-SSU_TARGET_FOR_COVERAGE="tax.sh" <br>
+add_ssuCoverageTarget　"./tax.sh" <br>
 <br>
 というように、カバレッジを測定したいシェルの相対パスを記述してください。<br>
+複数のシェルのカバレッジを測定することが可能です。<br>
+<br>
 全てのテストの実行が終了した後にコードのカバレッジが測定されます。<br>
 結果は、<br>
 <br>
 <font color="blue">
 ==Coverage Report.==========================<br>
+./tax.sh<br/>
 75% passed!(6/8[passedCommandLines/allCommandLines])<br>
 below lines unpassed.<br>
 5 6.<br>
@@ -576,10 +579,10 @@ below lines unpassed.<br>
 <br>
 <br>
 <font color=red>注意：</font><br>
-カバレッジ測定機能を使用すると、SSU_TARGET_FOR_COVERAGEに指定されたファイルが測定用ファイルに変換されます。<br>
-そのためSSU_TARGET_FOR_COVERAGEに指定したファイル、及びそのディレクトリに書き込み権限が必要です。<br>
-また、SSU_TARGET_FOR_COVERAGEに指定したファイルに定義した関数などの計測をしたい場合で、且つ測定用ファイルに変換する前の関数を読み込んでいる場合は、
-再度SSU_TARGET_FOR_COVERAGEに指定したファイルを読み込み直してください。beforeTest関数などを使用すると良いでしょう。<br>
+カバレッジ測定機能を使用すると、指定されたファイルが測定用ファイルに変換されます。<br>
+そのため指定したファイル、及びそのディレクトリに書き込み権限が必要です。<br>
+また、指定したファイルに定義した関数などの計測をしたい場合で、且つ測定用ファイルに変換する前の関数を読み込んでいる場合は、
+再度指定したファイルを読み込み直してください。beforeTest関数などを使用すると良いでしょう。<br>
 （測定用に変換されていない関数が実行される可能性を防ぐためです）<br>
 <br>
 <br>
@@ -1145,8 +1148,10 @@ afterTest
 #!/usr/bin/sh
 . ../ssu/SSU.sh #1. Testツールを読み込む
 
-add_testCmd "sh test_assert.sh" #2. TestScriptの実行を指定する
-add_testCmd "sh test_connect.sh"
+add_SSUTestCmd "sh test_assert.sh" #2. TestScriptの実行を指定する
+add_SSUTestCmd "sh test_connect.sh"
+
+set_SUITE_DEBUG_MODE OFF #3. デバッグモードを指定する
 
 startSSUSuite; #テストスイートを実行する
 </pre>
@@ -1155,12 +1160,17 @@ startSSUSuite; #テストスイートを実行する
 通常のテストスクリプトで必要なSSU_HOMEの設定などはテストスイートでは不要です。
 (各テストスクリプト内の値が使用されます)<br>
 <br>
-次に、add_testCmd関数にテストの実行コマンドを指定します。テストスイートでは、この設定した順序で実行されます。<br>
+次に、add_SSUTestCmd関数にテストの実行コマンドを指定します。テストスイートでは、この設定した順序で実行されます。<br>
 ここで指定できるテストコードは基本的にテストスイートスクリプトと同一ディレクトリで無くてはいけません。
 これは、テストスクリプト自体のディレクトリと、テストスイート実行のディレクトリが異なると
 ディレクトリパスの整合性が取れなくなってしまうためです。<br>
 また、ここでテストスクリプト以外のテストの実行を指定するとエラーとなります。<br>
-最後に3でテストスイートの実行を開始します。<br>
+<br>
+3でデバッグモードを指定しています。set_SUITE_DEBUG_MODE関数の引数に「ON/OFF」を指定してください。
+これは、このスイートで実行される全てのテストシェルのデバッグモードを強制指定します。<br>
+つまり、各テストシェルでデバッグモードがONにされていても、この指定により全てOFFに切り替えることができます。<br>
+<br>
+最後にテストスイートの実行を開始します。<br>
 <br>
 スイートの実行では、エビデンスなどの格納先は一切変更されません。
 <br>
