@@ -46,6 +46,9 @@ TARGET_TEST_PATTERN="^test";
 SSU_EVIDENCE_BASEDIR="";
 SSU_CHARCODE=""
 
+SSU_REPORT=OFF
+_ssu_REPORT_FILE="report.txt"
+
 ## SSU requires Java.
 ## Please define Your JavaPath.
 ## eg. SSU_JAVA_CMD="/opt/java/bin/java"
@@ -167,10 +170,10 @@ fi
 _ssu_BeforeTest(){
 
 	if [ "${SSU_DEBUG_MODE}" = "ON" ]; then
-		echo "";
-		echo "###########################################################################";
-		echo "Start : ${_ssu_casename}";
-		echo "";
+		echo ""
+		echo "###########################################################################"
+		echo "Start : ${_ssu_casename}"
+		echo ""
 		
 		_ssu_succeedLog_INNER="_ssu_succeedLog_DEBUG"
 	fi
@@ -304,8 +307,10 @@ _ssu_DoSSU(){
 		#result testing
 		if [ ${___ssu_DoSSU_test_rc} -eq 0 ] 
 		then 
+			echo "    $_ssu_CurrentTestName  -> OK!" >> "$_ssu_REPORT_FILE"
 			_ssu_countOfSuccessTest=$((${_ssu_countOfSuccessTest}+1))
 		else
+			echo "    $_ssu_CurrentTestName  -> ERROR!" >> "$_ssu_REPORT_FILE"
 			_ssu_countOfFailedTest=$((${_ssu_countOfFailedTest}+1))
 			___ssu_DoSSU_color="red"
 			_ssu_suite_color="red"
@@ -336,12 +341,14 @@ _ssu_SystemOut(){
 	then
 		return 0;
 	fi
-	echo ""
-	echo "** Result Of Test ***************************";
-	echo "Run Tests:${_ssu_cnt}";
-	echo "Success Tests:${_ssu_countOfSuccessTest}";
-	echo "Failure Tests:${_ssu_countOfFailedTest}";
-	echo "*********************************************";
+	{
+		echo ""
+		echo "** Result Of Test ***************************";
+		echo "Run Tests:${_ssu_cnt}";
+		echo "Success Tests:${_ssu_countOfSuccessTest}";
+		echo "Failure Tests:${_ssu_countOfFailedTest}";
+		echo "*********************************************";
+	} | tee -a "$_ssu_REPORT_FILE" 
 	_ssu_cnt=0
 }
 
@@ -405,13 +412,15 @@ _ssu_trap_function(){
 		_ssu_TestJobID=""
 	fi
 	
-	_ssu_TeardownForEvidence
 	_ssu_tearDown_h
 	_ssu_TearDownForCoverage
 	rm -fr "${_ssu_WorkDir}"
 	if [ "$_ssu_suite_mode" != "on" ];then
 		_ssu_SystemOut
 	fi
+	
+	_ssu_report_teardown
+	_ssu_TeardownForEvidence
 }
 trap _ssu_trap_function 0 1 2 3 15
 
@@ -510,6 +519,7 @@ startSSU(){
 	fi
 	
 	_ssu_SetupForEvidence
+	_ssu_report_setup
 	
 	typeset __startSSU_test_funcs=`typeset -f |sed 's/function //'| sed 's/()//' | grep ${SSU_TEST_PATTERN}`;
 
@@ -668,7 +678,10 @@ _ssu_iTearDown4C(){
 	typeset ___ssu_iTearDown4C_result_f=${_ssu_CoverageResult_fs[${___ssu_iTearDown4C_ind}]}
 	typeset ___ssu_iTearDown4C_expect_f=${_ssu_CoverageExpect_fs[${___ssu_iTearDown4C_ind}]}
 	
-	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar "${_ssu_UtilJar}" "${SSU_CHARCODE}" analyze "${___ssu_iTearDown4C_expect_f}" "${___ssu_iTearDown4C_result_f}" "${___ssu_iTearDown4C_target}"
+	{
+		echo ""
+		${SSU_JAVA_CMD} $SSU_JAVA_OPTION -jar "${_ssu_UtilJar}" "${SSU_CHARCODE}" analyze "${___ssu_iTearDown4C_expect_f}" "${___ssu_iTearDown4C_result_f}" "${___ssu_iTearDown4C_target}"
+	} |tee -a "$_ssu_REPORT_FILE"
 	if [ ! -f "${___ssu_iTearDown4C_backup}" ]
 	then
 		return 1;
@@ -770,6 +783,26 @@ _ssu_TeardownForEvidence(){
 	
 }
 
+################################################################################
+# test report
+################################################################################
+_ssu_report_setup(){
+	_ssu_REPORT_FILE="${SSU_EVIDENCE_BASEDIR}"/"$_ssu_REPORT_FILE"
+	typeset ___ssu_report_setup_date=`date`
+	{
+		echo "START :: $___ssu_report_setup_date"
+		echo ""
+		echo "TEST REPORT"
+	} > "$_ssu_REPORT_FILE"
+}
+_ssu_report_teardown(){
+	if [ "$SSU_REPORT" = "OFF" ];then
+		rm "$_ssu_REPORT_FILE"
+	else
+		typeset ___ssu_report_teardown_date=`date`
+		echo "END :: $___ssu_report_teardown_date" >> "$_ssu_REPORT_FILE"
+	fi
+}
 ################################################################################
 # test bar
 ################################################################################
