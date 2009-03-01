@@ -15,7 +15,7 @@ SSUは以下の機能を持ちます。<br>
 <li><a href="#helper">ヘルパー関数</a></li>
 <li><a href="#codecoverage">コードカバレッジ計測機能</a></li>
 <li><a href="#util">豊富なUtil関数</a></li>
-<li><a href="#evi">エビデンス取得関数</a></li>
+<li><a href="#evi">エビデンス取得</a></li>
 <li><a href="#perf">パフォーマンス測定機能</a></li>
 <li><a href="#beforeafter">テスト前後の共通化</a></li>
 <li><a href="#debug">デバックモード</a></li>
@@ -846,8 +846,13 @@ assert_db*を使用する際の前提も参照してください。</td></tr>
 <br>
 <br>
 
-<a name="evi"><b>エビデンス取得関数</b></a><br>
-エビデンス取得用の関数です。DB、ファイル、ディレクトリをエビデンスとして所定のディレクトリに保存します。<br>
+<a name="evi"><b>エビデンス取得機能</b></a><br>
+SSUではエビデンスを取得する機能を提供します。<br/>
+この機能には大きく分けて2種類あります。<br/>
+エビデンスバックアップ機能とテスト結果保存機能です。<br/>
+<br/>
+まずはエビデンスバックアップ機能を説明します。<br/>
+DB、ファイル、ディレクトリをエビデンスとして所定のディレクトリに保存します。<br>
 デフォルトの保存先ディレクトリは以下の規則で作成されます。<br/>
 ${SSU_HOME}/evidence/ユーザー名/日付/testシェル名/test関数名<br/>
 <br/>
@@ -864,6 +869,16 @@ _1.log<br/>
 <li><a href="#u_evi_dir">  u_evi_dir</a></li>
 </ul>
 <br><br>
+次にテスト結果保存機能を説明します。<br/>
+通常、テスト結果は標準出力に表示されますが、これらの結果をファイルにもレポートさせる機能です。（標準出力への出力は何も変わりません）<br/>
+evidence/ユーザー名/日付/testシェル名/report.txt<br/>
+というファイルにレポートさせます。<br/>
+<br>
+この機能を有効にするには、<br>
+SSU_REPORT=ON<br>
+と、して下さい。<br>
+<br>
+<br>
 <table border=0 bgcolor="#000000" cellspacing=1 cellpadding=1>
 <tr bgcolor="#FFFFFF"><td colspan=2><a name="#u_evi_db">u_evi_db</a></td></tr>
 <tr bgcolor="#FFFFFF"><td colspan=2>表の中身をエビデンスとして保存します。保存ファイル名は表名が使用されます。
