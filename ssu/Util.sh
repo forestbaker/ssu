@@ -14,6 +14,30 @@
 #
 ################################################################################
 
+_ssu_util_old_to_new(){
+	if [ "$JAVA_CMD" != "java" ];then
+		SSU_JAVA_CMD="$JAVA_CMD"
+	fi
+	if [ "$JAVA_OPTION" != "" ];then
+		SSU_JAVA_OPTION="$JAVA_OPTION"
+	fi
+	
+	if [ "$JDBC_JAR" != "" ];then
+		SSU_JDBC_JAR="$JDBC_JAR"
+	fi
+	if [ "$JDBC_CLASS" != "" ];then
+		SSU_JDBC_CLASS="$JDBC_CLASS"
+	fi
+	if [ "$JDBC_URL" != "" ];then
+		SSU_JDBC_URL="$JDBC_URL"
+	fi
+	if [ "$JDBC_USER" != "" ];then
+		SSU_JDBC_USER="$JDBC_USER"
+	fi
+	if [ "$JDBC_PASSWORD" != "" ];then
+		SSU_JDBC_PASSWORD="$JDBC_PASSWORD"
+	fi
+}
 ################################################################################
 #String
 ################################################################################
@@ -128,11 +152,12 @@ u_str_gsub(){
 	typeset __u_str_gsub_str="${1}";
 	typeset __u_str_gsub_pattern="${2}";
 	typeset __u_str_gsub_replace="${3}";
+	typeset __u_str_gsub_new_str="";
 	if [ -z "${__u_str_gsub_replace}" ]
 	then
-		typeset __u_str_gsub_new_str=`echo "${__u_str_gsub_str}" | tr -d "${__u_str_gsub_pattern}"`
+		__u_str_gsub_new_str=`echo "${__u_str_gsub_str}" | tr -d "${__u_str_gsub_pattern}"`
 	else
-		typeset __u_str_gsub_new_str=`echo "${__u_str_gsub_str}" | tr "${__u_str_gsub_pattern}" "${__u_str_gsub_replace}"`
+		__u_str_gsub_new_str=`echo "${__u_str_gsub_str}" | tr "${__u_str_gsub_pattern}" "${__u_str_gsub_replace}"`
 	fi
 	echo "${__u_str_gsub_new_str}"
 }
@@ -310,14 +335,14 @@ u_str_split(){
 	typeset __u_str_split_index=${2}
 	__u_str_split_index=$((${__u_str_split_index}+1))
 	typeset __u_str_split_i=1
-	typeset __u_str_split_index=1
+	typeset __u_str_split_inner_index=1
 	typeset __u_str_split_s="";
-	while [ ${__u_str_split_index} -le ${__u_str_split_index} ]
+	while [ ${__u_str_split_inner_index} -le ${__u_str_split_index} ]
 	do
 		__u_str_split_s=`echo "${__u_str_split_str}" | cut -d " " -f ${__u_str_split_i}`
 		if [[ ! -z "${__u_str_split_s}" ]]
 		then
-			__u_str_split_index=$((${__u_str_split_index}+1))
+			__u_str_split_inner_index=$((${__u_str_split_inner_index}+1))
 		fi
 		__u_str_split_i=$((${__u_str_split_i}+1))
 		if [[ ${__u_str_split_i} -gt ${__u_str_split_max} ]]
@@ -639,6 +664,7 @@ u_f_getTimestamp(){
 		_ssu_util_ExitLog "u_f_getTimestamp";
 		return 1;
 	fi
+	_ssu_util_old_to_new
 	typeset __u_f_getTimestamp_file="${1}"
 	if [[ ! -f "${__u_f_getTimestamp_file}" && ! -d "${__u_f_getTimestamp_file}" && ! -L "${__u_f_getTimestamp_file}" ]]
 	then
@@ -660,6 +686,7 @@ u_db_insert(){
 		_ssu_util_ExitLog "u_db_insert";
 		return 1;
 	fi
+	_ssu_util_old_to_new
 	typeset __u_db_insert_file="${1}";
 	typeset __u_db_insert_table="${2}";
 	typeset __u_db_insert_where=" ";
@@ -688,6 +715,7 @@ u_db_delete(){
 		_ssu_util_ExitLog "u_db_delete";
 		return 1;
 	fi
+	_ssu_util_old_to_new
 	typeset __u_db_delete_table="${1}";
 	typeset __u_db_delete_where=" ";
 	if [ $# = 2 ]
@@ -716,6 +744,7 @@ if [[ $# != 2 && $# != 3 ]]
 		_ssu_util_ExitLog "u_db_select_to";
 		return 1;
 	fi
+	_ssu_util_old_to_new
 	typeset __u_db_select_to_file="${1}";
 	typeset __u_db_select_to_table="${2}";
 	typeset __u_db_select_to_where=" ";
@@ -745,6 +774,7 @@ u_db_select(){
 		_ssu_util_ExitLog "u_db_select";
 		return 1;
 	fi
+	_ssu_util_old_to_new
 	typeset __u_db_select_table="${1}";
 	typeset __u_db_select_where=" ";
 	if [ $# = 2 ]
@@ -771,6 +801,7 @@ u_db_sql_query(){
 		_ssu_util_ExitLog "u_db_sql_query";
 		return 1;
 	fi
+	_ssu_util_old_to_new
 	typeset __u_db_sql_query_file="${1}";
 	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "query" "$__u_db_sql_query_file" ".." "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" " " ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
 	typeset __u_db_sql_query_r=$?
@@ -791,6 +822,7 @@ u_db_sql_exec(){
 		_ssu_util_ExitLog "u_db_sql_exec";
 		return 1;
 	fi
+	_ssu_util_old_to_new
 	typeset __u_db_sql_exec_file="${1}";
 	${SSU_JAVA_CMD} $SSU_JAVA_OPTION -cp "${SSU_JDBC_JAR}${_ssu_jarsep}${_ssu_UtilJar}" org.kikaineko.ssu.db.DBMain "${SSU_CHARCODE}" "db" "exec" "$__u_db_sql_exec_file" ".." "${SSU_JDBC_CLASS}" "${SSU_JDBC_URL}" " " ${SSU_JDBC_USER} ${SSU_JDBC_PASSWORD}
 	typeset __u_db_sql_exec_r=$?
@@ -813,6 +845,7 @@ if [[ $# != 1 && $# != 2 ]]
 		_ssu_util_ExitLog "u_evi_db";
 		return 1;
 	fi
+	_ssu_util_old_to_new
 	typeset __u_evi_db_table="${1}";
 	typeset __u_evi_db_name="${__u_evi_db_table}";
 	if [ $# = 2 ]
