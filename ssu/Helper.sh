@@ -84,7 +84,7 @@ h_mv(){
 	_ssu_h_mv_backup_src[${__h_mv_ind}]="${__h_mv_temp_src}"
 	_ssu_h_mv_backup_dest[${__h_mv_ind}]="${__h_mv_temp_dest}"
 	
-	typeset __h_mv_ind=`echo ${#_ssu_tearDown_h_calledFunctions[@]}`
+	__h_mv_ind=`echo ${#_ssu_tearDown_h_calledFunctions[@]}`
 	_ssu_tearDown_h_calledFunctions[${__h_mv_ind}]="_ssu_tearDown_h_mv"
 }
 
