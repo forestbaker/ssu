@@ -22,7 +22,7 @@
 # author : Masayuki Ioki,Takumi Hosaka,Teruyuki Takazawa
 # Version : 0.5
 # Date ; 2009.02.10
-_ssu_version="0.5 :: 2009.02.10"
+_ssu_version="0.5_2009.03.05"
 ################################################################################
 ################################################################################
 ## You MUST Define "SSU_HOME" in your test_case.
@@ -46,6 +46,9 @@ TARGET_TEST_PATTERN="^test";
 SSU_EVIDENCE_BASEDIR="";
 SSU_CHARCODE=""
 
+if [ x"$_ssu_SUITE_REPORT" = "x" ];then
+	_ssu_SUITE_REPORT="";
+fi
 SSU_REPORT=OFF
 _ssu_REPORT_FILE="report.txt"
 
@@ -328,12 +331,11 @@ _ssu_DoSSU(){
 		_ssu_display_bar "TEST END" "${_ssu_cnt}" "${___ssu_DoSSU_test_cnt_max}" "${___ssu_DoSSU_color}"
 	fi
 	
-	if [ "$_ssu_suite_inner_flag" != "on" ];then
+	if [ "$_ssu_suite_mode" != "on" ];then
 		echo ""
 	fi
     _ssu_AfterTest;
     
-	return $_ssu_countOfFailedTest
 }
 
 _ssu_SystemOut(){
@@ -341,14 +343,26 @@ _ssu_SystemOut(){
 	then
 		return 0;
 	fi
-	{
-		echo ""
-		echo "** Result Of Test ***************************";
-		echo "Run Tests:${_ssu_cnt}";
-		echo "Success Tests:${_ssu_countOfSuccessTest}";
-		echo "Failure Tests:${_ssu_countOfFailedTest}";
-		echo "*********************************************";
-	} | tee -a "$_ssu_REPORT_FILE" 
+
+	if [ "$_ssu_suite_mode" != "on" ];then
+		{
+			echo ""
+			echo "** Result Of Test ***************************";
+			echo "Run Tests:${_ssu_cnt}";
+			echo "Success Tests:${_ssu_countOfSuccessTest}";
+			echo "Failure Tests:${_ssu_countOfFailedTest}";
+			echo "*********************************************";
+		} | tee -a "$_ssu_REPORT_FILE" 
+	else
+		{
+			echo ""
+			echo "** Result Of Test ***************************";
+			echo "Run Tests:${_ssu_cnt}";
+			echo "Success Tests:${_ssu_countOfSuccessTest}";
+			echo "Failure Tests:${_ssu_countOfFailedTest}";
+			echo "*********************************************";
+		}  >> "$_ssu_REPORT_FILE" 
+	fi
 	_ssu_cnt=0
 }
 
@@ -415,9 +429,7 @@ _ssu_trap_function(){
 	_ssu_tearDown_h
 	_ssu_TearDownForCoverage
 	rm -fr "${_ssu_WorkDir}"
-	if [ "$_ssu_suite_mode" != "on" ];then
-		_ssu_SystemOut
-	fi
+	_ssu_SystemOut
 	
 	_ssu_report_teardown
 	_ssu_TeardownForEvidence
@@ -433,6 +445,9 @@ startSSU(){
 	_ssu_old_to_new
 	if [ x"$_ssu_SUITE_DEBUG_MODE" != "x" ];then
 		SSU_DEBUG_MODE="$_ssu_SUITE_DEBUG_MODE"
+	fi
+	if [ x"$_ssu_SUITE_REPORT" != "x" ];then
+		SSU_REPORT="$_ssu_SUITE_REPORT"
 	fi
 	
 	typeset __startSSU_td=`dirname ${SSU_HOME}`;
@@ -532,6 +547,8 @@ startSSU(){
 	done
 
 	_ssu_DoSSU;
+	
+	return $_ssu_countOfFailedTest
 }
 
 
@@ -881,7 +898,7 @@ _ssu_bar_suite() {
 	((___ssu_bar_suite_ii=___ssu_bar_suite_d3 - ___ssu_bar_suite_d2))
 	
     ((___ssu_bar_suite_suite_cnt=___ssu_bar_suite_suite_cnt + 1))
-    typeset ___ssu_bar_suite_sb=`printf "%-${_ssu_LENG}.${_ssu_LENG}s" " ${___ssu_bar_suite_testname}/$_ssu_casename (done: ${___ssu_bar_suite_cnt}/${___ssu_bar_suite_cnt}@${___ssu_bar_suite_suite_cnt}/${___ssu_bar_suite_suite_max}) "`
+    typeset ___ssu_bar_suite_sb=`printf "%-${_ssu_LENG}.${_ssu_LENG}s" " ${___ssu_bar_suite_testname}/$_ssu_casename (done: ${___ssu_bar_suite_cnt}/${___ssu_bar_suite_max}@${___ssu_bar_suite_suite_cnt}/${___ssu_bar_suite_suite_max}) "`
 
     typeset ___ssu_bar_suite_p1=`expr substr "$___ssu_bar_suite_sb" 1 $___ssu_bar_suite_d2`
     typeset ___ssu_bar_suite_p2=`expr substr "$___ssu_bar_suite_sb" $___ssu_bar_suite_d2_next $___ssu_bar_suite_ii`
@@ -899,6 +916,9 @@ _ssu_bar_suite() {
 ################################################################################
 set_SUITE_DEBUG_MODE(){
 	_ssu_SUITE_DEBUG_MODE="$1"
+}
+set_SUITE_REPORT(){
+	_ssu_SUITE_REPORT="$1"
 }
 
 add_SSUTestCmd(){
@@ -935,8 +955,8 @@ startSSUSuite(){
 	export _ssu_suite_test_cnt
 	export _ssu_suite_test_max
 	export _ssu_suite_testName
-	export _ssu_suite_inner_flag
 	export _ssu_SUITE_DEBUG_MODE
+	export _ssu_SUITE_REPORT
 	_ssu_suite_mode="on"
 	_ssu_suite_inner_flag=on
 	_ssu_suite_countOfSuccessTest=0
@@ -971,7 +991,7 @@ _ssu_suite_SystemOut(){
 		return 0;
 	fi
 	echo ""
-	echo "** Result Of Test ***************************";
+	echo "** Result Of TestSuite ***********************";
 	echo "Run TestCases:${_ssu_suite_test_max}";
 	echo "Success TestCases:${_ssu_suite_countOfSuccessTest}";
 	echo "Failure TestCases:${_ssu_suite_countOfFailedTest}";
