@@ -61,6 +61,7 @@ SSU_JAVA_OPTION=""
 
 ## If you use assert_db*, please set these vars.
 ## e.g. SSU_JDBC_JAR="/opt/oraclexe/app/oracle/product/10.2.0/server/jdbc/lib/ojdbc14.jar";
+##      SSU_JDBC_EXT_JAR="/opt/ibm/db2/V9.1/java/db2jcc_license_cu.jar"
 ##      SSU_JDBC_CLASS="oracle.jdbc.driver.OracleDriver";
 ##      SSU_JDBC_URL="jdbc:oracle:thin:@localhost:1521:xe";
 ##      SSU_JDBC_USER="pooh";
@@ -72,6 +73,7 @@ JDBC_USER="";
 JDBC_PASSWORD="";
 
 SSU_JDBC_JAR="";
+SSU_JDBC_EXT_JAR="";
 SSU_JDBC_CLASS="";
 SSU_JDBC_URL="";
 SSU_JDBC_USER="";
@@ -122,6 +124,8 @@ _ssu_old_to_new(){
 _ssu_map_abst(){
 	SSU_HOME=`_ssu_to_abst "${SSU_HOME}"`
 	SSU_JDBC_JAR=`_ssu_to_abst "${SSU_JDBC_JAR}"`
+    SSU_JDBC_EXT_JAR=`_ssu_to_abst "${SSU_JDBC_EXT_JAR}"`
+    SSU_JDBC_JAR=${SSU_JDBC_JAR}:${SSU_JDBC_EXT_JAR}
 }
 
 _ssu_to_abst(){
@@ -180,7 +184,7 @@ then
 	if [ "$1" = "-version" ]
 	then
 		echo "SSU version "$_ssu_version
-		echo "author Masayuki Ioki,Takumi Hosaka."
+		echo "author Masayuki Ioki,Takumi Hosaka,Teruyuki Takazawa."
 		exit 1
 	fi
 fi
@@ -520,6 +524,8 @@ startSSU(){
 	_ssu_UtilJar="${SSU_HOME}"/ssu.jar
 	
 	_ssu_setup_for_cygwin
+
+    SSU_JAVA_OPTION="${SSU_JAVA_OPTION} -Dssu.cygwin.root.path=${SSU_CYGWIN_ROOT_PATH} -Dssu.is.cygwin=${SSU_IS_CYGWIN}"
 
 	#make work dir
 	_ssu_WorkDir="${SSU_HOME}"/$$;
