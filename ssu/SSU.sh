@@ -17,12 +17,11 @@
 #
 # SSU : ShellScript Unit
 # You can use this tool as xUnit.
-# This tool requires Asser.sh and .jar and Util.sh
+# This tool requires Asser.sh,  ssu.jar and Util.sh
 #
 # author : Masayuki Ioki,Takumi Hosaka,Teruyuki Takazawa
 # Version : 0.5
-# Date ; 2009.02.10
-_ssu_version="0.5_2009.03.05"
+_ssu_version="0.5_2009.03.06"
 ################################################################################
 ################################################################################
 ## You MUST Define "SSU_HOME" in your test_case.
@@ -96,10 +95,6 @@ _ssu_old_to_new(){
 		SSU_TEST_PATTERN="$TARGET_TEST_PATTERN"
 	fi
 	
-	if [ "$SSU_TARGET_FOR_COVERAGE" = "" ];then
-		SSU_TARGET_FOR_COVERAGE="$TARGET_SHELL_FOR_COVERAGE"
-	fi
-	
 	if [ "$SSU_JAVA_CMD" = "java" ];then
 		SSU_JAVA_CMD="$JAVA_CMD"
 	fi
@@ -124,6 +119,27 @@ _ssu_old_to_new(){
 	fi
 }
 
+_ssu_map_abst(){
+	SSU_HOME=`_ssu_to_abst "${SSU_HOME}"`
+	SSU_JDBC_JAR=`_ssu_to_abst "${SSU_JDBC_JAR}"`
+}
+
+_ssu_to_abst(){
+	typeset ___ssu_to_abst_f="$1"
+	typeset ___ssu_to_abst_dir=`dirname "${___ssu_to_abst_f}"`
+	typeset ___ssu_to_abst_base=`basename "${___ssu_to_abst_f}"`
+	typeset ___ssu_to_abst_current=`pwd`
+	cd "$___ssu_to_abst_dir"
+	typeset ___ssu_to_abst_abst_dir=`pwd`
+	cd "$___ssu_to_abst_current"
+	
+	if [ "$___ssu_to_abst_abst_dir" != "/" ];then
+		echo "$___ssu_to_abst_abst_dir"/"$___ssu_to_abst_base"
+	else
+		echo /"$___ssu_to_abst_base"
+	fi
+}
+
 ################################################################################
 ################################################################################
 
@@ -145,6 +161,8 @@ _ssu_succeedLog_INNER="_ssu_succeedLog_DEBUG"
 if [ "$_ssu_suite_inner_flag" != "on" ];then
 	_ssu_suite_inner_flag="off"
 fi
+
+_ssu_run_dir=`pwd`
 ## suite 
 ################################################################################
 _ssu_casename=`basename $0`
@@ -225,8 +243,8 @@ setUp(){
 _ssu_TearDown(){
 
 	tearDown;
-	_ssu_TeardownForEvidence_test
 	_ssu_tearDown_h;
+	_ssu_TeardownForEvidence_test
 	if [ "${SSU_DEBUG_MODE}" = "ON" ]; then
 		typeset ___ssu_TearDown_case_num=$1;
 		echo "TestCase END : ${___ssu_TearDown_case_num}";
@@ -320,6 +338,8 @@ _ssu_DoSSU(){
 		fi
 		
 		_ssu_cnt=$((${_ssu_cnt}+1));
+		
+		cd "${_ssu_run_dir}"
 		
 		if [ "${SSU_DEBUG_MODE}" != "ON" ]; then
 			_ssu_display_bar "END   ${_ssu_CurrentTestName}" "${_ssu_cnt}" "${___ssu_DoSSU_test_cnt_max}" "${___ssu_DoSSU_color}"
@@ -443,6 +463,7 @@ trap _ssu_trap_function 0 1 2 3 15
 startSSU(){
 	## Checking
 	_ssu_old_to_new
+	_ssu_map_abst
 	if [ x"$_ssu_SUITE_DEBUG_MODE" != "x" ];then
 		SSU_DEBUG_MODE="$_ssu_SUITE_DEBUG_MODE"
 	fi
@@ -450,17 +471,9 @@ startSSU(){
 		SSU_REPORT="$_ssu_SUITE_REPORT"
 	fi
 	
-	typeset __startSSU_td=`dirname ${SSU_HOME}`;
-	typeset __startSSU_tf=`basename ${SSU_HOME}`;
-	
-	SSU_HOME=${__startSSU_td}/${__startSSU_tf}
-	
-	
 	if [[ ! -d "${SSU_HOME}" || ! -f "${SSU_HOME}/SSU.sh" ]];then
 		echo "\"${SSU_HOME}\" is wrong."
 		echo "Please Define SSU_HOME in your test_case."
-		echo "SSU_HOME is relative path-name from your test_case to SSU."
-		echo "like SSU_HOME=\"../test\" (/home/foo/test/SSU.sh , /home/foo/testcase/test.sh)"
 		exit 1;
 	fi
 	if [ ! -w "${SSU_HOME}" ];then
@@ -471,6 +484,11 @@ startSSU(){
 	if [ ! -f "${SSU_HOME}/Assert.sh" ];then
 		echo "Not Found Assert.sh in ${SSU_HOME}"
 		echo "We need Assert.sh"
+		exit 1;
+	fi
+	if [ ! -f "${SSU_HOME}/AssertExt.sh" ];then
+		echo "Not Found AssertExt.sh in ${SSU_HOME}"
+		echo "We need AssertExt.sh"
 		exit 1;
 	fi
 	if [ ! -f "${SSU_HOME}/Helper.sh" ];then
@@ -500,6 +518,8 @@ startSSU(){
 	. ${SSU_HOME}/Util.sh
 
 	_ssu_UtilJar="${SSU_HOME}"/ssu.jar
+	
+	_ssu_setup_for_cygwin
 
 	#make work dir
 	_ssu_WorkDir="${SSU_HOME}"/$$;
@@ -527,12 +547,6 @@ startSSU(){
 	echo "0" > ${_ssu_Lock};
 	#end
 	
-	typeset __startSSU_isCygwin=`uname |grep CYGWIN`;
-	if [ ! -z "${__startSSU_isCygwin}" ]
-	then
-		_ssu_jarsep=";"
-	fi
-	
 	_ssu_SetupForEvidence
 	_ssu_report_setup
 	
@@ -549,6 +563,22 @@ startSSU(){
 	_ssu_DoSSU;
 	
 	return $_ssu_countOfFailedTest
+}
+
+_ssu_setup_for_cygwin(){
+	typeset ___ssu_setup_for_cygwin_isCygwin=`uname |grep CYGWIN`;
+	if [ ! -z "${___ssu_setup_for_cygwin_isCygwin}" ]
+	then
+		_ssu_jarsep=";"
+		
+		SSU_CYGWIN_ROOT_PATH=`cygpath -aw /`
+		export SSU_CYGWIN_ROOT_PATH
+		SSU_IS_CYGWIN=1
+		export SSU_IS_CYGWIN
+		_ssu_UtilJar="$SSU_CYGWIN_ROOT_PATH""$_ssu_UtilJar"
+		
+		SSU_JDBC_JAR="$SSU_CYGWIN_ROOT_PATH""$SSU_JDBC_JAR"
+	fi
 }
 
 
