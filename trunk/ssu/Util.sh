@@ -23,7 +23,12 @@ _ssu_util_old_to_new(){
 	fi
 	
 	if [ "$JDBC_JAR" != "" ];then
-		SSU_JDBC_JAR="$JDBC_JAR"
+		if [ $SSU_IS_CYGWIN -eq 1 ];then
+			typeset ___ssu_util_old_to_new_v=`_ssu_to_abst "$JDBC_JAR"`
+			SSU_JDBC_JAR="$SSU_CYGWIN_ROOT_PATH""$___ssu_util_old_to_new_v"
+		else
+			SSU_JDBC_JAR="$JDBC_JAR"
+		fi
 	fi
 	if [ "$JDBC_CLASS" != "" ];then
 		SSU_JDBC_CLASS="$JDBC_CLASS"
@@ -955,4 +960,3 @@ _ssu_util_evi_FileName(){
 	touch ${_ssu_evi_dir}/"${___ssu_util_evi_FileName_tempName}${___ssu_util_evi_FileName_i}.log"
 	echo ${_ssu_evi_dir}/"${___ssu_util_evi_FileName_tempName}${___ssu_util_evi_FileName_i}.log"
 }
-
