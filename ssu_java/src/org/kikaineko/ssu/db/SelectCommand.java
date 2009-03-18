@@ -1,6 +1,5 @@
 package org.kikaineko.ssu.db;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -77,7 +76,7 @@ public class SelectCommand {
 	public static void selectAssertOrder(String filePath, String jdbcClass,
 			String url, String user, String password, String table,
 			String where, String convertPath) throws Throwable {
-		ArrayList fileData = FileIO.getFileDatas(new File(filePath),
+		ArrayList fileData = FileIO.getFileDatas(filePath,
 				FileIO.FileReadCodeToDB);
 		if (fileData.size() < 2) {
 			throw new SSUException("no data in " + filePath);
@@ -207,7 +206,7 @@ public class SelectCommand {
 		} else {
 			convertPath = null;
 		}
-		ArrayList fileData = FileIO.getFileDatas(new File(filePath),
+		ArrayList fileData = FileIO.getFileDatas(filePath,
 				FileIO.FileReadCodeToDB);
 		if (fileData.size() < 2) {
 			throw new SSUException("no data in " + filePath);

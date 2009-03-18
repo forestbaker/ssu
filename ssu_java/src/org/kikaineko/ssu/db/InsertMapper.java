@@ -30,6 +30,10 @@ public class InsertMapper {
 	}
 	
 	public static String norm(int type, String s) {
+		String ss=s;
+		if(ss!=null){
+			s=ss.trim();
+		}
 		switch (type) {
 		case Types.CHAR:
 		case Types.VARCHAR:
@@ -40,7 +44,7 @@ public class InsertMapper {
 			if (isEmpty(s)) {
 				return "''";
 			}
-			return "'"+sanit(s)+"'";
+			return "'"+sanit(ss)+"'";
 		case Types.BIT:
 			if ("0".equals(s)
 					|| (!isEmpty(s) && "true".equals(s.toLowerCase()))) {
@@ -88,7 +92,7 @@ public class InsertMapper {
 		case Types.NUMERIC:
 		case Types.DECIMAL:
 			if (!isEmpty(s)) {
-				return new BigDecimal(Double.parseDouble(s)).toString();
+				return new BigDecimal(s).toString();
 			} else {
 				return null;
 			}

@@ -109,7 +109,9 @@ public class Mapper {
 
 	private static Object _normFromCSV(String s, int type) throws SQLException {
 		String ss = s;
-		s = ss.trim();
+		if(ss!=null){
+			s = ss.trim();
+		}
 		switch (type) {
 		case Types.CHAR:
 		case Types.VARCHAR:
