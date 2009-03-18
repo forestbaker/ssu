@@ -24,8 +24,10 @@ public class FileIO {
 	public static final String FileWriteCodeFromDB = "FileWriteCodeFromDB";
 
 	public static void init(){
-		FileIO.CygwinRootPath=System.getenv("SSU_CYGWIN_ROOT_PATH");
-		FileIO.IsCygwin="1".equals(System.getenv("SSU_IS_CYGWIN"));
+		//FileIO.CygwinRootPath=System.getenv("SSU_CYGWIN_ROOT_PATH");
+        FileIO.CygwinRootPath=System.getProperty("ssu.cygwin.root.path");
+		//FileIO.IsCygwin="1".equals(System.getenv("SSU_IS_CYGWIN"));
+		FileIO.IsCygwin="1".equals(System.getProperty("ssu.is.cygwin"));
 	}
 	public static File getFile_NotDir(String path) throws IOException {
 		if (path != null) {
