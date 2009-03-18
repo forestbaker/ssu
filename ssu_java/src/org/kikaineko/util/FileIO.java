@@ -15,11 +15,31 @@ public class FileIO {
 	private static Map codeMap = null;
 	private static final String CodeFileName = "ssu_code.properties";
 	public static String CodeFilePATH = null;
+	public static String CygwinRootPath = null;
+	public static boolean IsCygwin;
 	public static final String FileReadCode = "FileReadCode";
 	public static final String FileWriteCode = "FileWriteCode";
 	public static final String DBSelectCode = "DBSelectCode";
 	public static final String FileReadCodeToDB = "FileReadCodeToDB";
 	public static final String FileWriteCodeFromDB = "FileWriteCodeFromDB";
+
+	public static void init(){
+		FileIO.CygwinRootPath=System.getenv("SSU_CYGWIN_ROOT_PATH");
+		FileIO.IsCygwin="1".equals(System.getenv("SSU_IS_CYGWIN"));
+	}
+	public static File getFile_NotDir(String path) throws IOException {
+		if (path != null) {
+			path = path.trim();
+		}
+		File f = new File(path);
+		if (f.exists() && f.isFile()) {
+			return f;
+		}
+		if (IsCygwin && CygwinRootPath != null) {
+			f = new File(CygwinRootPath.trim() + path.trim());
+		}
+		return f;
+	}
 
 	public static String code(String name) throws Exception {
 		if (name == null) {
@@ -29,11 +49,11 @@ public class FileIO {
 			return null;
 		}
 		if (codeMap == null) {
-			File f = new File(CodeFilePATH);
+			File f = getFile_NotDir(CodeFilePATH);
 			codeMap = new HashMap();
 
 			if (!f.exists() || f.isDirectory()) {
-				f = new File(CodeFilePATH + "/" + CodeFileName);
+				f = getFile_NotDir(CodeFilePATH + "/" + CodeFileName);
 				if (!f.exists()) {
 					return null;
 				}
@@ -52,10 +72,10 @@ public class FileIO {
 
 	public static ArrayList getFileDatas(String filePath, String code)
 			throws Exception {
-		return getFileDatas(new File(filePath), code);
+		return getFileDatas(getFile_NotDir(filePath), code);
 	}
 
-	public static ArrayList getFileDatas(File file, String code)
+	private static ArrayList getFileDatas(File file, String code)
 			throws Exception {
 		String charCode = code(code);
 		ArrayList list = new ArrayList();
@@ -88,18 +108,18 @@ public class FileIO {
 			throws Exception {
 		String charCode = code(code);
 		if (charCode != null) {
-			return new String(getFileDataAsBytes(new File(fileName)), charCode);
+			return new String(getFileDataAsBytes(getFile_NotDir(fileName)), charCode);
 		} else {
-			return new String(getFileDataAsBytes(new File(fileName)));
+			return new String(getFileDataAsBytes(getFile_NotDir(fileName)));
 
 		}
 	}
 
 	public static byte[] getFileDataAsBytes(String fileName) throws Exception {
-		return getFileDataAsBytes(new File(fileName));
+		return getFileDataAsBytes(getFile_NotDir(fileName));
 	}
 
-	public static byte[] getFileDataAsBytes(File file) throws Exception {
+	private static byte[] getFileDataAsBytes(File file) throws Exception {
 		byte[] bs = new byte[(int) file.length()];
 		try {
 			InputStream in = new FileInputStream(file);
@@ -118,11 +138,11 @@ public class FileIO {
 
 	public static void writeOutPutFile(String filePath, String str, String code)
 			throws Exception {
-		File file = new File(filePath);
+		File file = getFile_NotDir(filePath);
 		writeOutPutFile(file, str, code);
 	}
 
-	public static void writeOutPutFile(File file, String str, String code)
+	private static void writeOutPutFile(File file, String str, String code)
 			throws Exception {
 		String charCode = code(code);
 		BufferedWriter out = null;
