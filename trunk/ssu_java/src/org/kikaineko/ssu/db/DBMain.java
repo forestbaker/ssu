@@ -9,6 +9,7 @@ public class DBMain {
 	 * @throws Throwable
 	 */
 	public static void main(String[] args) {
+		FileIO.init();
 		try {
 			if (args.length != 7 && args.length != 8 && args.length != 9
 					&& args.length != 10 && args.length != 11) {

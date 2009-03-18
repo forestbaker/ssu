@@ -13,15 +13,15 @@ public class Convertor {
 	private static String MapFileName = "ssu_convert.properties";
 
 	public static void init(String path) throws Exception {
-		File f = new File(path);
+		File f = FileIO.getFile_NotDir(path);
 		map = new HashMap();
 		if (!f.exists() || f.isDirectory()) {
-			f = new File(path + "/" + MapFileName);
+			f = FileIO.getFile_NotDir(path + "/" + MapFileName);
 			if (!f.exists()) {
 				throw new FileNotFoundException(path);
 			}
 		}
-		ArrayList ls = FileIO.getFileDatas(f, null);
+		ArrayList ls = FileIO.getFileDatas(f.getAbsolutePath(), null);
 		for (int i = 0; i < ls.size(); i++) {
 			String s = (String) ls.get(i);
 			s = s.trim();

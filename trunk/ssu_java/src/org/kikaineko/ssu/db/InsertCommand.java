@@ -1,6 +1,5 @@
 package org.kikaineko.ssu.db;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -20,7 +19,7 @@ public class InsertCommand {
 	public static void insert(String filePath, String jdbcClass, String url,
 			String user, String password, String table) throws Exception {
 		InsertMapper.setDbmsType(jdbcClass);
-		ArrayList fileData = FileIO.getFileDatas(new File(filePath),FileIO.FileReadCodeToDB);
+		ArrayList fileData = FileIO.getFileDatas(filePath,FileIO.FileReadCodeToDB);
 		if (fileData.size() < 1) {
 			throw new SSUException("no data in " + filePath);
 		}
@@ -47,7 +46,6 @@ public class InsertCommand {
 			for (int i = 0; i < csvdata.size(); i++) {
 				List data = (List) csvdata.get(i);
 				sql = createSQL(names, map, data, table);
-
 				// –â‡‚¹‚ÌŽÀs
 				stmt.executeUpdate(sql);
 			}
@@ -70,11 +68,13 @@ public class InsertCommand {
 		presql.append(table).append(" (");
 		StringBuffer val = new StringBuffer();
 		int i = 0;
+		String inputData=null;
 		try {
 			for (i = 0; i < names.size(); i++) {
 				String s = (String) names.get(i);
+				inputData=(String) data.get(i);
 				Object o=InsertMapper.norm(((Integer) map.get(s)).intValue(),
-						(String) data.get(i));
+						inputData);
 				if(o!=null){
 					presql.append(s).append(",");
 					val.append(o).append(",");
@@ -85,7 +85,7 @@ public class InsertCommand {
 			val.append(")");
 		} catch (Throwable e) {
 			throw new RuntimeException("ColumnName " + names.get(i)
-					+ " is correct? or data short?", e);
+					+ " is correct? or Data ["+inputData+"] is wrong?", e);
 		}
 		presql.append(") values (").append(val);
 		return presql.toString();

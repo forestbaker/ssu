@@ -15,6 +15,9 @@ public class SSUBigDecimal {
 		if(this.bd.equals(ob)){
 			return true;
 		}
+		if(this.bd.compareTo(ob)==0){
+			return true;
+		}
 		int thisScale=this.bd.scale();
 		int otherScale=ob.scale();
 		if(thisScale<otherScale){
