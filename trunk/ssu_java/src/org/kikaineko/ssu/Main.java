@@ -15,6 +15,7 @@ public class Main {
 				badArgs(args);
 			}
 			FileIO.CodeFilePATH=args[0];
+			FileIO.init();
 			
 			if (args[1].equals("new")) {
 				NewSourceMaker.createNewSource(args[2], args[3]);

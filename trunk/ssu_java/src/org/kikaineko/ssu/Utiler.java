@@ -2,15 +2,16 @@ package org.kikaineko.ssu;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.kikaineko.util.FileIO;
 
 public class Utiler {
-	public static void exec(String string, String string2) {
+	public static void exec(String string, String string2) throws IOException {
 		if (string.equals("file-time")) {
-			File f = new File(string2);
+			File f = FileIO.getFile_NotDir(string2);
 			Date fileDate = new Date(f.lastModified());
 			SimpleDateFormat dateFormat = new SimpleDateFormat(
 					"yyyy-MM-dd HH:mm:ss");
@@ -27,8 +28,8 @@ public class Utiler {
 		}
 	}
 	public static void fileSame(String string, String string2) throws Throwable {
-		File f1 = new File(string.trim());
-		File f2 = new File(string2.trim());
+		File f1 = FileIO.getFile_NotDir(string.trim());
+		File f2 = FileIO.getFile_NotDir(string2.trim());
 		if (f1.length() != f2.length()) {
 			File ff=null;
 			if(f1.length()==0){
@@ -43,8 +44,8 @@ public class Utiler {
 			return;
 		}
 		
-		byte[] bs1 = FileIO.getFileDataAsBytes(f1);
-		byte[] bs2 = FileIO.getFileDataAsBytes(f2);
+		byte[] bs1 = FileIO.getFileDataAsBytes(f1.getAbsolutePath());
+		byte[] bs2 = FileIO.getFileDataAsBytes(f2.getAbsolutePath());
 		if (bs1.length != bs2.length) {
 			System.out.print(1);
 			return;

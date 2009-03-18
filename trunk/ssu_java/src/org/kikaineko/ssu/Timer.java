@@ -8,11 +8,7 @@ import org.kikaineko.util.FileIO;
 
 public class Timer {
 	public static void assertAve(String exp,String fname) throws Exception{
-		File f = new File(fname);
-		if (!f.exists() || f.isDirectory()) {
-			throw new IOException("not found or isDirectory? " + fname);
-		}
-		ArrayList list=FileIO.getFileDatas(f, null);
+		ArrayList list=FileIO.getFileDatas(fname, null);
 		ArrayList ls=new ArrayList();
 		long sum=0;
 		long max=0;
@@ -43,11 +39,7 @@ public class Timer {
 		
 	}
 	public static void report(String flag,String fname) throws Exception{
-		File f = new File(fname);
-		if (!f.exists() || f.isDirectory()) {
-			throw new IOException("not found or isDirectory? " + fname);
-		}
-		ArrayList list=FileIO.getFileDatas(f, null);
+		ArrayList list=FileIO.getFileDatas(fname, null);
 		ArrayList ls=new ArrayList();
 		long sum=0;
 		long max=0;
@@ -99,21 +91,21 @@ public class Timer {
 	}
 	public static void exec(String time, String start, String end,
 			String startD, String endD) throws Exception {
-		File startF = new File(start);
-		File endF = new File(end);
-		File startDF = new File(startD);
-		File endDF = new File(endD);
+		File startF = FileIO.getFile_NotDir(start);
+		File endF = FileIO.getFile_NotDir(end);
+		File startDF = FileIO.getFile_NotDir(startD);
+		File endDF = FileIO.getFile_NotDir(endD);
 		if (!startF.exists() || startF.isDirectory()) {
-			throw new IOException("not found or isDirectory? " + start);
+			throw new IOException("not found or isDirectory? " + start+" PATH=>"+startF.getPath());
 		}
 		if (!endF.exists() || endF.isDirectory()) {
-			throw new IOException("not found or isDirectory? " + endF);
+			throw new IOException("not found or isDirectory? " + end+" PATH=>"+endF.getPath());
 		}
 		if (!startDF.exists() || startDF.isDirectory()) {
-			throw new IOException("not found or isDirectory? " + startD);
+			throw new IOException("not found or isDirectory? " + startDF+" PATH=>"+startDF.getPath());
 		}
 		if (!endDF.exists() || endDF.isDirectory()) {
-			throw new IOException("not found or isDirectory? " + endD);
+			throw new IOException("not found or isDirectory? " + endD+" PATH=>"+endDF.getPath());
 		}
 
 		long t = Long.parseLong(time);
@@ -134,10 +126,10 @@ public class Timer {
 
 	public static void getTime(String start, String end, String startD,
 			String endD) throws Exception {
-		File startF = new File(start);
-		File endF = new File(end);
-		File startDF = new File(startD);
-		File endDF = new File(endD);
+		File startF = FileIO.getFile_NotDir(start);
+		File endF = FileIO.getFile_NotDir(end);
+		File startDF = FileIO.getFile_NotDir(startD);
+		File endDF = FileIO.getFile_NotDir(endD);
 		if (!startF.exists() || startF.isDirectory()) {
 			throw new IOException("not found or isDirectory? " + start);
 		}
