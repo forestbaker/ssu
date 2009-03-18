@@ -39,7 +39,7 @@ h_mv(){
 	typeset __h_mv_dest=""
 	typeset __h_mv_op=""
 	if [[ $# -eq 2 || $# -eq 3 ]];then
-		__h_mv_src="${1}"
+		__h_mv_src=`_ssu_to_abst "${1}"`
 		__h_mv_dest="${2}"
 		__h_mv_op=""
 		if [ $# = 3 ]
@@ -62,6 +62,7 @@ h_mv(){
 	
 	typeset __h_mv_temp_dest=""
 	if [ -f ${__h_mv_dest} ];then
+		__h_mv_dest=`_ssu_to_abst "$__h_mv_dest"`
 		__h_mv_temp_dest=`_ssu_TempFileName "${__h_mv_dest}"`;
 		cp -p  "${__h_mv_dest}" "${__h_mv_temp_dest}"
 		if [ $? -ne 0 ];then
@@ -77,6 +78,8 @@ h_mv(){
 	then
 		_ssu_ErrExit2 "h_mv: Fail! No Space?"
 	fi
+	
+	__h_mv_dest=`_ssu_to_abst "$__h_mv_dest"`
 	
 	typeset __h_mv_ind=`echo ${#_ssu_h_mv_src[@]}`
 	_ssu_h_mv_src[${__h_mv_ind}]="${__h_mv_src}"
@@ -124,7 +127,7 @@ h_chmod(){
 	typeset __h_chmod_file=""
 	if [[ $# -eq 2 ]];then
 		__h_chmod_mod="${1}"
-		__h_chmod_file="${2}"
+		__h_chmod_file=`_ssu_to_abst "${2}"`
 	else
 		_ssu_ErrExit "h_chmod: wrong argument."
 	fi
@@ -169,7 +172,7 @@ h_chown(){
 	typeset __h_chown_file=""
 	if [[ $# -eq 2 ]];then
 		__h_chown_own="${1}"
-		__h_chown_file="${2}"
+		__h_chown_file=`_ssu_to_abst "${2}"`
 	else
 		_ssu_ErrExit "h_chown"
 	fi
@@ -232,7 +235,7 @@ h_cp(){
 	typeset __h_cp_dest=""
 	typeset __h_cp_op=""
 	if [[ $# -eq 2 || $# -eq 3 ]];then
-		__h_cp_src="${1}"
+		__h_cp_src=`_ssu_to_abst "${1}"`
 		__h_cp_dest="${2}"
 		__h_cp_op=""
 		if [ $# = 3 ]
@@ -254,6 +257,7 @@ h_cp(){
 
 	typeset __h_cp_temp_dest=""
 	if [ -f ${__h_cp_dest} ];then
+		__h_cp_dest=`_ssu_to_abst "${__h_cp_dest}"`
 		__h_cp_temp_dest=`_ssu_TempFileName "${__h_cp_dest}"`;
 		cp -p  "${__h_cp_dest}" "${__h_cp_temp_dest}"
 		if [ $? -ne 0 ];then
@@ -268,6 +272,8 @@ h_cp(){
 	then
 		_ssu_ErrExit2 "h_cp: Fail! No Space?"
 	fi
+	
+	__h_cp_dest=`_ssu_to_abst "${__h_cp_dest}"`
 	
 	typeset __h_cp_ind=`echo ${#_ssu_h_cp_dest[@]}`
 	_ssu_h_cp_src[${__h_cp_ind}]="${__h_cp_src}"
@@ -313,7 +319,7 @@ h_rm(){
 	typeset __h_rm_src=""
 	typeset __h_rm_op=""
 	if [[ $# -eq 1 || $# -eq 2 ]];then
-		__h_rm_src="${1}"
+		__h_rm_src=`_ssu_to_abst "${1}"`
 		__h_rm_op=""
 		if [ $# = 2 ]
 		then
@@ -392,6 +398,8 @@ h_mkdir(){
 		_ssu_ErrExit2 "h_mkdir: Fail! Cannot make dir ${__h_mkdir_dir}"
 	fi
 	
+	__h_mkdir_dir=`_ssu_to_abst "$__h_mkdir_dir"`
+	
 	typeset __h_mkdir_ind=`echo ${#_ssu_h_mkdir_dir[@]}`
 	_ssu_h_mkdir_dir[${__h_mkdir_ind}]="${__h_mkdir_dir}"
 	
@@ -420,7 +428,7 @@ h_cd(){
 	typeset __h_cd_dir=""
 	typeset __h_cd_op=""
 	if [[ $# -eq 1 || $# -eq 2 ]];then
-		__h_cd_dir="${1}"
+		__h_cd_dir=`_ssu_to_abst "${1}"`
 		__h_cd_op=""
 		if [ $# = 2 ]
 		then
@@ -448,6 +456,7 @@ h_cd(){
 _ssu_tearDown_h_cd(){
 	typeset ___ssu_tearDown_h_cd_ind=`echo ${#_ssu_h_cd_old_dir[@]}`
 	___ssu_tearDown_h_cd_ind=$((${___ssu_tearDown_h_cd_ind}-1))
+	
 	cd ${_ssu_h_cd_old_dir[${___ssu_tearDown_h_cd_ind}]}
 	unset _ssu_h_cd_old_dir[${___ssu_tearDown_h_cd_ind}]
 }
@@ -466,6 +475,7 @@ h_make_file(){
 	
 	typeset __h_make_file_backup_src="";
 	if [ -f ${__h_make_file_file} ];then
+		__h_make_file_file=`_ssu_to_abst "$__h_make_file_file"`
 		__h_make_file_backup_src=`_ssu_TempFileName "${__h_make_file_file}"`;
 		cp -p  ${__h_make_file_file} ${__h_make_file_backup_src}
 		if [ $? -ne 0 ];then
@@ -482,6 +492,8 @@ h_make_file(){
 	if [ $? -ne 0 ];then
 		_ssu_ErrExit2 "h_make_file: Fail! Cannot make file ${__h_make_file_file}"
 	fi
+	
+	__h_make_file_file=`_ssu_to_abst "$__h_make_file_file"`
 	
 	typeset __h_make_file_ind=`echo ${#_ssu_h_make_file[@]}`
 	_ssu_h_make_file[${__h_make_file_ind}]="${__h_make_file_file}"
