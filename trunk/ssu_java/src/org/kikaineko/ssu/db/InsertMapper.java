@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.sql.Types;
 
 public class InsertMapper {
-	private static final String DB2 = "db2";
-	private static final String ORACLE = "oracle";
+	public static final String DB2 = "db2";
+	public static final String ORACLE = "oracle";
 	private static String dbmsType = null;
 	
 	public static void setDbmsType(String jdbcClass) {
@@ -17,6 +17,10 @@ public class InsertMapper {
 		}
 	}
 	
+	public static String getDbmsType() {
+		return dbmsType;
+	}
+
 	private static boolean isEmpty(String s) {
 		return s == null || s.length() == 0;
 	}
@@ -124,9 +128,18 @@ public class InsertMapper {
 	}
 
 	protected static String datef(String s) {
-	//	String t = TimeF.toSFromDate(s);
-		//TODO ˆêŽž“I‚È‘Î‰ž
-		String t = TimeF.toSFromTimestamp(s);
+        String t = null;
+		if (InsertMapper.getDbmsType().equals(InsertMapper.ORACLE)) {
+			t = TimeF.toSFromTimestamp(s);
+        }
+		else if (InsertMapper.getDbmsType().equals(InsertMapper.DB2)) {
+			t = TimeF.toSFromDate(s);
+        }
+		else {
+			//TODO ¿¿¿DBMS¿¿¿
+			t = TimeF.toSFromDate(s);
+		}
+
 		if(t.length()==0){
 			return null;
 		}

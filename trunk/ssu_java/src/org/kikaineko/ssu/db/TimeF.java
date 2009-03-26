@@ -94,6 +94,7 @@ class TimeF {
 	}
 
 	public static String toSFromDate(String s) {
+System.out.println(":::::::::::::" + s + "::::::::::::::");
 		if (s == null || s.length() == 0) {
 			return "";
 		}
