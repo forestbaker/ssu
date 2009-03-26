@@ -101,6 +101,9 @@ public class InsertCommand {
 		try {
 			stmt = conn.createStatement();
 			String sql = "select * from " + table;
+			if (InsertMapper.getDbmsType().equals(InsertMapper.DB2)) {
+				sql += " fetch first 1 row only";
+			}
 
 			// ñ‚çáÇπÇÃé¿çs
 			rset = stmt.executeQuery(sql);
