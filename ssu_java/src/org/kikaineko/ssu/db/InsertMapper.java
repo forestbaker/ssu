@@ -4,22 +4,6 @@ import java.math.BigDecimal;
 import java.sql.Types;
 
 public class InsertMapper {
-	public static final String DB2 = "db2";
-	public static final String ORACLE = "oracle";
-	private static String dbmsType = null;
-	
-	public static void setDbmsType(String jdbcClass) {
-		String s = jdbcClass.toLowerCase();
-		if (s.indexOf("db2") != -1) {
-			dbmsType = "db2";
-		} else if (s.indexOf("oracle") != -1) {
-			dbmsType = "oracle";
-		}
-	}
-	
-	public static String getDbmsType() {
-		return dbmsType;
-	}
 
 	private static boolean isEmpty(String s) {
 		return s == null || s.length() == 0;
@@ -118,10 +102,10 @@ public class InsertMapper {
 		if(t.length()==0){
 			return null;
 		}
-		if (DB2.equals(dbmsType)) {
+		if (Mapper.getDbmsType().equals(Mapper.DB2)) {
 			return "'" + t + "'";
 		}
-		if (ORACLE.equals(dbmsType)) {
+		if (Mapper.getDbmsType().equals(Mapper.ORACLE)) {
 			return "to_timestamp('" + t + "','yyyy-mm-dd hh24:mi:ss.ff3')";
 		}
 		return "'" + s + "'";
@@ -129,11 +113,11 @@ public class InsertMapper {
 
 	protected static String datef(String s) {
         String t = null;
-		if (InsertMapper.getDbmsType().equals(InsertMapper.ORACLE)) {
-			t = TimeF.toSFromTimestamp(s);
-        }
-		else if (InsertMapper.getDbmsType().equals(InsertMapper.DB2)) {
+		if (Mapper.getDbmsType().equals(Mapper.DB2)) {
 			t = TimeF.toSFromDate(s);
+		}
+		if (Mapper.getDbmsType().equals(Mapper.ORACLE)) {
+			t = TimeF.toSFromTimestamp(s);
         }
 		else {
 			//TODO ¿¿¿DBMS¿¿¿
@@ -145,10 +129,10 @@ public class InsertMapper {
 		}
 		String[] ss=t.split("\\.");
 		t=ss[0];
-		if (DB2.equals(dbmsType)) {
+		if (Mapper.getDbmsType().equals(Mapper.DB2)) {
 			return "'" + t + "'";
 		}
-		if (ORACLE.equals(dbmsType)) {
+		if (Mapper.getDbmsType().equals(Mapper.ORACLE)) {
 			return "to_date('" + t + "','yyyy-mm-dd hh24:mi:ss')";
 		}
 		return "'" + s + "'";

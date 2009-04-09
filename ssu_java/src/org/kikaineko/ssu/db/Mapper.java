@@ -9,6 +9,23 @@ import org.kikaineko.util.FileIO;
 
 public class Mapper {
 
+	public static final String DB2 = "db2";
+	public static final String ORACLE = "oracle";
+	private static String dbmsType = null;
+
+	public static void setDbmsType(String jdbcClass) {
+		String s = jdbcClass.toLowerCase();
+		if (s.indexOf("db2") != -1) {
+			dbmsType = "db2";
+		} else if (s.indexOf("oracle") != -1) {
+			dbmsType = "oracle";
+		}
+	}
+
+	public static String getDbmsType() {
+		return dbmsType;
+	}
+
 	private static boolean isEmpty(String s) {
 		return s == null || s.length() == 0;
 	}
@@ -80,11 +97,15 @@ public class Mapper {
 				return bd.toString();
 			return "";
 		case Types.DATE:
-			// java.sql.Date d = rset.getDate(name);
-			// return "\"" + TimeF.toS(d) + "\"";
-			// TODO
-			java.sql.Timestamp ts0 = rset.getTimestamp(name);
-			return "\"" + TimeF.toS(ts0).split("\\.")[0] + "\"";
+			if (getDbmsType().equals(DB2)) {
+				java.sql.Date d = rset.getDate(name);
+				return "\"" + TimeF.toS(d) + "\"";
+			}
+			else if (getDbmsType().equals(ORACLE)) {
+				java.sql.Timestamp ts0 = rset.getTimestamp(name);
+				return "\"" + TimeF.toS(ts0).split("\\.")[0] + "\"";
+			}
+			return "\"" + rset.getDate(name) + "\"";
 		case Types.TIME:
 			java.sql.Time t = rset.getTime(name);
 			return "\"" + TimeF.toS(t) + "\"";
@@ -172,9 +193,12 @@ public class Mapper {
 			}
 
 		case Types.DATE:
-			// return TimeF.toSFromDate(s);
-			// TODO
-			return TimeF.toSFromTimestamp(s).split("\\.")[0];
+			if (getDbmsType().equals(DB2)) {	
+				return TimeF.toSFromDate(s);
+			}
+			else if (getDbmsType().equals(ORACLE)) {
+				return TimeF.toSFromTimestamp(s).split("\\.")[0];
+			}
 		case Types.TIME:
 			return TimeF.toSFromTime(s);
 		case Types.TIMESTAMP:
@@ -246,12 +270,13 @@ public class Mapper {
 			}
 			return "";
 		case Types.DATE:
-			/*
-			 * java.sql.Date d = rset.getDate(i); return TimeF.toS(d);
-			 */
-			// TODO
-			java.sql.Timestamp ts0 = rset.getTimestamp(i);
-			return TimeF.toS(ts0).split("\\.")[0];
+			if (getDbmsType().equals(DB2)) {
+				return TimeF.toS(rset.getDate(i));
+			}
+			else if (getDbmsType().equals(ORACLE)) {
+				java.sql.Timestamp ts0 = rset.getTimestamp(i);
+				return TimeF.toS(ts0).split("\\.")[0];
+			}
 		case Types.TIME:
 			java.sql.Time t = rset.getTime(i);
 			return TimeF.toS(t);

@@ -18,7 +18,6 @@ import org.kikaineko.util.FileIO;
 public class InsertCommand {
 	public static void insert(String filePath, String jdbcClass, String url,
 			String user, String password, String table) throws Exception {
-		InsertMapper.setDbmsType(jdbcClass);
 		ArrayList fileData = FileIO.getFileDatas(filePath,FileIO.FileReadCodeToDB);
 		if (fileData.size() < 1) {
 			throw new SSUException("no data in " + filePath);
@@ -101,7 +100,7 @@ public class InsertCommand {
 		try {
 			stmt = conn.createStatement();
 			String sql = "select * from " + table;
-			if (InsertMapper.getDbmsType().equals(InsertMapper.DB2)) {
+			if (Mapper.getDbmsType().equals(Mapper.DB2)) {
 				sql += " fetch first 1 row only";
 			}
 

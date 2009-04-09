@@ -19,6 +19,8 @@ public class DBCommander {
 	public static void exec(String db_option_flag, String filePath,
 			String table, String jdbcClass, String url, String where,
 			String user, String password,String convpath) throws Throwable {
+		Mapper.setDbmsType(jdbcClass);
+
 		if (SELECT_COMP.equals(db_option_flag)) {
 			SelectCommand.selectAssert("complete", filePath, jdbcClass, url,
 					user, password, table, where,null);
