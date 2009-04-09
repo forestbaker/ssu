@@ -9,6 +9,7 @@ class TimeF {
 		if (time == null || time.length() == 0) {
 			return "";
 		}
+
 		String[] timeArray = null;
 		String mil = "000";
 		if (time.indexOf(".") != -1) {
@@ -94,22 +95,42 @@ class TimeF {
 	}
 
 	public static String toSFromDate(String s) {
-System.out.println(":::::::::::::" + s + "::::::::::::::");
-		if (s == null || s.length() == 0) {
-			return "";
+		String dbmsType = Mapper.getDbmsType();
+		if (dbmsType.equals(Mapper.DB2)) {
+            // YYYY-MM-DD
+            if (s.indexOf("-") != -1) {
+                return s;
+            }
+            // MM/DD/YYYY
+            else if (s.indexOf("/") != -1) {
+                String[] str = s.split("/");
+                return str[2] + "-" + str[0] + "-" + str[1];
+            }
+            // DD.MM.YYYY
+            else if (s.indexOf(".") != -1) {
+                String[] str = s.split("\\.");
+                return str[2] + "-" + str[1] + "-" + str[0];
+            }
 		}
-		String[] ss = null;
-		if (s.indexOf("-") != -1) {
-			ss = s.split("-");
-		} else if (s.indexOf("/") != -1) {
-			ss = s.split("/");
-		} else {
-			ss = new String[3];
-			ss[0] = s.substring(0, 4);
-			ss[1] = s.substring(4, 6);
-			ss[2] = s.substring(6, 8);
+		else if (dbmsType.equals(Mapper.ORACLE)) {
+			if (s == null || s.length() == 0) {
+				return "";
+			}
+			String[] ss = null;
+			if (s.indexOf("-") != -1) {
+				ss = s.split("-");
+			} else if (s.indexOf("/") != -1) {
+				ss = s.split("/");
+			} else {
+				ss = new String[3];
+				ss[0] = s.substring(0, 4);
+				ss[1] = s.substring(4, 6);
+				ss[2] = s.substring(6, 8);
+			}
+			return ss[0] + "-" + ss[1] + "-" + ss[2];
 		}
-		return ss[0] + "-" + ss[1] + "-" + ss[2];
+
+		return s;
 	}
 
 	public static String toS(Timestamp ts) {
