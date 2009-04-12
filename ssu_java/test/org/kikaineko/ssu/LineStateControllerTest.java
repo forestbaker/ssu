@@ -14,6 +14,11 @@ public class LineStateControllerTest extends TestCase {
 		assertEquals(true,cnt.isSkipLine("#aaa"));
 		assertEquals(false,cnt.isSkipLine("bbb#aaa"));
 	}
+	public void testPipe(){
+		assertEquals(false,cnt.isSkipLine("hoge aaa |"));
+		assertEquals(true,cnt.isSkipLine("hoge aaa |"));
+		assertEquals(true,cnt.isSkipLine("hoge aaa"));
+	}
 	
 	public void testelif(){
 		assertEquals(false,cnt.isSkipLine("bbb#aaa"));
