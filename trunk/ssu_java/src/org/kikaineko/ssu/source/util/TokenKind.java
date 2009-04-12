@@ -1,28 +1,36 @@
 /*
- * 作成日： 2005/02/09
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * TODO この生成されたファイルのテンプレートを変更するには次を参照。
- * ウィンドウ ＞ 設定 ＞ Java ＞ コード・スタイル ＞ コード・テンプレート
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  */
 package org.kikaineko.ssu.source.util;
 
 /**
- * オートマトンで使用される状態を表す
- * @author masayuki
+ * 
+ * @author Masayuki Ioki
+ *
  */
 public interface TokenKind {
-    /** トークンオートマトンの始まりを表す。*/
+    /** Starts Automaton */
 	public static final int Start = 0;
-	/** トークンオートマトンの終わりを表す。*/
+	/** Ends Automaton */
 	public static final int End = -1;
-	/** 数字*/
+	/** number*/
 	public static final int Number = 1;
-	/** ' ','\t','\n' これを表現*/
+	/** ' ','\t','\n' */
 	public static final int Kuuhaku = 2;
-	/** 数学記号*/
+	/** Math symbol*/
 	public static final int MathToken = 3;
-	/** 変数名など、どのトークンにも当てはまらないもの*/
-	public static final int Word = 4;//変数名など
+	/** like variables.*/
+	public static final int Word = 4;//
 	/** = */
 	public static final int Eq=5;// =
 	/** * */
@@ -50,7 +58,7 @@ public interface TokenKind {
 	/** ' */
 	public static final int SingleQ = 17;//'
 	
-	/** エスケープシーケンス */
+	/** escape */
 	public static final int Esc = 18; //\
 	/** [ */
 	public static final int ArrayOpen = 19;//[
@@ -85,7 +93,7 @@ public interface TokenKind {
 	/** % */
 	public static final int Amari = 34;//%
 	/** ^ */
-	public static final int Kasa = 35;//^これね
+	public static final int Kasa = 35;//^
 	/** += */
 	public static final int SaikiWa = 36; // +=
 	/** -= */
@@ -122,14 +130,14 @@ public interface TokenKind {
 	/** // */
 	public static final int LineComment = 52; // //
 	
-	/** 文字列 */
-	public static final int STring = 53; // 文字列
-	/** 一文字 */
-	public static final int Char = 54; // 文字
+	/** string */
+	public static final int STring = 53; // string
+	/** char */
+	public static final int Char = 54; // char
 	
 	public static final int AttMark=55; //@
 
 	public static final int Sharpe=56; //#
 	
-	public static final int WithSharpe=57; //-#とか
+	public static final int WithSharpe=57; //like -#,$#
 }

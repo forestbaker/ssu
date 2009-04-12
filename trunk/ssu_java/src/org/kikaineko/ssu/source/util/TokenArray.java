@@ -1,28 +1,32 @@
 /*
- * Created on 2005/02/18
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  */
 package org.kikaineko.ssu.source.util;
 
 import org.kikaineko.ssu.sourcescan.Tokenizer;
 
 /**
- * トークンの配列表現。 トークンの配列を柔軟に扱うためのメソッドを提供する。
- * 
  * @author Masayuki Ioki
  */
 public class TokenArray {
 	private Token[] tokens;
 
-	private int addLength = 50;// 50個ずつ増加させる
+	private int addLength = 50;
 
 	private int length;
 
 	/**
 	 * @param tokens
-	 *            トークンの配列
 	 */
 	public TokenArray(Token[] ts) {
 		this.tokens = new Token[ts.length];
@@ -52,7 +56,6 @@ public class TokenArray {
 	}
 
 	/**
-	 * 最初のkindのindexを返す。
 	 * 
 	 * @param word
 	 * @return
@@ -62,7 +65,6 @@ public class TokenArray {
 	}
 
 	/**
-	 * fromIndex以降の最初のkindのindexを返す。
 	 * 
 	 * @param number
 	 * @param i
@@ -77,7 +79,6 @@ public class TokenArray {
 	}
 
 	/**
-	 * 最初のvalのindexを返す。
 	 * 
 	 * @param string
 	 * @return
@@ -87,7 +88,6 @@ public class TokenArray {
 	}
 
 	/**
-	 * fromIndex以降の最初のvalのindexを返す。
 	 * 
 	 * @param string
 	 * @param fromIndex
@@ -102,7 +102,7 @@ public class TokenArray {
 	}
 
 	/**
-	 * i番目のTokenを返す。 getTokenと同じ
+	 * same getToken.
 	 * 
 	 * @param i
 	 * @return
@@ -114,7 +114,6 @@ public class TokenArray {
 	int counter = 0;
 
 	/**
-	 * i番目のTokenを返す
 	 * 
 	 * @param i
 	 * @return
@@ -124,7 +123,6 @@ public class TokenArray {
 	}
 
 	/**
-	 * i番目のTokenの値を返す。
 	 * 
 	 * @param i
 	 * @return
@@ -134,7 +132,6 @@ public class TokenArray {
 	}
 
 	/**
-	 * i番目のTokenの種類を返す。
 	 * 
 	 * @param i
 	 * @return
@@ -144,7 +141,6 @@ public class TokenArray {
 	}
 
 	/**
-	 * fromからend までの部分配列を返す。 返る配列長はend-fromとなる。
 	 * 
 	 * @param i
 	 * @param j
@@ -157,7 +153,6 @@ public class TokenArray {
 	}
 
 	/**
-	 * fromからの部分配列を返す。
 	 * 
 	 * @param i
 	 * @return
@@ -206,7 +201,6 @@ public class TokenArray {
 	}
 
 	/**
-	 * トークンの配列のfromからtoまでを削除する。
 	 * 
 	 * @param ts
 	 * @param i
@@ -234,7 +228,6 @@ public class TokenArray {
 	
 
 	/**
-	 * このトークンの配列に新たにトークンの配列を追加する。
 	 * 
 	 * @param tokens2
 	 */
@@ -256,7 +249,6 @@ public class TokenArray {
 	}
 
 	/**
-	 * このトークンの配列に新たにトークンの配列を追加する。
 	 * 
 	 * @param tokens2
 	 */
@@ -273,7 +265,6 @@ public class TokenArray {
 	}
 
 	/**
-	 * 指定したkindがいくつ配列中にあるかを返す。
 	 * 
 	 * @param ts
 	 * @param word
@@ -328,7 +319,6 @@ public class TokenArray {
 	}
 
 	/**
-	 * fromからtoまでの部分配列を返すと共に、その部分を削除する。
 	 * 
 	 * @param i
 	 * @param j
@@ -360,7 +350,6 @@ public class TokenArray {
 	}
 
 	/**
-	 * 配列中にその文字列を持つトークンがいくつあるかを返す。
 	 * 
 	 * @param string
 	 * @return
@@ -413,7 +402,6 @@ public class TokenArray {
 	}
 	
 	/**
-	 * 最初の位置にトークンを挿入する
 	 * @param t
 	 */
 	public void insertIntoFirstToken(Token t){

@@ -1,14 +1,19 @@
 /*
- * 作成日： 2005/02/09
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * TODO この生成されたファイルのテンプレートを変更するには次を参照。
- * ウィンドウ ＞ 設定 ＞ Java ＞ コード・スタイル ＞ コード・テンプレート
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  */
 package org.kikaineko.ssu.source.util;
 
 /**
- * トークンを表現するクラス。
- * 文字列としての値と、種類、それがリテラルかどうかの真偽値を持つ。
  * @author Masayuki Ioki
  *
  */
