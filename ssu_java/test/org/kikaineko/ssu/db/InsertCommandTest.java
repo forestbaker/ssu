@@ -41,7 +41,7 @@ public class InsertCommandTest extends TestCase {
 	*/
 
 	public void testSql() throws Throwable {
-		InsertMapper.setDbmsType("oracle");
+		//InsertMapper.setDbmsType("oracle");
 		String sql = "insert into emp (id,name,date) values (12,'hoge data',to_timestamp('2009/01/14 01:41:50','yyyy/mm/dd hh24:mi:ss'))";
 		List names = new ArrayList();
 		names.add("id");
@@ -59,4 +59,16 @@ public class InsertCommandTest extends TestCase {
 		//sql1 = InsertCommand.createSQL(sql1, names, map, data);
 		//assertEquals(sql, sql1);
 	}
+	
+	public void testBigt() throws Exception{
+		String filePath = "bigt/2.csv";
+		String jdbcClass = "oracle.jdbc.driver.OracleDriver";
+		String url = "jdbc:oracle:thin:@localhost:1521:xe";
+		String user = "system";
+		String password = "ioki0da";
+		String table = "BIGT";
+		
+		InsertCommand.insert(filePath, jdbcClass, url, user, password, table);
+	}
+	
 }

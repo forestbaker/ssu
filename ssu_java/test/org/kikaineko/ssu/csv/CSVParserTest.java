@@ -7,14 +7,14 @@ import org.kikaineko.ssu.csv.CSVParser;
 import junit.framework.TestCase;
 
 public class CSVParserTest extends TestCase {
-	public void test’Pƒ(){
+	public void testSimple(){
 		List l=CSVParser.lineParse("1,2,3");
 		assertEquals(3, l.size());
 		assertEquals("1", l.get(0));
 		assertEquals("2", l.get(1));
 		assertEquals("3", l.get(2));
 	}
-	public void testˆê‚Â‚­‚­‚Á‚Ä‚İ‚é(){
+	public void testString(){
 		List l=CSVParser.lineParse("1,\"2\",3");
 		assertEquals(3, l.size());
 		assertEquals("1", l.get(0));
@@ -32,14 +32,14 @@ public class CSVParserTest extends TestCase {
 		assertEquals("1.0", l.get(0));
 		assertEquals("pwd_lock_list", l.get(1));
 	}
-	public void test‚­‚­‚Á‚½’†‚ÉƒJƒ“ƒ}(){
+	public void testStringIncludeKamma(){
 		List l=CSVParser.lineParse("1,\"2,2\",3");
 		assertEquals(3, l.size());
 		assertEquals("1", l.get(0));
 		assertEquals("2,2", l.get(1));
 		assertEquals("3", l.get(2));
 	}
-	public void test‹ó”’‚à‚Ğ‚ë‚¤(){
+	public void testWhite(){
 		List l=CSVParser.lineParse(",1,\"2,2\",,3,");
 		assertEquals(6, l.size());
 		assertEquals("", l.get(0));
@@ -50,7 +50,7 @@ public class CSVParserTest extends TestCase {
 		assertEquals("", l.get(5));
 	}
 	
-	public void test“r’†‚ÉDQ‚ª‚ ‚é(){
+	public void testStringIncludeDQ(){
 		List l=CSVParser.lineParse("a,\"b\"\"c");
 		assertEquals("a", l.get(0));
 		assertEquals("b\"c", l.get(1));
