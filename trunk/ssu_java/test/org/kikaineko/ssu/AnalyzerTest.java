@@ -6,6 +6,6 @@ import junit.framework.TestCase;
 
 public class AnalyzerTest extends TestCase {
 	public void testa() {
-		Analyzer.result(new StringBuffer("10 11 "),18,20);
+		Analyzer.result(new StringBuffer("10 11 "),18,20,"");
 	}
 }
