@@ -1,3 +1,16 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 package org.kikaineko.ssu.db;
 
 import java.sql.Connection;
@@ -14,7 +27,11 @@ import java.util.Map;
 import org.kikaineko.ssu.csv.CSVParser;
 import org.kikaineko.ssu.exception.SSUException;
 import org.kikaineko.util.FileIO;
-
+/**
+ * 
+ * @author Masayuki Ioki
+ *
+ */
 public class InsertCommand {
 	public static void insert(String filePath, String jdbcClass, String url,
 			String user, String password, String table) throws Exception {
@@ -45,7 +62,6 @@ public class InsertCommand {
 			for (int i = 0; i < csvdata.size(); i++) {
 				List data = (List) csvdata.get(i);
 				sql = createSQL(names, map, data, table);
-				// –â‡‚¹‚ÌŽÀs
 				stmt.executeUpdate(sql);
 			}
 			conn.commit();
@@ -104,7 +120,6 @@ public class InsertCommand {
 				sql += " fetch first 1 row only";
 			}
 
-			// –â‡‚¹‚ÌŽÀs
 			rset = stmt.executeQuery(sql);
 			ResultSetMetaData rsmd = rset.getMetaData();
 			for (int i = 0; i < rsmd.getColumnCount(); i++) {

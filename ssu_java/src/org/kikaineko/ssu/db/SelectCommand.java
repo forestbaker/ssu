@@ -1,3 +1,16 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 package org.kikaineko.ssu.db;
 
 import java.sql.Connection;
@@ -13,7 +26,11 @@ import org.kikaineko.ssu.csv.CSVParser;
 import org.kikaineko.ssu.exception.DBCheckException;
 import org.kikaineko.ssu.exception.SSUException;
 import org.kikaineko.util.FileIO;
-
+/**
+ * 
+ * @author Masayuki Ioki
+ *
+ */
 public class SelectCommand {
 	private static String BR = System.getProperty("line.separator");
 
@@ -32,7 +49,6 @@ public class SelectCommand {
 			if (where != null && where.trim().length() != 0) {
 				sql += " " + where;
 			}
-			// 問合せの実行
 			rset = stmt.executeQuery(sql);
 			ResultSetMetaData rsmd = rset.getMetaData();
 			List names = new ArrayList();
@@ -47,7 +63,7 @@ public class SelectCommand {
 				sb.append(rsmd.getColumnName(i + 1));
 			}
 			sb.append(BR);
-			// 問合せ結果の表示
+			
 			while (rset.next()) {
 				String name = (String) names.get(0);
 				int type = ((Integer) types.get(0)).intValue();
@@ -103,11 +119,10 @@ public class SelectCommand {
 					&& !where.trim().equals(".")) {
 				sql += " " + where.trim();
 			}
-			// 問合せの実行
+			
 			rset = stmt.executeQuery(sql);
 			ResultSetMetaData rsmd = rset.getMetaData();
 
-			// 問合せ結果の表示
 			while (rset.next()) {
 				ArrayList temp = new ArrayList();
 				for (int i = 1; i <= max; i++) {
@@ -181,9 +196,9 @@ public class SelectCommand {
 	}
 
 	/**
-	 * flagは、complete/includeの２つ。completeはCSVとDBが完全に一致する。
-	 * includeはCSVの内容がDBに含まれていればよい。<br>
-	 * flagにcomplete以外を指定した場合、includeと解釈される。
+	 * 
+	 * flag is complete or include. complete is [CSV = Table].
+	 * include is [CSV <= Table].<br/>
 	 * 
 	 * @param flag
 	 * @param filePath
@@ -227,7 +242,7 @@ public class SelectCommand {
 					&& !where.trim().equals(".")) {
 				sql += " " + where.trim();
 			}
-			// 問合せの実行
+			
 			rset = stmt.executeQuery(sql);
 			ResultSetMetaData rsmd = rset.getMetaData();
 
@@ -268,14 +283,13 @@ public class SelectCommand {
 				csvMapped.add(csvtmp);
 			}
 
-			// 問合せ結果の表示
 			while (rset.next()) {
 				if (!flag.equals("complete")) {
 					if (csvdata.size() == 0) {
 						break;
 					}
 				}
-				// 列番号による指定
+				
 				ArrayList temp = new ArrayList();
 				for (int i = 1; i <= max; i++) {
 					Object o = Mapper
@@ -386,7 +400,7 @@ public class SelectCommand {
 			if (where != null && where.trim().length() != 0) {
 				sql += " " + where;
 			}
-			// 問合せの実行
+			
 			rset = stmt.executeQuery(sql);
 			rset.next();
 			String res = rset.getString(1);
