@@ -138,7 +138,7 @@ public class Mapper {
 	public static Object normFromCSV(String s, int type) throws Exception {
 		try {
 			return _normFromCSV(s, type);
-		}catch (SQLException se){
+		} catch (SQLException se){
 			throw se;
 		} catch (Exception e) {
 			throw new FormatException(e);
@@ -243,10 +243,15 @@ public class Mapper {
 			} else {
 				s = rset.getString(i);
 			}
-			if (s != null)
+			if (s != null) {
+				if (getDbmsType().equals(DB2)) {
+					// trim right space
+					return s.replaceAll("\\s+$", "");
+				}
 				return s;
+			}
 			return "";
-
+			
 		case Types.BINARY:
 		case Types.VARBINARY:
 		case Types.LONGVARBINARY:

@@ -304,10 +304,11 @@ public class SelectCommand {
 						temp.add(o);
 					}
 				}
+
 				int index = -1;
 				for (int i = 0; i < csvMapped.size(); i++) {
 					List csvtmp = (List) csvMapped.get(i);
-
+										
 					if (csvtmp.equals(temp)) {
 						index = i;
 						break;
