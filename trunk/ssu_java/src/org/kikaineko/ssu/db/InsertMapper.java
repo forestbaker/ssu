@@ -80,7 +80,6 @@ public class InsertMapper {
 			} else {
 				return "0";
 			}
-
 		case Types.REAL:
 			if (!isEmpty(s)) {
 				return Float.valueOf(s).toString();
@@ -105,7 +104,9 @@ public class InsertMapper {
 		case Types.DATE:
 			return datef(s);
 		case Types.TIME:
-			//TODO
+			if (Mapper.getDbmsType().equals(Mapper.DB2)) {
+				return (!isEmpty(s)) ? "'" + s + "'" : null; 
+			}
 		case Types.TIMESTAMP:
 			return timestampf(s);
 		default:
