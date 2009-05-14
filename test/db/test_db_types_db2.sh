@@ -65,6 +65,7 @@ test_datetimes() {
   echo ",07:00 pm," >>d
   echo ",,2009-05-15-00.01.02.333333" >>d
   echo ",,2009-05-15-00.01.02.444" >>d
+  echo ",,2009-05-15 00:01:02.5" >>d
   
   u_db_insert d "DATETIMES"
   assert_db d "DATETIMES"
