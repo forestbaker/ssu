@@ -521,3 +521,58 @@ _ssu_tearDown_h_make_file(){
 	unset _ssu_h_make_file[${___ssu_tearDown_h_make_file_ind}]
 	unset _ssu_h_make_backup_file[${___ssu_tearDown_h_make_file_ind}]
 }
+
+
+################################################################################
+# db helper
+# $1 input file 
+# $2 table name
+################################################################################
+h_db(){
+	typeset __h_db_file=""
+	typeset __h_db_table=""
+	if [[ $# -eq 2 ]];then
+		__h_db_file="${1}"
+		__h_db_table="${2}"
+	else
+		_ssu_ErrExit "h_db"
+	fi
+	
+	typeset __h_db_table_backup_src=`_ssu_TempFileName "${__h_db_table}"`;
+	touch "${__h_db_table_backup_src}"
+	
+	#db to file
+	u_db_select_to "${__h_db_table_backup_src}" "${__h_db_table}"
+	
+	#all erase
+	u_db_delete "${__h_db_table}" > /dev/null
+	
+	#file to db
+	u_db_insert "${__h_db_file}" "${__h_db_table}"
+	
+	typeset __h_db_ind=`echo ${#_ssu_h_db_table_backup[@]}`
+	_ssu_h_db_table_backup[${__h_db_ind}]="${__h_db_table_backup_src}"
+	_ssu_h_db_table_name[${__h_db_ind}]="${__h_db_table}"
+	
+	__h_db_ind=`echo ${#_ssu_tearDown_h_calledFunctions[@]}`
+	_ssu_tearDown_h_calledFunctions[${__h_db_ind}]="_ssu_tearDown_h_db"
+}
+
+_ssu_tearDown_h_db(){
+	typeset ___ssu_tearDown_h_db_ind=`echo ${#_ssu_h_db_table_backup[@]}`
+	___ssu_tearDown_h_db_ind=$((${___ssu_tearDown_h_db_ind}-1))
+	
+	typeset ___ssu_tearDown_h_db_table_backup=${_ssu_h_db_table_backup[${___ssu_tearDown_h_db_ind}]}
+	typeset ___ssu_tearDown_h_db_table_name=${_ssu_h_db_table_name[${___ssu_tearDown_h_db_ind}]}
+	
+	#all erase
+	u_db_delete "${___ssu_tearDown_h_db_table_name}" > /dev/null
+	
+	#file to db
+	u_db_insert "${___ssu_tearDown_h_db_table_backup}" "${___ssu_tearDown_h_db_table_name}"
+	
+	rm -f "${___ssu_tearDown_h_db_table_backup}"
+	
+	unset _ssu_h_db_table_backup[${___ssu_tearDown_h_db_ind}]
+	unset _ssu_h_db_table_name[${___ssu_tearDown_h_db_ind}]
+}
