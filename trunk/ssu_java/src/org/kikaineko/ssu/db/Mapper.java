@@ -7,7 +7,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -20,7 +20,7 @@ import java.sql.Types;
 
 import org.kikaineko.util.FileIO;
 /**
- * 
+ *
  * @author Masayuki Ioki
  *
  */
@@ -28,6 +28,7 @@ public class Mapper {
 
 	public static final String DB2 = "db2";
 	public static final String ORACLE = "oracle";
+	public static final String NETEZZA = "nz";
 	private static String dbmsType = null;
 
 	public static void setDbmsType(String jdbcClass) {
@@ -36,6 +37,8 @@ public class Mapper {
 			dbmsType = "db2";
 		} else if (s.indexOf("oracle") != -1) {
 			dbmsType = "oracle";
+		} else if (s.indexOf("netezza") != -1){
+			dbmsType = "nz";
 		}
 	}
 
@@ -60,6 +63,8 @@ public class Mapper {
 		case Types.CHAR:
 		case Types.VARCHAR:
 		case Types.LONGVARCHAR:
+		case Types.NVARCHAR:
+		case Types.LONGNVARCHAR:
 			String charCode = FileIO.code(FileIO.DBSelectCode);
 
 			String s = null;
@@ -154,6 +159,8 @@ public class Mapper {
 		case Types.CHAR:
 		case Types.VARCHAR:
 		case Types.LONGVARCHAR:
+		case Types.NVARCHAR:
+		case Types.LONGNVARCHAR:
 		case Types.BINARY:
 		case Types.VARBINARY:
 		case Types.LONGVARBINARY:
@@ -210,7 +217,7 @@ public class Mapper {
 			}
 
 		case Types.DATE:
-			if (getDbmsType().equals(DB2)) {	
+			if (getDbmsType().equals(DB2)) {
 				return TimeF.toSFromDate(s);
 			}
 			else if (getDbmsType().equals(ORACLE)) {
@@ -232,6 +239,8 @@ public class Mapper {
 		case Types.CHAR:
 		case Types.VARCHAR:
 		case Types.LONGVARCHAR:
+		case Types.NVARCHAR:
+		case Types.LONGNVARCHAR:
 			String charCode = FileIO.code(FileIO.DBSelectCode);
 
 			String s = null;
@@ -251,7 +260,7 @@ public class Mapper {
 				return s;
 			}
 			return "";
-			
+
 		case Types.BINARY:
 		case Types.VARBINARY:
 		case Types.LONGVARBINARY:
