@@ -7,7 +7,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -28,7 +28,7 @@ import org.kikaineko.ssu.csv.CSVParser;
 import org.kikaineko.ssu.exception.SSUException;
 import org.kikaineko.util.FileIO;
 /**
- * 
+ *
  * @author Masayuki Ioki
  *
  */
@@ -118,6 +118,8 @@ public class InsertCommand {
 			String sql = "select * from " + table;
 			if (Mapper.getDbmsType().equals(Mapper.DB2)) {
 				sql += " fetch first 1 row only";
+			} else if (Mapper.getDbmsType().equals(Mapper.NETEZZA)) {
+				sql += " limit 1";
 			}
 
 			rset = stmt.executeQuery(sql);

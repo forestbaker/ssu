@@ -7,7 +7,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
@@ -16,7 +16,7 @@ package org.kikaineko.ssu.db;
 import java.math.BigDecimal;
 import java.sql.Types;
 /**
- * 
+ *
  * @author Masayuki Ioki
  *
  */
@@ -25,15 +25,15 @@ public class InsertMapper {
 	private static boolean isEmpty(String s) {
 		return s == null || s.length() == 0;
 	}
-	
-	
+
+
 	protected static String sanit(String s) {
 		if (s.indexOf("'") != -1) {
 			s = s.replaceAll("'", "''");
 		}
 		return s;
 	}
-	
+
 	public static String norm(int type, String s) {
 		String ss=s;
 		if(ss!=null){
@@ -46,6 +46,8 @@ public class InsertMapper {
 		case Types.BINARY:
 		case Types.VARBINARY:
 		case Types.LONGVARBINARY:
+		case Types.NVARCHAR:
+		case Types.LONGNVARCHAR:
 			if (isEmpty(s)) {
 				return "''";
 			}
@@ -105,7 +107,7 @@ public class InsertMapper {
 			return datef(s);
 		case Types.TIME:
 			if (Mapper.getDbmsType().equals(Mapper.DB2)) {
-				return (!isEmpty(s)) ? "'" + s + "'" : null; 
+				return (!isEmpty(s)) ? "'" + s + "'" : null;
 			}
 		case Types.TIMESTAMP:
 			return timestampf(s);
@@ -114,7 +116,7 @@ public class InsertMapper {
 		}
 		return null;
 	}
-	
+
 	protected static String timestampf(String s) {
 		String t = TimeF.toSFromTimestamp(s);
 		if(t.length()==0){
